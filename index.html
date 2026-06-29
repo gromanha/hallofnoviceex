@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hall of the Novice EX | Majestic Battle Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #1D6A6A;
+            --teal-dark: #124949;
+            --teal-light: #E8F4F4;
+            --gold: #D4AF37;
+            --gold-light: #F5E6B8;
+            --lavender: #9B8BB4;
+            --lavender-light: #EDE8F3;
+            --ivory: #FAF6ED;
+            --slate: #3E4A56;
+            --slate-light: #6B7A8A;
+            --white: #FFFFFF;
+            --shadow-sm: 0 1px 3px rgba(62, 74, 86, 0.08);
+            --shadow-md: 0 4px 12px rgba(62, 74, 86, 0.1);
+            --shadow-lg: 0 8px 24px rgba(62, 74, 86, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--ivory) 0%, var(--teal-light) 50%, var(--lavender-light) 100%);
+            color: var(--slate);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid rgba(29, 106, 106, 0.1);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--teal-dark);
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 11px;
+            color: var(--slate-light);
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: var(--slate-light);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--teal-light);
+            color: var(--teal);
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .nav-link.active .nav-icon {
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--lavender-light) 0%, var(--teal-light) 100%);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .sidebar-footer p {
+            font-size: 12px;
+            color: var(--slate-light);
+            margin-bottom: 12px;
+        }
+
+        .btn-upgrade {
+            display: inline-block;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-upgrade:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(29, 106, 106, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 24px 32px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--white);
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-sm);
+            width: 320px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: var(--slate);
+            width: 100%;
+            background: transparent;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--slate-light);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--white);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            background: var(--white);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--teal-dark);
+            font-size: 16px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--teal) 0%, #2A8A8A 50%, var(--lavender) 100%);
+            border-radius: var(--radius);
+            padding: 40px 48px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+        }
+
+        .hero-content h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .btn-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--white);
+            color: var(--teal);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-decoration {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 16px;
+        }
+
+        .deco-book {
+            width: 80px;
+            height: 100px;
+            background: var(--gold);
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 var(--gold-light);
+            transform: rotate(-5deg);
+        }
+
+        .deco-book:nth-child(2) {
+            background: var(--lavender);
+            transform: rotate(3deg) translateY(-10px);
+        }
+
+        .deco-book:nth-child(3) {
+            background: var(--white);
+            transform: rotate(-2deg) translateY(5px);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+        }
+
+        /* Blog Posts */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--teal-dark);
+        }
+
+        .view-all {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--teal);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .post-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .post-image-placeholder {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .post-image-placeholder.teal {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal) 100%);
+        }
+
+        .post-image-placeholder.gold {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        }
+
+        .post-image-placeholder.lavender {
+            background: linear-gradient(135deg, var(--lavender-light) 0%, var(--lavender) 100%);
+        }
+
+        .post-image-placeholder.mixed {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--lavender-light) 100%);
+        }
+
+        .post-content {
+            padding: 20px;
+        }
+
+        .post-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--teal-light);
+            color: var(--teal);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .post-tag.gold {
+            background: var(--gold-light);
+            color: #8B7318;
+        }
+
+        .post-tag.lavender {
+            background: var(--lavender-light);
+            color: var(--lavender);
+        }
+
+        .post-title {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--teal-dark);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .post-excerpt {
+            font-size: 13px;
+            color: var(--slate-light);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--slate-light);
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .widget {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .widget-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--teal-dark);
+            margin-bottom: 16px;
+        }
+
+        /* Achievement Widget */
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(29, 106, 106, 0.08);
+        }
+
+        .achievement-item:last-child {
+            border-bottom: none;
+        }
+
+        .achievement-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--white);
+        }
+
+        .achievement-avatar.teal {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+        }
+
+        .achievement-avatar.lavender {
+            background: linear-gradient(135deg, var(--lavender) 0%, #7A6B94 100%);
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--slate);
+            margin-bottom: 4px;
+        }
+
+        .achievement-bar {
+            height: 6px;
+            background: var(--teal-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .achievement-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 100%);
+            border-radius: 3px;
+        }
+
+        .achievement-percent {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--teal);
+        }
+
+        /* Events Widget */
+        .event-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(29, 106, 106, 0.08);
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .event-icon.teal {
+            background: var(--teal-light);
+        }
+
+        .event-icon.gold {
+            background: var(--gold-light);
+        }
+
+        .event-icon.lavender {
+            background: var(--lavender-light);
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--slate);
+            margin-bottom: 4px;
+        }
+
+        .event-date {
+            font-size: 12px;
+            color: var(--slate-light);
+        }
+
+        .btn-event {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 14px;
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Stats Widget */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: var(--teal-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-item.gold {
+            background: var(--gold-light);
+        }
+
+        .stat-item.lavender {
+            background: var(--lavender-light);
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--teal-dark);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--slate-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 32px;
+            background: var(--white);
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--teal-dark);
+            margin-bottom: 8px;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: var(--slate-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .right-sidebar {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .right-sidebar {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 32px 24px;
+            }
+            
+            .hero-decoration {
+                margin-top: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">HoN</div>
+            <div class="logo-text">
+                Hall of the Novice
+                <span>Majestic Battle Academy</span>
+            </div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Alunos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Professores
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    Cursos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="23 7 16 12 23 17 23 7"/>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                    </svg>
+                    Aulas Ao Vivo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Presença
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    Eventos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    Biblioteca
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <p>Desbloqueie conquistas<br>e evolua mais!</p>
+            <a href="#" class="btn-upgrade">Melhorar ✦</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="search-bar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7A8A" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="Buscar no blog...">
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-live">
+                    <span class="live-dot"></span>
+                    Live
+                </button>
+                <button class="icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E4A56" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="avatar">AR</div>
+            </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1>Bem-vindo à Majestic Battle Academy</h1>
+                <p>A biblioteca serve como um lar acolhedor para buscadores de conhecimento e ávidos leitores. Descubra guias, eventos e histórias da nossa comunidade Eorzean.</p>
+                <button class="btn-hero">
+                    Explorar ✦
+                </button>
+            </div>
+            <div class="hero-decoration">
+                <div class="deco-book"></div>
+                <div class="deco-book"></div>
+                <div class="deco-book"></div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Blog Posts -->
+            <div class="posts-section">
+                <div class="section-header">
+                    <h2 class="section-title">Publicações Populares</h2>
+                    <a href="#" class="view-all">Ver Todas</a>
+                </div>
+                
+                <div class="posts-grid">
+                    <article class="post-card">
+                        <div class="post-image-placeholder teal">📚</div>
+                        <div class="post-content">
+                            <span class="post-tag">Guia</span>
+                            <h3 class="post-title">Tratado Zodiac Weapons: Completo</h3>
+                            <p class="post-excerpt">Guia passo a passo completo cobrindo as 8 fases das relíquias Zodiac.</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar">AR</div>
+                                    <span>Reitor Aquilles</span>
+                                </div>
+                                <span>12 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card">
+                        <div class="post-image-placeholder gold">⚔️</div>
+                        <div class="post-content">
+                            <span class="post-tag gold">Evento</span>
+                            <h3 class="post-title">Prova de Gelo: Shiva Extreme</h3>
+                            <p class="post-excerpt">Exame prático com sincronização de item mínimo. Prêmios de 1M de Gil!</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--gold) 0%, #8B7318 100%);">LO</div>
+                                    <span>Leafa Oakfall</span>
+                                </div>
+                                <span>15 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card">
+                        <div class="post-image-placeholder lavender">🎨</div>
+                        <div class="post-content">
+                            <span class="post-tag lavender">Comunidade</span>
+                            <h3 class="post-title">Diário do Reitor: Inauguração</h3>
+                            <p class="post-excerpt">Relato emocionante do primeiro dia de aula da Majestic Battle Academy.</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar">AR</div>
+                                    <span>Reitor Aquilles</span>
+                                </div>
+                                <span>18 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card">
+                        <div class="post-image-placeholder mixed">🔮</div>
+                        <div class="post-content">
+                            <span class="post-tag">Tutorial</span>
+                            <h3 class="post-title">EchoGlossian: Tradução PT-BR</h3>
+                            <p class="post-excerpt">Como instalar o plugin para traduzir diálogos em tempo real.</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--lavender) 0%, #7A6B94 100%);">NT</div>
+                                    <span>Nick Trentini</span>
+                                </div>
+                                <span>20 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Atividades Recentes</h2>
+                    <a href="#" class="view-all">Ver Todas</a>
+                </div>
+                
+                <div class="posts-grid">
+                    <article class="post-card">
+                        <div class="post-image-placeholder teal">🗺️</div>
+                        <div class="post-content">
+                            <span class="post-tag">Campo</span>
+                            <h3 class="post-title">Caça ao Tesouro Semanal</h3>
+                            <p class="post-excerpt">Excursão de mapas do tesouro nível 80/90 para enriquecimento coletivo.</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar">AR</div>
+                                    <span>Reitor Aquilles</span>
+                                </div>
+                                <span>22 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card">
+                        <div class="post-image-placeholder gold">⚡</div>
+                        <div class="post-content">
+                            <span class="post-tag gold">Exame</span>
+                            <h3 class="post-title">Prova do Trovão: Ramuh EX</h3>
+                            <p class="post-excerpt">Coordenação e comunicação por voz para derrotar Ramuh.</p>
+                            <div class="post-meta">
+                                <div class="post-author">
+                                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--gold) 0%, #8B7318 100%);">LO</div>
+                                    <span>Leafa Oakfall</span>
+                                </div>
+                                <span>25 Jan</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <aside class="right-sidebar">
+                <!-- Achievement Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">Conquistas Recentes</h3>
+                    <div class="achievement-item">
+                        <div class="achievement-avatar teal">AR</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">Reitor Aquilles</div>
+                            <div class="achievement-bar">
+                                <div class="achievement-progress" style="width: 78%;"></div>
+                            </div>
+                        </div>
+                        <span class="achievement-percent">78%</span>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-avatar lavender">LO</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">Leafa Oakfall</div>
+                            <div class="achievement-bar">
+                                <div class="achievement-progress" style="width: 62%;"></div>
+                            </div>
+                        </div>
+                        <span class="achievement-percent">62%</span>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-avatar" style="background: linear-gradient(135deg, var(--gold) 0%, #8B7318 100%);">NT</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">Nick Trentini</div>
+                            <div class="achievement-bar">
+                                <div class="achievement-progress" style="width: 54%;"></div>
+                            </div>
+                        </div>
+                        <span class="achievement-percent">54%</span>
+                    </div>
+                </div>
+                
+                <!-- Events Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">Próximos Eventos</h3>
+                    <div class="event-item">
+                        <div class="event-icon teal">❄️</div>
+                        <div class="event-info">
+                            <div class="event-name">Prova de Gelo</div>
+                            <div class="event-date">Sábado, 28 Jan • 20h</div>
+                            <a href="#" class="btn-event">Participar</a>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-icon gold">📚</div>
+                        <div class="event-info">
+                            <div class="event-name">Aula de Herbalismo</div>
+                            <div class="event-date">Domingo, 29 Jan • 15h</div>
+                            <a href="#" class="btn-event">Participar</a>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-icon lavender">🎭</div>
+                        <div class="event-info">
+                            <div class="event-name">Gincana do Campus</div>
+                            <div class="event-date">Sábado, 4 Fev • 19h</div>
+                            <a href="#" class="btn-event">Participar</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">Estatísticas</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">127</div>
+                            <div class="stat-label">Alunos</div>
+                        </div>
+                        <div class="stat-item gold">
+                            <div class="stat-value">34</div>
+                            <div class="stat-label">Aulas</div>
+                        </div>
+                        <div class="stat-item lavender">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Eventos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">89%</div>
+                            <div class="stat-label">Aprovação</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">Majestic Battle Academy</div>
+            <p class="footer-text">Hall of the Novice EX • Aulas Práticas, Eventos de Guilda e Pesquisas Étericas Avançadas</p>
+            <p class="footer-text" style="margin-top: 8px; font-size: 12px;">© 2026 - Todos os direitos reservados aos estudantes de Eorzea.</p>
+        </footer>
+    </main>
+
+</body>
+</html>

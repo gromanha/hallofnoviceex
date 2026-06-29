@@ -1,7 +1,7 @@
 # 🏛️ Majestic Battle Academy | Hall of the Novice EX [HoN]
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/seu-usuario/seu-repositorio/main/caminho-da-logo.png" alt="Majestic Battle Academy Logo" width="180px">
+  <img src="\assets\logo.png" alt="Majestic Battle Academy Logo" width="180px">
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/SEU_CONVITE"><img src="https://img.shields.io/discord/SEU_ID_DO_SERVIDOR?color=1D6A6A&label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
+  <a href="https://discord.gg/3XJgrsVUbP"><img src="https://img.shields.io/discord/SEU_ID_DO_SERVIDOR?color=1D6A6A&label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
   <img src="https://img.shields.io/badge/FFXIV_FC-HoN-D4AF37?style=for-the-badge&logo=square-enix" alt="FFXIV Free Company">
   <img src="https://img.shields.io/badge/Language-PT--BR-blue?style=for-the-badge" alt="Language PT-BR">
 </p>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Códice de Fundação: Majestic Battle Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Paleta de Cores e Configurações Gerais */
+        :root {
+            --bg-parchment: #FAF6ED; /* Marfim */
+            --teal-sharlayan: #1D6A6A; /* Verde-Água Sharlayan */
+            --teal-dark: #124949;
+            --gold-accent: #D4AF37; /* Ouro */
+            --gold-light: #E5C158;
+            --charcoal-text: #3E4A56; /* Cinza-Ardósia */
+            --white-card: #FFFFFF;
+            --lavender: #9B8BB4;
+            --shadow-soft: 0 4px 15px rgba(62, 74, 86, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-parchment);
+            color: var(--charcoal-text);
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.7;
+            padding: 0;
+        }
+
+        /* Cabeçalho Majestoso */
+        header {
+            background-color: var(--teal-sharlayan);
+            border-bottom: 5px solid var(--gold-accent);
+            color: var(--bg-parchment);
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #E2EFEF;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Prólogo do Reitor */
+        .rector-letter {
+            background-color: var(--white-card);
+            border-left: 5px solid var(--gold-accent);
+            border-radius: 4px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .rector-letter h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--teal-sharlayan);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .rector-signature {
+            margin-top: 20px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            color: var(--teal-sharlayan);
+            text-align: right;
+        }
+
+        /* Sanfona Interativa (Acordeons) */
+        details {
+            background-color: var(--white-card);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        details[open] {
+            border-color: var(--gold-accent);
+            box-shadow: 0 6px 20px rgba(29, 106, 106, 0.1);
+        }
+
+        summary {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 22px 25px;
+            cursor: pointer;
+            color: var(--teal-sharlayan);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid transparent;
+            user-select: none;
+        }
+
+        details[open] summary {
+            border-bottom-color: rgba(212, 175, 55, 0.2);
+            color: var(--gold-accent);
+            background-color: rgba(247, 244, 235, 0.3);
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: "▼";
+            font-size: 0.9rem;
+            color: var(--gold-accent);
+            transition: transform 0.3s ease;
+        }
+
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        /* Conteúdo das Abas */
+        .panel-content {
+            padding: 30px;
+        }
+
+        h2.section-title {
+            font-family: 'Cinzel', serif;
+            color: var(--teal-sharlayan);
+            margin: 25px 0 15px 0;
+            border-bottom: 2px solid rgba(29, 106, 106, 0.1);
+            padding-bottom: 8px;
+        }
+
+        h3.section-subtitle {
+            font-family: 'Cinzel', serif;
+            color: var(--teal-sharlayan);
+            font-size: 1.15rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 18px;
+        }
+
+        ul, ol {
+            margin-bottom: 22px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: var(--teal-dark);
+            font-weight: 700;
+        }
+
+        /* Tabelas Estilizadas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background-color: var(--white-card);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(62, 74, 86, 0.05);
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(62, 74, 86, 0.08);
+        }
+
+        th {
+            background-color: var(--teal-sharlayan);
+            color: var(--bg-parchment);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background-color: rgba(247, 244, 235, 0.7);
+        }
+
+        /* Blocos Informativos */
+        .academic-note {
+            background-color: rgba(155, 139, 180, 0.08);
+            border-left: 4px solid var(--lavender);
+            padding: 18px;
+            margin: 25px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .academic-note strong {
+            color: #6A5B8C;
+        }
+
+        .alert-box {
+            background-color: rgba(212, 175, 55, 0.08);
+            border-left: 4px solid var(--gold-accent);
+            padding: 18px;
+            margin: 25px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .coord {
+            background-color: #EBF3F3;
+            color: var(--teal-sharlayan);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Blocos de Código (Prompts e Macros) */
+        pre {
+            background-color: #2C3E50;
+            color: #ECF0F1;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            border-left: 4px solid var(--gold-accent);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        blockquote {
+            background-color: rgba(212, 175, 55, 0.05);
+            border-left: 4px solid var(--gold-accent);
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        /* Rodapé de Sharlayan */
+        footer {
+            background-color: var(--teal-dark);
+            border-top: 4px solid var(--gold-accent);
+            color: var(--bg-parchment);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CÓDICE DE FUNDAÇÃO</h1>
+        <p>Majestic Battle Academy • Free Company: Hall of the Novice EX [HoN]</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Prólogo Acadêmico -->
+        <section class="rector-letter">
+            <h2>Prólogo do Fundador</h2>
+            <p>Prezados alunos, mentores e aliados,</p>
+            <p>O documento que se estende diante de vocês é o registro oficial de fundação da nossa amada <strong>Majestic Battle Academy</strong>. Nele, consolidamos cada decisão criativa, metodológica, visual e técnica que tomamos para dar vida a este polo de ensino de Eorzea.</p>
+            <p>Que esta bíblia de marca sirva como norte para a nossa reitoria, uma base para as nossas comunicações de rede e uma grande biblioteca onde nossos alunos possam consultar uniformes, desafios práticos e diretrizes de convívio social. Desejo excelentes estudos e bom proveito deste acervo!</p>
+            <p class="rector-signature">Atenciosamente,<br>Reitor Aquilles Romanha</p>
+        </section>
+
+        <!-- SEÇÃO 1 -->
+        <details>
+            <summary>Seção 1: Conceito, Nome e Pilares</summary>
+            <div class="panel-content">
+                <h2 class="section-title">1.1 A Origem da Instituição</h2>
+                <p>Dentro do universo de Final Fantasy XIV, o <em>Hall of the Novice</em> oficial é o local onde os novos aventureiros recebem suas instruções primárias. Nossa Free Company foi batizada como <strong>Hall of the Novice EX [HoN]</strong> com o objetivo de expandir esse conceito original de ensino do jogo básico para os desafios de nível <strong>Extreme (EX)</strong>, Savage e Ultimate, bem como as artes de coleta e manufatura de forma extremamente paciente e didática.</p>
+                
+                <h2 class="section-title">1.2 Os Quatro Pilares Acadêmicos</h2>
+                <ul>
+                    <li><strong>Ensino Sem Toxicidade:</strong> Nossas aulas práticas (<em>Learning Parties</em>) são portos seguros onde errar faz parte do currículo escolar e a paciência é a nossa maior virtude.</li>
+                    <li><strong>Imersão Temática (RPG de Base):</strong> Adotamos com carinho a fantasia de uma grande universidade inspirada em Old Sharlayan, com cargos funcionais de Reitoria, Alto Conselho, Professores e Alunos (divididos entre Calouros, Veteranos e Formandos).</li>
+                    <li><strong>Polo de Informação PT-BR:</strong> Produção e tradução rigorosa de guias de alta complexidade para apoiar a comunidade de língua portuguesa.</li>
+                    <li><strong>Companheirismo e Vivência:</strong> Atividades que extrapolam o combate, focando no entrosamento social através de gincanas, fotos de turma e excursões coletivas.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 2 -->
+        <details>
+            <summary>Seção 2: Identidade Visual e Paleta de Cores</summary>
+            <div class="panel-content">
+                <h2 class="section-title">2.1 O Conceito Artístico</h2>
+                <p>Nossos materiais gráficos, redes sociais e site apoiam-se no estilo de <strong>ilustração em aquarela clássico do Final Fantasy XIV</strong>, apresentando traços delicados desenhados à mão, iluminação suave, atmosfera acadêmica de fantasia e elementos naturais integrados.</p>
+                
+                <h2 class="section-title">2.2 A Tabela de Cores da Academia</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cor / Identidade</th>
+                            <th>Código Hexadecimal</th>
+                            <th>Aplicação Recomendada no Design</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Verde-Água Sharlayan (Teal)</strong></td><td><span class="coord">#1D6A6A</span></td><td>Títulos grandes, botões de ação principal (CTA) e destaques.</td></tr>
+                        <tr><td><strong>Dourado Suave (Champagne)</strong></td><td><span class="coord">#D4AF37</span></td><td>Bordas de caixas, divisores de seção, detalhes de ícones.</td></tr>
+                        <tr><td><strong>Lavanda do Campus</strong></td><td><span class="coord">#9B8BB4</span></td><td>Ícones de redes sociais, detalhes florais e acentos secundários.</td></tr>
+                        <tr><td><strong>Marfim Pergaminho (Fundo)</strong></td><td><span class="coord">#FAF6ED</span></td><td>Fundo das seções de leitura para uma atmosfera acolhedora e "cozy".</td></tr>
+                        <tr><td><strong>Cinza-Ardósia (Slate Grey)</strong></td><td><span class="coord">#3E4A56</span></td><td>Cor dos textos principais e parágrafos de fácil leitura.</td></tr>
+                        <tr><td><strong>Branco Pérola (Cards)</strong></td><td><span class="coord">#FFFFFF</span></td><td>Fundo de cartões de conteúdo (com 90% de opacidade).</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 3 -->
+        <details>
+            <summary>Seção 3: O Alto Conselho (Corpo Docente)</summary>
+            <div class="panel-content">
+                <h2 class="section-title">3.1 Fichas de Identidade de RPG</h2>
+                
+                <h3 class="section-subtitle">Reitor Aquilles Romanha (Liderança e Estratégia)</h3>
+                <p>Um jovem Miqo'te loiro de olhos azuis brilhantes. Como um <strong>Sábio (Sage)</strong>, ele utiliza seus <em>Nouliths</em> dourados para projetar escudos matemáticos milissegundos antes do impacto inimigo. Suas características incluem raciocínio rápido (INTJ), perfeccionismo, inteligência tática e aversão profunda à mentira. Seus passa-tempos favoritos são decifrar mapas de tesouro e o estudo dos astros.</p>
+                <blockquote>"Fortuna favet Prudentibus" (A sorte favorece os preparados).</blockquote>
+
+                <h3 class="section-subtitle">Conselheiro Leafa Oakfall (Cura e Herbalismo)</h3>
+                <p>Um Miqo'te de olhos azuis e cabelo castanho-claro. Ele atua como o <strong>Sábio Botânico (Druida/Herbalista)</strong> da escola. Seu visual é composto por um chapéu de mago verde-oliva com fita clara e um manto de aprendiz verde-limão e oliva com tiras de couro e uma ombreira metálica em formato de asa. Seus estudos focam na cura baseada no fluxo de poções de éter e ervas do campus.</p>
+
+                <h3 class="section-subtitle">Conselheiro Nick (N'ihk) Trentini (Danças e Artes)</h3>
+                <p>Um jovem de pele bronzeada, cabelo rosa e cavanhaque. Mestre nas disciplinas de **Dance** e **Painting** (Dancer e Pictomancer). Veste boné branco com detalhes rosa, colar com gema vermelha, manguitos de lã verde-menta, bermuda esportiva branca com tiras rosa e tênis plataforma de sola grossa. Conduz o combate com movimentos enérgicos e respingos de tinta mágica.</p>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 4 -->
+        <details>
+            <summary>Seção 4: O Campus e a Sede Física in-game</summary>
+            <div class="panel-content">
+                <h2 class="section-title">4.1 Arquitetura e Decoração Externa</h2>
+                <p>Localizado à beira-mar, o nosso campus físico (FC House) é o ponto de encontro de todos os alunos. Suas principais características externas incluem:</p>
+                <ul>
+                    <li><strong>Sede de Pedra Branca:</strong> Um edifício de alvenaria em estilo chalé Sharlayan com telhados gablados claros e elegantes toldos de lona em verde-floresta sobre as janelas.</li>
+                    <li><strong>Área de Café:</strong> Um pátio coberto na lateral direita com mesas de bistrô de ferro escuro para descanso dos artesãos.</li>
+                    <li><strong>Pórtico Principal:</strong> Um belo portão ornamentado de ferro branco e ouro ladeado por escadarias curvas de mármore claro.</li>
+                    <li><strong>Deck de Observação:</strong> Uma estrutura elevada de madeira à esquerda envolta em trepadeiras, contendo um grande telescópio de latão apontado para as estrelas.</li>
+                    <li><strong>A Cerejeira do Campus:</strong> Uma vistosa árvore de floração roxo-lavanda posicionada no centro do gramado verdejante.</li>
+                    <li><strong>Gazebo de Glicínias:</strong> Uma pérgula de madeira no canto direito decorada com flores de wisteria roxas suspensas.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 5 -->
+        <details>
+            <summary>Seção 5: Manual do Uniforme Acadêmico</summary>
+            <div class="panel-content">
+                <h2 class="section-title">5.1 Fórmulas de Glamour (iLvl 1 - Todas as Classes)</h2>
+                <p>Para assegurar a união estética e visual de nossa equipe em formaturas e fotos de classe, os estudantes devem trajar o seguinte uniforme:</p>
+                
+                <h3 class="section-subtitle">Uniforme Masculino Oficial</h3>
+                <ul>
+                    <li><strong>Cabeça:</strong> <em>The Emperor's New Hat</em> (Sem cor)</li>
+                    <li><strong>Peito:</strong> <em>Lawless Enforcer's Jacket</em> (Cor: Sky Blue)</li>
+                    <li><strong>Luvas:</strong> <em>The Emperor's New Gloves</em> (Sem cor)</li>
+                    <li><strong>Calças:</strong> <em>Southern Seas Trousers</em> (Cor: Slate Grey)</li>
+                    <li><strong>Sapatos:</strong> <em>Summertide Formal Shoes</em> (Sem cor)</li>
+                </ul>
+
+                <h3 class="section-subtitle">Uniforme Feminino Oficial</h3>
+                <ul>
+                    <li><strong>Cabeça:</strong> <em>The Emperor's New Hat</em> (Sem cor)</li>
+                    <li><strong>Peito:</strong> <em>Lawless Enforcer's Jacket</em> (Cor: Sky Blue)</li>
+                    <li><strong>Luvas:</strong> <em>The Emperor's New Gloves</em> (Sem cor)</li>
+                    <li><strong>Calças (Saia):</strong> <em>Southern Seas Skirt</em> (Cor: Slate Grey)</li>
+                    <li><strong>Sapatos:</strong> <em>A Escolha da Aluna</em> (O modelo oficial das fotos de turma utiliza meias pretas até a panturrilha com o tênis plataforma *Calfskin Rider's Shoes* sem tintura).</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 6 -->
+        <details>
+            <summary>Seção 6: Acervo da Biblioteca (Guias Teóricos)</summary>
+            <div class="panel-content">
+                <h2 class="section-title">6.1 Resumos de Projetos de Estudo</h2>
+                <p>Nossa biblioteca acadêmica conta com os seguintes manuais traduzidos e otimizados para a comunidade:</p>
+                <ul>
+                    <li><strong>Tratado Zodiac Weapons (iLvl 80-135):</strong> Um guia passo a passo completo estruturado de forma HTML interativa, cobrindo as 8 fases (de Relic a Zeta), detalhando o farm de livros (Books), matéria, luzes (Nexus) e o investimento financeiro ideal de forma simples e direta.</li>
+                    <li><strong>Manual de Tradução EchoGlossian:</strong> Guia de instalação do plugin do Dalamud para traduzir em tempo real as caixas de diálogos para o Português (PT-BR) de forma discreta e segura.</li>
+                    <li><strong>Manual de Economia Steam:</strong> Instruções mostrando como vincular e pagar a assinatura in-game através da renovação automática da Steam (Auto-Renewal) para obter a mensalidade localizada de R$ 30,00 por mês em vez do valor em dólares.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 7 -->
+        <details>
+            <summary>Seção 7: Exames Práticos e Atividades de Campo</summary>
+            <div class="panel-content">
+                <h2 class="section-title">7.1 As Provas Acadêmicas (Minimum iLvl)</h2>
+                <p>Nossos exames práticos utilizam a sincronização de item mínimo para testar a destreza real dos alunos nas mecânicas originais das lutas:</p>
+                
+                <h3 class="section-subtitle">Prova I: Prova de Gelo (Shiva Extreme)</h3>
+                <p><strong>Foco:</strong> Alternância de armas da Shiva (Espada = Juntar / Cajado = Espalhar), desvio geométrico de círculos no chão e controle de passos no chão escorregadio. 
+                <br><strong>Prêmios:</strong> 1.000.000 de Gil por participante do clear + sorteio de montaria.</p>
+
+                <h3 class="section-subtitle">Prova II: Prova do Trovão (Ramuh Extreme)</h3>
+                <p><strong>Foco:</strong> Coordenação e comunicação por voz. Rotação das orbes de raio pelos Tanks para obter o buff de proteção, quebra das correntes elétricas entre os jogadores e salvamento de aliados enfeitiçados por *Chaos* com ataques de raio.
+                <br><strong>Prêmios:</strong> 1.000.000 de Gil por participante do clear + sorteio de montaria.</p>
+
+                <h3 class="section-subtitle">Prova III: Prova do Rei Moogle (Moggle Mog Extreme)</h3>
+                <p><strong>Foco:</strong> Controle rígido de alvos (DPS) e paciência. Os alunos devem enfraquecer todos os súditos moogles da guarda real de forma equivalente antes de derrotá-los, impedindo que o Rei lance o julgamento final.
+                <br><strong>Prêmios:</strong> Sem Gil. Apenas sorteio de prêmios decorativos, mascotes (minions) fofos e partituras de música.</p>
+
+                <h2 class="section-title">7.2 Atividades de Lazer e Pesquisa</h2>
+                <ul>
+                    <li><strong>Caça ao Tesouro (Treasure Maps):</strong> Excursão de campo semanal coordenada pelo Reitor para desbravamento de portais de mapas do tesouro de nível 80/90 para enriquecimento financeiro coletivo.</li>
+                    <li><strong>Expedição à Terra Proibida de Eureka:</strong> Exploração em grupo em mapas elementais (Anemos, Pagos, Pyros, Hydatos) com foco em elevar o nível elemental em conjunto de forma segura e forjar as relíquias brilhantes.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 8 -->
+        <details>
+            <summary>Seção 8: Macros de Divulgação in-game</summary>
+            <div class="panel-content">
+                <h2 class="section-title">8.1 Macro Geral de Divulgação (Shout)</h2>
+                <pre>/sh Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo!</pre>
+                
+                <h2 class="section-title">8.2 Rota Temática Automatizada (La Noscea)</h2>
+                <p>Utiliza o plugin <em>Teleporter</em> para percorrer de forma sequencial os principais cristais de éter de La Noscea no chat de cross-world linkshell 1 para fins de teste:</p>
+                <pre>/tp "Limsa Lominsa Lower Decks" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Middle La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Lower La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Eastern La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Western La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Upper La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo! <wait.3>
+/tp "Outer La Noscea" <wait.10>
+/cwls1 Procurando uma FC focada em ENSINO e COMUNIDADE? A «Hall of the Novice EX» [HoN] ajuda você do nível 1 ao conteúdo Extreme/Savage! Ambiente 100% amigável, perfeito para fazer amigos. Mande um /tell e venha se matricular em nossa academia hoje mesmo!</pre>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 9 -->
+        <details>
+            <summary>Seção 9: Biblioteca de Prompts do Midjourney</summary>
+            <div class="panel-content">
+                <h2 class="section-title">9.1 Banco de Prompts Visuais</h2>
+                
+                <h3 class="section-subtitle">1. O Campus Externo (FC House)</h3>
+                <pre>A wide horizontal panoramic illustration in FFXIV official watercolor concept art style of a majestic seaside fantasy academy manor perched on a grassy cliff. The manor is built from beautiful pearl-white stone bricks with gabled roofs, arched windows, and deep forest-green canvas awnings. On the right side of the house, an outdoor cafe patio is nestled under a large green canopy with small tables and chairs. The front courtyard features a beautiful white-and-gold iron gate between marble pillars with stairs curving down. In the center of the lush green lawn, a spectacular, softly glowing purple cherry blossom tree is in full bloom. On the far left of the cliff, a rustic wooden multi-level stargazing platform wrapped in green ivy stands with a brass telescope pointing to the sea. On the right side of the garden, a small wooden gazebo is draped with hanging purple wisteria. The entire scene overlooks a vast, sparkling turquoise ocean under a warm, golden sunset sky with soft magical wind swirls and tiny glowing light particles. Ethereal, cozy, highly detailed, and magical. --ar 16:9</pre>
+
+                <h3 class="section-subtitle">2. O Reitor Aquilles Romanha</h3>
+                <pre>A half-body portrait illustration in FFXIV official watercolor concept art style of a handsome male Miqo'te Rector. He has short blonde hair, warm blue eyes, and delicate feline ears, looking forward with a calm and wise expression. He wears an elegant, detailed white scholarly coat with gold embroidery, a high brown leather collar, and a vibrant teal turtleneck sweater underneath. Symmetrical composition, soft lighting, and detailed hand-drawn textures on a plain light-cream background. --ar 3:4</pre>
+
+                <h3 class="section-subtitle">3. Conselheiro Leafa Oakfall</h3>
+                <pre>A half-body portrait illustration in FFXIV watercolor concept art style of a male druid healer named Leafa Oakfall. He is a handsome male Miqo'te with soft light-brown hair, feline ears, warm blue eyes, and subtle facial markings under his eyes. He has a gentle and wise expression. He wears a wide-brimmed pointed wizard hat in earthy brown and sage-green. His attire is highly detailed, featuring a long hooded lime-green and olive-green tunic adorned with brown leather straps, gold filigree, and a wide leather belt with small herbalist pouches. On his left shoulder is a silver metal wing-like pauldron. The setting is a magical herbalist's workshop inside the Sharlayan-style academy, surrounded by wooden shelves filled with glowing green and blue potion vials, potted magical glowing plants, and hanging bundles of dried lavender and sage. Warm sunlight filters through arched glass windows. Watercolor brushstroke texture, soft warm lighting, cozy, and magical atmosphere. --ar 3:4</pre>
+
+                <h3 class="section-subtitle">4. Conselheiro Nick Trentini</h3>
+                <pre>A 3/4 body portrait illustration in FFXIV watercolor concept art style of an artistic male teacher named Nick Trentini. He has warm tanned skin, short reddish-pink hair peeking out from under a stylish white baseball cap with pink details, and a friendly, energetic smile. He is shirtless, showcasing a fit athletic torso, wearing a delicate gold necklace with a red crystal pendant, and light mint-green knit arm warmers on his forearms. He wears white sporty shorts with pink straps and buckles. Two circular pink chakrams are clipped to his hips. In his hand, he holds a magical glowing paintbrush, with vibrant, playful splashes of pink, teal, and gold watercolor paint magically swirling in the air around him. The background is a sun-lit outdoor art terrace of the Sharlayan-style academy overlooking a sparkling blue sea, with a wooden easel nearby. Watercolor brushstroke texture, bright and colorful lighting, creative and warm atmosphere. --ar 3:4</pre>
+
+                <h3 class="section-subtitle">5. Aula Prática de Herbalismo</h3>
+                <pre>A wide horizontal panoramic illustration in FFXIV official watercolor concept art style. The scene depicts an engaging herbalism and botany class inside a grand sun-drenched greenhouse-classroom of a magic academy. At the front, the teacher, Leafa Oakfall (a handsome male Miqo'te with light-brown hair, feline ears, and a pointed brown-and-green wizard hat), is standing behind a rustic wooden presentation table. He is demonstrating how to extract magical essence from a softly glowing purple lily, causing gentle green and gold pollen particles to float in the air. He wears his signature lime-green hooded robe with brown leather straps and a silver wing-like shoulder pauldron. Seated at wooden desks in front of him, several diverse academy students wearing the official sky-blue and slate-grey uniforms watch him with fascination, some taking notes in leather-bound books with feather quills. The background features a majestic conservatory with large arched glass windows, shelves lined with botanical books, glass flasks, and potted glowing herbs. Cozy, inspiring, highly detailed, and magical. --ar 16:9</pre>
+            </div>
+        </details>
+
+        <!-- SEÇÃO 10 -->
+        <details>
+            <summary>Seção 10: Modelos de Anúncios e Comunicados</summary>
+            <div class="panel-content">
+                <h2 class="section-title">10.1 Diário de Bordo do Reitor</h2>
+                <blockquote>
+                    <strong>Querido diário,</strong><br><br>
+                    Ainda sinto meu coração acelerado e um sorriso no rosto enquanto escrevo estas linhas na quietude da reitoria esta manhã. Ontem foi, sem dúvidas, um dos dias mais inesquecíveis de toda a minha jornada por Eorzea.<br><br>
+                    Ver os portões de mármore da nossa academia se abrirem e ver cada um de nossos estudantes entrando, vestindo orgulhosamente as nossas cores azul-céu e cinza-ardósia, encheu meus olhos de lágrimas. Nossas salas de aula, que antes eram silenciosas, agora ecoam com risadas, conversas e o som de páginas de livros sendo folheadas na biblioteca. O nosso campus finalmente ganhou alma.<br><br>
+                    Do discurso de abertura à nossa primeira foto de turma na escadaria (com direito a muitas poses, piadas e brilhos mágicos!), cada segundo foi especial. Agradeço imensamente ao Alto Conselho por todo o apoio na organização e a cada aluno que esteve presente para celebrar esse marco e participar do nosso sorteio.<br><br>
+                    A Majestic Battle Academy está oficialmente viva. E este é apenas o primeiro capítulo de uma grande história que iremos escrever juntos. Sejam todos muito bem-vindos à nossa casa! 🎓💙
+                </blockquote>
+
+                <h2 class="section-title">10.2 Comunicado de Uniforme Obrigatório</h2>
+                <blockquote>
+                    <strong>🏛️ COMUNICADO OFICIAL DA REITORIA: O USO DO UNIFORME 🎓</strong><br><br>
+                    Prezados alunos,<br><br>
+                    Para fortalecermos a identidade, a união e o espírito de equipe de nossa amada Majestic Battle Academy, a Reitoria e o Alto Conselho estabelecem que o **uso do Uniforme Oficial é obrigatório** em todas as nossas aulas práticas (Learning Parties), cerimônias de formatura e eventos oficiais da guilda.<br><br>
+                    Vestir as cores azul-céu e cinza-ardósia de nossa instituição é um símbolo do nosso compromisso com o aprendizado mútuo e do orgulho de fazermos parte do Hall of the Novice EX!<br><br>
+                    <strong>🎒 Como obter o seu uniforme?</strong><br><br>
+                    Sabemos que muitos de nossos calouros (Sprouts) acabaram de chegar a Eorzea e podem não ter o nível de classe, os materiais ou o Gil necessário para obter as peças de glamour ou as tintas. Não se preocupem! A Academia dará todo o suporte necessário.<br><br>
+                    Se você precisa das peças para montar o seu visual de estudante, basta fazer o seu pedido enviando uma mensagem privada diretamente para o nosso Reitor (Aquilles Romanha) ou para um dos membros do Alto Conselho (como o Leafa Oakfall ou o Nick Trentini). Nós providenciaremos a confecção e a entrega dos itens diretamente para você!<br><br>
+                    Atenciosamente,<br>
+                    <strong>A Reitoria & O Alto Conselho de Sharlayan 🕊️💙</strong>
+                </blockquote>
+            </div>
+        </details>
+
+    </div>
+
+    <footer>
+        <p><strong>Majestic Battle Academy / Hall of the Novice EX</strong></p>
+        <p>Aulas Práticas, Eventos de Guilda e Pesquisas Étericas Avançadas</p>
+        <p>© 2026 - Todos os direitos reservados aos estudantes de Eorzea.</p>
+    </footer>
+
+</body>
+</html>

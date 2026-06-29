@@ -1,4 +1,4 @@
-# 🏛️ Majestic Battle Academy | Hall of the Novice EX [HoN]
+# 🏛️ Hall of the Novice EX [HoN]
 
 <p align="center">
   <img src="\assets\logo.png" alt="Majestic Battle Academy Logo" width="180px">
@@ -18,7 +18,7 @@
 
 ## 📖 Sobre a nossa Academia
 
-A **Majestic Battle Academy**, lar da Free Company **Hall of the Novice EX [HoN]**, é uma comunidade brasileira de *Final Fantasy XIV* projetada para ser um ambiente de aprendizado seguro, imersivo e totalmente livre de toxicidade. 
+A Free Company **Hall of the Novice EX [HoN]**, é uma comunidade brasileira de *Final Fantasy XIV* projetada para ser um ambiente de aprendizado seguro, imersivo e totalmente livre de toxicidade. 
 
 Inspirada na arquitetura, sabedoria e filosofia da grandiosa cidade de **Old Sharlayan**, nossa guilda adota com carinho a fantasia de uma **Academia de Magia, Batalha e Artesanato**. Acreditamos que a ignorância é a maior vulnerabilidade de um aventureiro, e que o saber compartilhado com paciência é a ferramenta de mitigação definitiva de Eorzea.
 
@@ -79,12 +79,12 @@ Neste repositório, você encontrará os manuais de instrução preparados pelo 
 
 Se você deseja se juntar a nós como aluno (Calouro) ou até mesmo se candidatar ao Corpo Docente (Professor/Mentor), siga os passos abaixo:
 
-1. **Matrícula pelo Discord:** Entre no nosso campus digital através do convite: [discord.gg/SEU_CONVITE](https://discord.gg/SEU_CONVITE).
+1. **Matrícula pelo Discord:** Entre no nosso campus digital através do convite: [https://discord.gg/3XJgrsVUbP](https://discord.gg/3XJgrsVUbP).
 2. **Registro de Personagem:** Acesse o canal `#matricula` e utilize nosso bot para vincular o perfil do seu personagem da Lodestone.
-3. **In-game:** Visite nosso campus físico em `[Seu Servidor] – [Distrito] – Ward [X], Plot [Y]` e faça sua inscrição diretamente no placard de anúncios do portão ou enviando um `/tell` para o **Reitor Aquilles Romanha**.
+3. **In-game:** Visite nosso campus físico em `Behemoth – Mist – Ward 19, Plot 35` e faça sua inscrição diretamente no placard de anúncios do portão ou enviando um `/tell` para o **Reitor Aquilles Romanha**.
 
 ---
 
 <p align="center">
-  <sub>© 2026 Majestic Battle Academy. Desenvolvido para a comunidade de Final Fantasy XIV. Todos os direitos reservados à Square Enix.</sub>
+  <sub>© 2026 Hall of the Novice EX. Desenvolvido para a comunidade de Final Fantasy XIV. Todos os direitos reservados à Square Enix.</sub>
 </p>

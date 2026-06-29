@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/3XJgrsVUbP"><img src="https://img.shields.io/discord/SEU_ID_DO_SERVIDOR?color=1D6A6A&label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
+  <a href="https://discord.gg/3XJgrsVUbP"><img src="https://img.shields.io/discord/1502680625117790218?color=1D6A6A&label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
   <img src="https://img.shields.io/badge/FFXIV_FC-HoN-D4AF37?style=for-the-badge&logo=square-enix" alt="FFXIV Free Company">
   <img src="https://img.shields.io/badge/Language-PT--BR-blue?style=for-the-badge" alt="Language PT-BR">
 </p>

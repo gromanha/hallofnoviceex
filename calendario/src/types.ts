@@ -1,4 +1,9 @@
-export type EventType = 'spells' | 'tactics' | 'alchemy' | 'ritual' | 'other';
+export type EventType =
+  | 'aula-pratica'
+  | 'evento-sazonal'
+  | 'atividades-semanais'
+  | 'evento-social'
+  | 'outros';
 
 export interface MagicalEvent {
   id: string;
@@ -10,9 +15,6 @@ export interface MagicalEvent {
   instructor?: string;
   image?: string; // Optional image link
   type: EventType;
-  manaProgress: number; // Percentage (e.g. 70)
-  spots: string; // e.g. "12/40"
-  rank: string; // e.g. "S-Class", "A-Class"
   crystal?: boolean; // Show floating crystal icon
   stars?: boolean; // Show star over thumbnail
   indicators?: string[]; // Color list e.g. ['primary', 'secondary', 'error']

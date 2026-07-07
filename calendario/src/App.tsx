@@ -109,10 +109,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Reunião de recepção dos novatos para desvendar os mistérios dos antigos tomos flutuantes na Grande Biblioteca Central.",
     instructor: "Arquimago Valerius",
     image: IMAGE_PRESETS[0].url,
-    type: "spells",
-    manaProgress: 35,
-    spots: "18/40",
-    rank: "A-Class",
+    type: "aula-pratica",
     crystal: true,
     indicators: ['primary']
   },
@@ -125,10 +122,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Estudo das linhas de fluxo em combate e posicionamento avançado de barreiras rúnicas de contenção.",
     instructor: "Archmage Valerius",
     image: IMAGE_PRESETS[2].url,
-    type: "tactics",
-    manaProgress: 70,
-    spots: "12/40",
-    rank: "S-Class",
+    type: "aula-pratica",
     crystal: true,
     stars: true,
     indicators: ['primary', 'secondary']
@@ -141,10 +135,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     title: "Ritual de Cristais: Focalização Elemental",
     description: "Traga seu prisma pessoal de nível 3 para o Salão Sul. Foco em alinhamento de canais de energia elemental pura.",
     instructor: "Mestra Seraphina",
-    type: "ritual",
-    manaProgress: 70,
-    spots: "12/40",
-    rank: "S-Class",
+    type: "atividades-semanais",
     indicators: ['secondary']
   },
   {
@@ -156,10 +147,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Ronda de vigilância mística ao redor dos portões principais da academia sob a luz das estrelas e escudos translúcidos.",
     instructor: "Guarda Rúnico Alistair",
     image: IMAGE_PRESETS[3].url,
-    type: "tactics",
-    manaProgress: 70,
-    spots: "12/40",
-    rank: "S-Class",
+    type: "atividades-semanais",
     indicators: ['error']
   },
   {
@@ -170,10 +158,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     title: "Mistura de Elixires e Essências de Fogo",
     description: "Destilação experimental de lágrimas de fênix e pó de enxofre em ambiente alquímico controlado de nível 2.",
     instructor: "Alquimista Ignis",
-    type: "alchemy",
-    manaProgress: 50,
-    spots: "8/25",
-    rank: "B-Class",
+    type: "aula-pratica",
     crystal: false,
     indicators: ['secondary', 'error']
   },
@@ -186,10 +171,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Discussão aprofundada de táticas defensivas contra hordas elementais e conjuração síncrona com os generais de prata.",
     instructor: "Arquimago Valerius",
     image: IMAGE_PRESETS[5].url,
-    type: "tactics",
-    manaProgress: 80,
-    spots: "24/40",
-    rank: "S-Class",
+    type: "aula-pratica",
     crystal: true,
     indicators: ['primary']
   },
@@ -202,10 +184,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Excursão prática aos jardins sagrados para colheita de lavanda mística sob o orvalho da manhã e rituais de crescimento rápido.",
     instructor: "Mestra Flora",
     image: IMAGE_PRESETS[4].url,
-    type: "alchemy",
-    manaProgress: 60,
-    spots: "15/30",
-    rank: "A-Class",
+    type: "evento-sazonal",
     crystal: true,
     indicators: ['primary', 'secondary']
   }
@@ -234,7 +213,7 @@ export default function App() {
   const [currentMonthIdx, setCurrentMonthIdx] = useState(0);
   const currentMonth = DEFAULT_MONTHS[currentMonthIdx];
   const [selectedDay, setSelectedDay] = useState<number>(TODAY.getDate());
-  const [activeFilter, setActiveFilter] = useState<'all' | 'spells' | 'tactics' | 'alchemy'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | EventType>('all');
 
   // Custom event creation states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -243,10 +222,7 @@ export default function App() {
   const [newEventTime, setNewEventTime] = useState('09:00 — 11:30');
   const [newEventDesc, setNewEventDesc] = useState('');
   const [newEventInstructor, setNewEventInstructor] = useState('Archmage Valerius');
-  const [newEventType, setNewEventType] = useState<EventType>('spells');
-  const [newEventMana, setNewEventMana] = useState<number>(60);
-  const [newEventSpots, setNewEventSpots] = useState('15/40');
-  const [newEventRank, setNewEventRank] = useState('S-Class');
+  const [newEventType, setNewEventType] = useState<EventType>('aula-pratica');
   const [newEventImage, setNewEventImage] = useState(IMAGE_PRESETS[0].url);
   const [newEventCrystal, setNewEventCrystal] = useState(true);
 
@@ -290,14 +266,11 @@ export default function App() {
       instructor: newEventInstructor,
       image: newEventImage,
       type: newEventType,
-      manaProgress: Number(newEventMana),
-      spots: newEventSpots,
-      rank: newEventRank,
       crystal: newEventCrystal,
-      stars: newEventType === 'tactics',
+      stars: newEventType === 'aula-pratica',
       indicators: [
-        newEventType === 'spells' ? 'primary' :
-          newEventType === 'tactics' ? 'secondary' : 'error'
+        newEventType === 'aula-pratica' ? 'primary' :
+          newEventType === 'atividades-semanais' ? 'secondary' : 'error'
       ]
     };
 
@@ -308,7 +281,7 @@ export default function App() {
     setNewEventTitle('');
     setNewEventDesc('');
     // Trigger toast notification
-    setProphecy(`Mágico! Nova atividade "${newEventTitle}" inscrita no Registro de Atividades.`);
+    setProphecy(`Nova atividade "${newEventTitle}" inscrita no Registro de Atividades.`);
     setShowProphecyToast(true);
     setTimeout(() => setShowProphecyToast(false), 4000);
   };
@@ -368,15 +341,6 @@ export default function App() {
   };
 
   // Dynamic values based on selected day's events
-  const selectedDaySpots = selectedDayEvents.length > 0
-    ? selectedDayEvents[0].spots
-    : "12/40"; // fallback default
-  const selectedDayRank = selectedDayEvents.length > 0
-    ? selectedDayEvents[0].rank
-    : "S-Class"; // fallback default
-  const maxManaRequired = selectedDayEvents.length > 0
-    ? Math.max(...selectedDayEvents.map(e => e.manaProgress))
-    : 0;
 
   return (
     <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{ overscrollBehavior: 'none' }}>
@@ -899,9 +863,9 @@ export default function App() {
                   <div>
                     <h3 className="text-2xl font-serif text-[#735c00] font-bold flex items-center gap-2">
                       <Sparkles className="w-6 h-6 text-[#fed65b] fill-[#fed65b]" />
-                      Novo Ritual de Aprendizado
+                      Novo Evento
                     </h3>
-                    <p className="text-xs text-[#73777f]">Inscreva uma aula mística no calendário da Majestic Battle Academy.</p>
+                    <p className="text-xs text-[#73777f]">Inscreva uma nova atividade na Hall of the Novice EX.</p>
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
@@ -998,11 +962,11 @@ export default function App() {
                   {/* Description */}
                   <div>
                     <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                      Descrição Detalhada do Saber
+                      Descrição Detalhada da Atividade
                     </label>
                     <textarea
                       rows={3}
-                      placeholder="Indique as orientações e materiais misticos exigidos aos estudantes..."
+                      placeholder="Indique as orientações e materiais exigidos aos estudantes..."
                       value={newEventDesc}
                       onChange={(e) => setNewEventDesc(e.target.value)}
                       className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30 resize-none"
@@ -1012,7 +976,7 @@ export default function App() {
                   {/* Illustration Image Preset Picker Grid */}
                   <div>
                     <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                      Presetação Visual Ilustrativa
+                      Banner
                     </label>
                     <div className="grid grid-cols-6 gap-2">
                       {IMAGE_PRESETS.map((p) => {

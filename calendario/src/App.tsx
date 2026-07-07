@@ -543,7 +543,7 @@ export default function App() {
           <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-serif text-[#1a3a5f] font-bold tracking-tight">Calendário Acadêmico</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-cinzel text-[#1a3a5f] font-bold tracking-tight">Calendario Hall of the Novice EX</h2>
                 {activeFilter !== 'all' && (
                   <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20">
                     Filtro: {activeFilter}
@@ -664,7 +664,7 @@ export default function App() {
 
                   {/* Indicator dots for multiple events */}
                   {allDayEventsForIndicators.length > 0 && (
-                    <div className="absolute top-8 left-2.5 sm:left-3 flex gap-1 z-10">
+                    <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
                       {allDayEventsForIndicators.map((e, index) => {
                         let dotColor = 'bg-[#1a3a5f]'; // spells
                         if (e.type === 'tactics') dotColor = 'bg-[#735c00]';

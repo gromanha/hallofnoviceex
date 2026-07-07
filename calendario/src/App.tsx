@@ -555,7 +555,7 @@ export default function App() {
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'local'
+            backgroundAttachment: 'scroll'
           }}
         >
           {/* Custom coordinate tracker glow: Mouse Trail */}

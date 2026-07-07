@@ -29,6 +29,7 @@ import {
   Eye
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventType } from './types';
+import bgImage from './assets/id.jpeg';
 
 // Predefined magic imagery URLs matching the original design
 const IMAGE_PRESETS = [
@@ -64,34 +65,44 @@ const IMAGE_PRESETS = [
   }
 ];
 
-const DEFAULT_MONTHS: MonthData[] = [
-  {
-    name: "Mês das Plêiades",
-    cycle: "Ciclo de Cristalização do 4º Ano",
-    daysCount: 30,
-    offset: 2, // Tuesday start
-    prevMonthDays: [30, 31]
-  },
-  {
-    name: "Mês das Dríades",
-    cycle: "Ciclo de Florescimento do 4º Ano",
-    daysCount: 31,
-    offset: 4, // Thursday start
-    prevMonthDays: [28, 29, 30, 31]
-  },
-  {
-    name: "Mês do Éter",
-    cycle: "Ciclo de Transcendência do 4º Ano",
-    daysCount: 30,
-    offset: 0, // Sunday start
-    prevMonthDays: []
-  }
+// Build REAL months dynamically, starting from the current month
+const REAL_MONTH_NAMES = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
+
+function buildRealMonths(startYear: number, startMonth: number, count = 3): MonthData[] {
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(startYear, startMonth + i, 1);
+    const year = d.getFullYear();
+    const month = d.getMonth(); // 0-indexed
+    const daysCount = new Date(year, month + 1, 0).getDate();
+    const firstWeekday = d.getDay(); // 0=Sun
+    // Days from previous month to fill the first row
+    const prevMonthDays: number[] = [];
+    if (firstWeekday > 0) {
+      const prevTotal = new Date(year, month, 0).getDate();
+      for (let p = prevTotal - firstWeekday + 1; p <= prevTotal; p++) {
+        prevMonthDays.push(p);
+      }
+    }
+    return {
+      name: REAL_MONTH_NAMES[month],
+      cycle: `${year}`,
+      daysCount,
+      offset: firstWeekday,
+      prevMonthDays,
+    };
+  });
+}
+
+const TODAY = new Date();
+const DEFAULT_MONTHS: MonthData[] = buildRealMonths(TODAY.getFullYear(), TODAY.getMonth(), 12);
 
 const INITIAL_EVENTS: MagicalEvent[] = [
   {
     id: 'evt-1',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 1,
     time: "08:00 — 10:30",
     title: "Iniciação Hermética: Estudo de Tomos de Mana",
@@ -107,7 +118,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-2',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 3,
     time: "09:00 — 11:30",
     title: "Tática de Batalha: Formações de Mana",
@@ -124,7 +135,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-3',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 3,
     time: "14:00 — 16:00",
     title: "Ritual de Cristais: Focalização Elemental",
@@ -138,7 +149,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-4',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 3,
     time: "20:00 — 22:00",
     title: "Vigília nos Portões: Patrulha Noturna",
@@ -153,7 +164,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-5',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 5,
     time: "11:00 — 13:00",
     title: "Mistura de Elixires e Essências de Fogo",
@@ -168,7 +179,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-6',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 8,
     time: "10:00 — 12:30",
     title: "Análise Avançada de Diagramas Táticos",
@@ -184,7 +195,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
   },
   {
     id: 'evt-7',
-    month: "Mês das Plêiades",
+    month: REAL_MONTH_NAMES[TODAY.getMonth()],
     day: 16,
     time: "09:00 — 12:00",
     title: "Herborologia e Botânica Arcana: Cultivo de Lavanda Mística",
@@ -211,18 +222,18 @@ const PROPHECIES = [
 export default function App() {
   // Persistence state
   const [events, setEvents] = useState<MagicalEvent[]>(() => {
-    const saved = localStorage.getItem('academic_ledger_events');
+    const saved = localStorage.getItem('academic_ledger_events_v2');
     return saved ? JSON.parse(saved) : INITIAL_EVENTS;
   });
 
   useEffect(() => {
-    localStorage.setItem('academic_ledger_events', JSON.stringify(events));
+    localStorage.setItem('academic_ledger_events_v2', JSON.stringify(events));
   }, [events]);
 
-  // Calendar parameters
+  // Calendar parameters — start on current real month
   const [currentMonthIdx, setCurrentMonthIdx] = useState(0);
   const currentMonth = DEFAULT_MONTHS[currentMonthIdx];
-  const [selectedDay, setSelectedDay] = useState<number>(3); // Default matches Day 3 in screenshot
+  const [selectedDay, setSelectedDay] = useState<number>(TODAY.getDate());
   const [activeFilter, setActiveFilter] = useState<'all' | 'spells' | 'tactics' | 'alchemy'>('all');
 
   // Mouse Trail State
@@ -385,7 +396,7 @@ export default function App() {
     : 0;
 
   return (
-    <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased">
+    <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{overscrollBehavior: 'none'}}>
       
       {/* Toast Notification for Daily Prophecy or Magical actions */}
       <AnimatePresence>
@@ -408,57 +419,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Header */}
-      <header className="bg-[#e5e2da] shadow-md flex flex-wrap gap-4 justify-between items-center w-full px-6 md:px-10 py-3 border-b-2 border-[#ffe088] z-30">
-        <div className="flex items-center gap-4">
-          <img 
-            id="academy-seal"
-            alt="Academy Seal" 
-            className="h-14 w-14 object-contain animate-[spin_60s_linear_infinite]" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhz7kxZZNUGzTQkqh4ZvbMx8K65LBKuR22FKXovUYV49qlY1ZKVcZtPYqQujFbUKCdrMfOZGaf7yTOi834Tqyw1yH6hmf9fu_ViIfpEVixlcss2gsYGU_OJ-RA4mOLYU1x971YrNsSz_ZlLbZodVEZSTmPaj6eEZvqMlrJLREwLAc5Jqa2ITwXe0D65lQLMcJLTB8iDrIry1wGRk-KAp7cHFOSIh4LkxakGnq0jAP28SBxx-0mMhLVk7DsL9810UTOkQ"
-            referrerPolicy="no-referrer"
-          />
-          <div>
-            <h1 className="text-2xl md:text-3xl font-serif font-bold text-[#735c00] tracking-tight">Majestic Battle Academy</h1>
-            <p className="text-[10px] md:text-xs font-caps text-[#43474e] uppercase tracking-widest font-semibold">Hall of the Novice EX</p>
-          </div>
-        </div>
-        
-        {/* Current Period Badge */}
-        <div className="flex flex-col items-center md:items-end bg-[#f1eee5]/70 border border-[#735c00]/20 rounded-xl px-4 py-1.5 parchment-texture">
-          <span className="text-lg md:text-xl font-serif text-[#002446] font-semibold">{currentMonth.name}</span>
-          <span className="text-[9px] md:text-[11px] font-caps text-[#735c00] uppercase tracking-wider">{currentMonth.cycle}</span>
-        </div>
-
-        {/* Header Navigation */}
-        <nav className="flex items-center gap-6">
-          <div className="hidden md:flex gap-6">
-            <a href="#" className="text-[#735c00] border-b-2 border-[#735c00] pb-0.5 font-caps text-xs uppercase tracking-wider font-semibold">Chronicle</a>
-            <a href="#" className="text-[#43474e] hover:text-[#735c00] transition-colors font-caps text-xs uppercase tracking-wider font-semibold">Sanctum</a>
-            <a href="#" className="text-[#43474e] hover:text-[#735c00] transition-colors font-caps text-xs uppercase tracking-wider font-semibold">Arsenal</a>
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-              id="sparkle-prophecy"
-              onClick={triggerProphecy}
-              title="Obter Profecia Diária"
-              className="p-2 hover:bg-[#1a3a5f] hover:text-[#abc8f5] rounded-full transition-all active:scale-90 text-[#1c1c17] relative group"
-            >
-              <Sparkles className="w-5 h-5 text-[#735c00] group-hover:text-white" />
-              <span className="absolute -bottom-8 right-0 bg-[#002446] text-white text-[9px] px-2 py-0.5 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Profecia</span>
-            </button>
-            <button className="p-2 hover:bg-[#1a3a5f] hover:text-[#abc8f5] rounded-full transition-all active:scale-90 text-[#1c1c17]">
-              <User className="w-5 h-5 text-[#43474e]" />
-            </button>
-          </div>
-        </nav>
-      </header>
+      {/* Header removed per user request */}
 
       {/* Main Body */}
-      <main className="flex-1 flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] overflow-hidden">
+      <main className="flex-1 flex flex-col lg:flex-row h-auto lg:h-screen overflow-hidden">
         
         {/* Left Side Navigation Bar */}
-        <aside className="w-full lg:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-6 flex flex-col gap-6 shrink-0">
+        <aside className="w-full lg:w-56 xl:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-4 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto">
           <div className="px-6">
             <div className="flex items-center gap-3 mb-6 bg-[#fcf9f0] p-3 rounded-2xl border border-[#735c00]/10 parchment-texture">
               <div className="w-10 h-10 rounded-full bg-[#fed65b] flex items-center justify-center border border-[#735c00] shrink-0">
@@ -586,11 +553,12 @@ export default function App() {
           id="calendar-section"
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="flex-1 overflow-y-auto p-6 md:p-8 relative"
+          className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 xl:p-8 relative"
           style={{
-            backgroundImage: "linear-gradient(rgba(252, 249, 240, 0.88), rgba(252, 249, 240, 0.88)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcUngGM23uoeLyCKmgB0JNzlCssJXQDwZSnU2vzEMOwP8Pe5mCvwaoiM5vS_hX0o2DfV4jNMZJT0Uezm6eAVV60SIIzJhvMcgZcHS23wiEUjR6MxEZ3DrCr38eosiEEXw5d-x5D8TVfnxWqfkAUr6o7LvTrtA_JnS0H8MMqrOtBGMe6Hl5Weov51NfsRC2zrZMOPzxlEO4GSyg2tN9SMtFeDxfH9sALcZ8l4w91Lxv0MbALuXEqKeu4S7v-EIr0q77Rw')",
+            backgroundImage: `linear-gradient(rgba(252, 249, 240, 0.82), rgba(252, 249, 240, 0.82)), url(${bgImage})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
             backgroundAttachment: 'local'
           }}
         >
@@ -607,21 +575,24 @@ export default function App() {
             />
           )}
 
-          <div className="mb-6 flex flex-wrap gap-4 justify-between items-end">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-3xl md:text-5xl font-serif text-[#1a3a5f] font-bold tracking-tight">Calendário Acadêmico</h2>
+          <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-serif text-[#1a3a5f] font-bold tracking-tight">Calendário Acadêmico</h2>
                 {activeFilter !== 'all' && (
                   <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20">
                     Filtro: {activeFilter}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#73777f] font-sans mt-1">Selecione qualquer dia para detalhar no Diário Arcano (Arcane Ledger). Duplo clique adiciona um evento.</p>
+              <p className="text-xs text-[#73777f] font-sans mt-1">
+                <span className="font-semibold text-[#735c00]">{currentMonth.name} {currentMonth.cycle}</span>
+                {' — '}Selecione um dia ou dê duplo clique para adicionar evento.
+              </p>
             </div>
             
             {/* Nav arrows to cycle months */}
-            <div className="flex gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button 
                 onClick={prevMonth}
                 title="Mês Anterior"
@@ -629,6 +600,9 @@ export default function App() {
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
+              <span className="text-sm font-serif text-[#735c00] font-semibold hidden sm:block min-w-[100px] text-center">
+                {currentMonth.name}
+              </span>
               <button 
                 onClick={nextMonth}
                 title="Próximo Mês"
@@ -640,11 +614,12 @@ export default function App() {
           </div>
 
           {/* Calendar Grid Container */}
-          <div className="grid grid-cols-7 gap-3 md:gap-4 select-none">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none">
             {/* Days of Week Headers */}
-            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-              <div key={day} className="text-center font-caps text-[11px] md:text-xs text-[#43474e] pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30">
-                {day}
+            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
+              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30">
+                <span className="hidden sm:inline">{['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][i]}</span>
+                <span className="sm:hidden">{day}</span>
               </div>
             ))}
 
@@ -664,10 +639,10 @@ export default function App() {
                 return (
                   <div 
                     key={`p-${idx}`} 
-                    className="h-28 md:h-36 rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-2 relative flex flex-col justify-between"
+                    className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between"
                   >
-                    <span className="font-serif text-lg text-[#73777f]">{dayNum}</span>
-                    <span className="text-[8px] font-caps text-[#73777f]/60 text-right">
+                    <span className="font-serif text-sm sm:text-lg text-[#73777f]">{dayNum}</span>
+                    <span className="text-[7px] sm:text-[8px] font-caps text-[#73777f]/60 text-right hidden sm:block">
                       {isPrev ? 'anterior' : 'próximo'}
                     </span>
                   </div>
@@ -685,7 +660,7 @@ export default function App() {
                   key={`c-${dayNum}`}
                   onClick={() => setSelectedDay(dayNum)}
                   onDoubleClick={() => openCreateModalForDay(dayNum)}
-                  className={`h-36 md:h-40 rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-3 overflow-hidden group border ${
+                  className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${
                     isSelected
                       ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
                       : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
@@ -698,15 +673,15 @@ export default function App() {
 
                   {/* Top Row: Number, Crystals, indicator dots */}
                   <div className="flex justify-between items-start z-10">
-                    <span className={`font-serif text-xl md:text-2xl font-bold ${
+                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${
                       isSelected ? 'text-[#241a00]' : 'text-[#735c00]'
                     }`}>
                       {dayNum < 10 ? `0${dayNum}` : dayNum}
                     </span>
 
                     {/* Today indicator label */}
-                    {dayNum === 3 && currentMonthIdx === 0 && (
-                      <span className={`text-[8px] font-caps px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${
+                    {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
+                      <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${
                         isSelected 
                           ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20' 
                           : 'bg-[#735c00] text-white border-transparent'
@@ -728,7 +703,7 @@ export default function App() {
 
                   {/* Indicator dots for multiple events */}
                   {allDayEventsForIndicators.length > 0 && (
-                    <div className="absolute top-2 right-12 flex gap-1 z-10">
+                    <div className="absolute top-8 left-2.5 sm:left-3 flex gap-1 z-10">
                       {allDayEventsForIndicators.map((e, index) => {
                         let dotColor = 'bg-[#1a3a5f]'; // spells
                         if (e.type === 'tactics') dotColor = 'bg-[#735c00]';
@@ -747,7 +722,7 @@ export default function App() {
 
                   {/* Thumbnail display if any event has an image */}
                   {firstEventImage && matchesFilter ? (
-                    <div className="mt-2 w-full h-14 md:h-16 rounded-lg overflow-hidden border border-[#c3c6cf]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
+                    <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[#c3c6cf]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
                       <img 
                         className="w-full h-full object-cover" 
                         src={firstEventImage} 
@@ -756,19 +731,19 @@ export default function App() {
                       />
                       {dayEvents.some(e => e.stars) && (
                         <div className="absolute inset-0 bg-[#735c00]/10 flex items-center justify-center">
-                          <Star className="w-4 h-4 text-[#fed65b] fill-[#fed65b] drop-shadow" />
+                          <Star className="w-3 h-3 sm:w-4 sm:h-4 text-[#fed65b] fill-[#fed65b] drop-shadow" />
                         </div>
                       )}
                     </div>
                   ) : (
                     // Free day text
-                    <div className="mt-4 flex flex-col justify-end text-right">
+                    <div className="mt-2 sm:mt-4 flex flex-col justify-end text-right">
                       {hasEvents ? (
-                        <span className="text-[9px] font-semibold font-sans italic text-[#735c00] opacity-80 truncate">
-                          {dayEvents.length} {dayEvents.length === 1 ? 'Atividade' : 'Atividades'}
+                        <span className="text-[8px] sm:text-[9px] font-semibold font-sans italic text-[#735c00] opacity-80 truncate">
+                          {dayEvents.length} {dayEvents.length === 1 ? 'Ativ.' : 'Ativ.'}
                         </span>
                       ) : (
-                        <span className="text-[8px] font-caps text-[#73777f]/40 uppercase tracking-widest group-hover:text-[#735c00]/50 transition-colors">
+                        <span className="text-[7px] sm:text-[8px] font-caps text-[#73777f]/40 uppercase tracking-widest group-hover:text-[#735c00]/50 transition-colors hidden sm:block">
                           Livre
                         </span>
                       )}
@@ -787,7 +762,7 @@ export default function App() {
         </section>
 
         {/* Right Side: Arcane Ledger Activities Panel */}
-        <aside className="w-full lg:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative">
+        <aside className="w-full lg:w-80 xl:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative">
           
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#c3c6cf]/40 pb-4">
@@ -843,25 +818,24 @@ export default function App() {
                         <EventIcon className="w-3.5 h-3.5" />
                       </div>
 
-                      {/* Delete activity trigger */}
-                      <button 
-                        onClick={() => handleDeleteEvent(event.id)}
-                        title="Deletar Atividade"
-                        className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 text-[#ba1a1a] hover:bg-[#ffdad6] p-1 rounded transition-opacity"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-
                       <div className="flex flex-col gap-2">
-                        {/* Time & type indicator */}
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-caps text-[#735c00] font-semibold tracking-widest uppercase flex items-center gap-1">
+                        {/* Time & type indicator + delete button */}
+                        <div className="flex justify-between items-center gap-2 pr-6 relative">
+                          <span className="text-[10px] font-caps text-[#735c00] font-semibold tracking-widest uppercase flex items-center gap-1 shrink-0">
                             <Clock className="w-3 h-3" />
                             {event.time}
                           </span>
-                          <span className={`text-[9px] font-caps px-2 py-0.5 rounded-full border ${typeBg} ${typeColor} uppercase font-semibold`}>
+                          <span className={`text-[9px] font-caps px-2 py-0.5 rounded-full border ${typeBg} ${typeColor} uppercase font-semibold whitespace-nowrap`}>
                             {event.type}
                           </span>
+                          {/* Delete button — absolutely positioned inside relative container with pr-6 */}
+                          <button 
+                            onClick={() => handleDeleteEvent(event.id)}
+                            title="Deletar Atividade"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-[#ba1a1a] hover:bg-[#ffdad6] p-1 rounded transition-opacity shrink-0 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
 
                         {/* Title */}

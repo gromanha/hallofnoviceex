@@ -13,7 +13,7 @@ export function useAuth() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const me = await apiGet<AdminProfile>('/api/auth/me');
+      const me = await apiGet<AdminProfile>('/api/auth?op=me');
       setUser(me);
     } catch {
       setUser(null);
@@ -27,12 +27,12 @@ export function useAuth() {
   }, [refresh]);
 
   const login = useCallback(async (username: string, password: string) => {
-    await apiPost('/api/auth/login', { username, password });
+    await apiPost('/api/auth?op=login', { username, password });
     await refresh();
   }, [refresh]);
 
   const logout = useCallback(async () => {
-    await apiPost('/api/auth/logout');
+    await apiPost('/api/auth?op=logout');
     setUser(null);
   }, []);
 

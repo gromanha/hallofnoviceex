@@ -29,5 +29,5 @@ export const apiPost = <T = any>(path: string, data?: any) =>
   request(path, { method: 'POST', body: JSON.stringify(data ?? {}) }) as Promise<T>;
 export const apiPatch = <T = any>(path: string, data?: any) =>
   request(path, { method: 'PATCH', body: JSON.stringify(data ?? {}) }) as Promise<T>;
-export const apiDel = <T = any>(path: string) =>
-  request(path, { method: 'DELETE' }) as Promise<T>;
+export const apiDel = <T = any>(path: string, data?: any) =>
+  request(path, { method: 'DELETE', body: data ? JSON.stringify(data) : undefined }) as Promise<T>;

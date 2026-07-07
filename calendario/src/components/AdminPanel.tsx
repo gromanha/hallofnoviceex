@@ -162,9 +162,9 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
         stars: eventForm.stars,
       };
       if (editingEventId) {
-        await apiPatch(`/api/admin/events/${editingEventId}`, payload);
+        await apiPatch('/api/events', { ...payload, id: editingEventId });
       } else {
-        await apiPost('/api/admin/events', payload);
+        await apiPost('/api/events', payload);
       }
       setShowEventForm(false);
       setEditingEventId(null);
@@ -179,7 +179,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   async function handleEventDelete(id: string) {
     setDeletingEventId(id);
     try {
-      await apiDel(`/api/admin/events/${id}`);
+      await apiDel('/api/events', { id });
       await fetchEvents();
     } catch (err: any) {
       setError(err?.detail || err?.message || 'Erro ao deletar.');
@@ -223,9 +223,9 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
     setSavingType(true);
     try {
       if (editingTypeId) {
-        await apiPatch(`/api/admin/event-types/${editingTypeId}`, typeForm);
+        await apiPatch('/api/event-types', { ...typeForm, id: editingTypeId });
       } else {
-        await apiPost('/api/admin/event-types', typeForm);
+        await apiPost('/api/event-types', typeForm);
       }
       setShowTypeForm(false);
       setEditingTypeId(null);
@@ -240,7 +240,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   async function handleTypeDelete(id: string) {
     setDeletingTypeId(id);
     try {
-      await apiDel(`/api/admin/event-types/${id}`);
+      await apiDel('/api/event-types', { id });
       await fetchEventTypes();
     } catch (err: any) {
       setError(err?.detail || err?.message || 'Erro ao deletar tipo.');

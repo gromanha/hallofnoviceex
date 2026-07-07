@@ -3,12 +3,16 @@
   "outputDirectory": ".",
   "rewrites": [
     {
+      "source": "/calendario/assets/:file*",
+      "destination": "/calendario/dist/assets/:file*"
+    },
+    {
       "source": "/calendario/:path*",
-      "destination": "/dist-calendario/:path*"
+      "destination": "/calendario/dist/index.html"
     },
     {
       "source": "/calendario",
-      "destination": "/dist-calendario/index.html"
+      "destination": "/calendario/dist/index.html"
     }
   ]
 }

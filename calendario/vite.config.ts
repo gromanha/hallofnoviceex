@@ -5,7 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    // Base path for production deployment at /calendario/
+    // Base path: assets will be requested at /calendario/assets/...
+    // Vercel rewrites /calendario/* -> /calendario/dist/* to serve them
     base: '/calendario/',
     plugins: [react(), tailwindcss()],
     resolve: {
@@ -14,11 +15,12 @@ export default defineConfig(() => {
       },
     },
     build: {
-      outDir: '../dist-calendario',
+      // Output inside the repo so Vercel can serve it from outputDirectory: "."
+      outDir: './dist',
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâ€”file watching is disabled to prevent flickering during agent edits.
+      // Do not modify — file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},

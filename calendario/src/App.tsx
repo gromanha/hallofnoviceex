@@ -455,8 +455,8 @@ export default function App() {
             <button
               onClick={() => setActiveFilter('all')}
               className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
                 }`}
             >
               <div className="flex items-center gap-3">
@@ -471,8 +471,8 @@ export default function App() {
             <button
               onClick={() => setActiveFilter('spells')}
               className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'spells'
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
                 }`}
             >
               <div className="flex items-center gap-3">
@@ -487,8 +487,8 @@ export default function App() {
             <button
               onClick={() => setActiveFilter('tactics')}
               className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'tactics'
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
                 }`}
             >
               <div className="flex items-center gap-3">
@@ -503,8 +503,8 @@ export default function App() {
             <button
               onClick={() => setActiveFilter('alchemy')}
               className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'alchemy'
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
                 }`}
             >
               <div className="flex items-center gap-3">
@@ -657,8 +657,8 @@ export default function App() {
                   onClick={() => setSelectedDay(dayNum)}
                   onDoubleClick={() => openCreateModalForDay(dayNum)}
                   className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
-                      ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
-                      : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
+                    ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
+                    : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
                     } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
                     }`}
                 >
@@ -675,8 +675,8 @@ export default function App() {
                     {/* Today indicator label */}
                     {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
                       <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
-                          ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20'
-                          : 'bg-[#735c00] text-white border-transparent'
+                        ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20'
+                        : 'bg-[#735c00] text-white border-transparent'
                         }`}>
                         Hoje
                       </span>

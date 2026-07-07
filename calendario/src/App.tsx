@@ -1,35 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  motion, 
-  AnimatePresence 
+import {
+  motion,
+  AnimatePresence
 } from 'motion/react';
-import { 
-  BookOpen, 
-  Sparkles, 
-  User, 
-  PlusCircle, 
-  Layers, 
-  Wand2, 
-  Swords, 
-  FlaskConical, 
-  Settings, 
-  HelpCircle, 
-  ChevronLeft, 
-  ChevronRight, 
-  X, 
-  Check, 
-  Plus, 
-  Trash2, 
-  Gem, 
-  Compass, 
-  Map, 
-  Star, 
+import {
+  BookOpen,
+  Sparkles,
+  User,
+  PlusCircle,
+  Layers,
+  Wand2,
+  Swords,
+  FlaskConical,
+  Settings,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Check,
+  Plus,
+  Trash2,
+  Gem,
+  Compass,
+  Map,
+  Star,
   Clock,
   AlertCircle,
   Eye
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventType } from './types';
-import bgImage from './assets/id.jpeg';
+import bgImage from './assets/id.png';
 
 // Predefined magic imagery URLs matching the original design
 const IMAGE_PRESETS = [
@@ -313,8 +313,8 @@ export default function App() {
       crystal: newEventCrystal,
       stars: newEventType === 'tactics',
       indicators: [
-        newEventType === 'spells' ? 'primary' : 
-        newEventType === 'tactics' ? 'secondary' : 'error'
+        newEventType === 'spells' ? 'primary' :
+          newEventType === 'tactics' ? 'secondary' : 'error'
       ]
     };
 
@@ -385,23 +385,23 @@ export default function App() {
   };
 
   // Dynamic values based on selected day's events
-  const selectedDaySpots = selectedDayEvents.length > 0 
-    ? selectedDayEvents[0].spots 
+  const selectedDaySpots = selectedDayEvents.length > 0
+    ? selectedDayEvents[0].spots
     : "12/40"; // fallback default
-  const selectedDayRank = selectedDayEvents.length > 0 
-    ? selectedDayEvents[0].rank 
+  const selectedDayRank = selectedDayEvents.length > 0
+    ? selectedDayEvents[0].rank
     : "S-Class"; // fallback default
   const maxManaRequired = selectedDayEvents.length > 0
     ? Math.max(...selectedDayEvents.map(e => e.manaProgress))
     : 0;
 
   return (
-    <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{overscrollBehavior: 'none'}}>
-      
+    <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{ overscrollBehavior: 'none' }}>
+
       {/* Toast Notification for Daily Prophecy or Magical actions */}
       <AnimatePresence>
         {showProphecyToast && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -423,7 +423,7 @@ export default function App() {
 
       {/* Main Body */}
       <main className="flex-1 flex flex-col lg:flex-row h-auto lg:h-screen overflow-hidden">
-        
+
         {/* Left Side Navigation Bar */}
         <aside className="w-full lg:w-56 xl:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-4 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto">
           <div className="px-6">
@@ -436,9 +436,9 @@ export default function App() {
                 <p className="text-sm font-bold text-[#002446] truncate">Novice Ledger</p>
               </div>
             </div>
-            
+
             {/* Create Event Trigger */}
-            <button 
+            <button
               id="new-event-btn"
               onClick={() => setIsModalOpen(true)}
               className="w-full bg-[#002446] py-3 rounded-xl text-white font-caps text-xs tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#abc8f5]/20"
@@ -451,14 +451,13 @@ export default function App() {
           {/* Interactive Navigation Filter Categories */}
           <nav className="flex-1 px-3 space-y-1">
             <p className="text-[9px] font-caps uppercase tracking-widest text-[#73777f] px-3 mb-2">Filtros de Disciplina</p>
-            
-            <button 
+
+            <button
               onClick={() => setActiveFilter('all')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${
-                activeFilter === 'all' 
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm' 
+              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
+                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                   : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <Layers className="w-4 h-4" />
@@ -469,13 +468,12 @@ export default function App() {
               </span>
             </button>
 
-            <button 
+            <button
               onClick={() => setActiveFilter('spells')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${
-                activeFilter === 'spells' 
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm' 
+              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'spells'
+                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                   : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <Wand2 className="w-4 h-4 text-[#002446]" />
@@ -486,13 +484,12 @@ export default function App() {
               </span>
             </button>
 
-            <button 
+            <button
               onClick={() => setActiveFilter('tactics')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${
-                activeFilter === 'tactics' 
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm' 
+              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'tactics'
+                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                   : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <Swords className="w-4 h-4 text-[#735c00]" />
@@ -503,13 +500,12 @@ export default function App() {
               </span>
             </button>
 
-            <button 
+            <button
               onClick={() => setActiveFilter('alchemy')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${
-                activeFilter === 'alchemy' 
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm' 
+              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'alchemy'
+                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                   : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <FlaskConical className="w-4 h-4 text-emerald-700" />
@@ -526,8 +522,8 @@ export default function App() {
             <div className="mx-4 p-3 bg-[#f1eee5] rounded-xl border border-[#735c00]/10 text-xs parchment-texture">
               <span className="font-caps text-[10px] text-[#735c00] block uppercase mb-1">Filtro Ativo</span>
               <p className="text-[#43474e]">O calendário agora destaca apenas eventos da disciplina <strong className="capitalize text-[#002446]">{activeFilter}</strong>.</p>
-              <button 
-                onClick={() => setActiveFilter('all')} 
+              <button
+                onClick={() => setActiveFilter('all')}
                 className="mt-2 text-[#735c00] hover:underline font-semibold flex items-center gap-1 cursor-pointer text-[11px]"
               >
                 Limpar filtro ×
@@ -549,7 +545,7 @@ export default function App() {
         </aside>
 
         {/* Central Calendar Panel */}
-        <section 
+        <section
           id="calendar-section"
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
@@ -590,10 +586,10 @@ export default function App() {
                 {' — '}Selecione um dia ou dê duplo clique para adicionar evento.
               </p>
             </div>
-            
+
             {/* Nav arrows to cycle months */}
             <div className="flex items-center gap-2 shrink-0">
-              <button 
+              <button
                 onClick={prevMonth}
                 title="Mês Anterior"
                 className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]"
@@ -603,7 +599,7 @@ export default function App() {
               <span className="text-sm font-serif text-[#735c00] font-semibold hidden sm:block min-w-[100px] text-center">
                 {currentMonth.name}
               </span>
-              <button 
+              <button
                 onClick={nextMonth}
                 title="Próximo Mês"
                 className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]"
@@ -618,7 +614,7 @@ export default function App() {
             {/* Days of Week Headers */}
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
               <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30">
-                <span className="hidden sm:inline">{['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][i]}</span>
+                <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
                 <span className="sm:hidden">{day}</span>
               </div>
             ))}
@@ -626,19 +622,19 @@ export default function App() {
             {/* Calendar Cells */}
             {daysInGrid.map((cell, idx) => {
               const { dayNum, isCurrent, isPrev, isNext } = cell;
-              
+
               // Find events on this day
               const dayEvents = getDayEvents(dayNum, currentMonth.name);
               const hasEvents = dayEvents.length > 0;
               const hasCrystal = dayEvents.some(e => e.crystal);
               const firstEventImage = dayEvents.find(e => e.image)?.image;
               const isSelected = isCurrent && selectedDay === dayNum;
-              
+
               // Non-current month styles
               if (!isCurrent) {
                 return (
-                  <div 
-                    key={`p-${idx}`} 
+                  <div
+                    key={`p-${idx}`}
                     className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between"
                   >
                     <span className="font-serif text-sm sm:text-lg text-[#73777f]">{dayNum}</span>
@@ -660,32 +656,28 @@ export default function App() {
                   key={`c-${dayNum}`}
                   onClick={() => setSelectedDay(dayNum)}
                   onDoubleClick={() => openCreateModalForDay(dayNum)}
-                  className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${
-                    isSelected
+                  className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
                       ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
                       : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
-                  } ${
-                    !matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
-                  }`}
+                    } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
+                    }`}
                 >
                   {/* Filigree aesthetic & glowing highlights */}
                   <div className="absolute inset-0 bg-transparent pointer-events-none rounded-xl" />
 
                   {/* Top Row: Number, Crystals, indicator dots */}
                   <div className="flex justify-between items-start z-10">
-                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${
-                      isSelected ? 'text-[#241a00]' : 'text-[#735c00]'
-                    }`}>
+                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-[#241a00]' : 'text-[#735c00]'
+                      }`}>
                       {dayNum < 10 ? `0${dayNum}` : dayNum}
                     </span>
 
                     {/* Today indicator label */}
                     {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
-                      <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${
-                        isSelected 
-                          ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20' 
+                      <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
+                          ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20'
                           : 'bg-[#735c00] text-white border-transparent'
-                      }`}>
+                        }`}>
                         Hoje
                       </span>
                     )}
@@ -709,11 +701,11 @@ export default function App() {
                         if (e.type === 'tactics') dotColor = 'bg-[#735c00]';
                         if (e.type === 'alchemy') dotColor = 'bg-emerald-700';
                         if (e.type === 'ritual') dotColor = 'bg-purple-700';
-                        
+
                         return (
-                          <div 
-                            key={e.id || index} 
-                            className={`w-1.5 h-1.5 rounded-full ${dotColor} crystal-glow animate-pulse`} 
+                          <div
+                            key={e.id || index}
+                            className={`w-1.5 h-1.5 rounded-full ${dotColor} crystal-glow animate-pulse`}
                           />
                         );
                       })}
@@ -723,10 +715,10 @@ export default function App() {
                   {/* Thumbnail display if any event has an image */}
                   {firstEventImage && matchesFilter ? (
                     <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[#c3c6cf]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
-                      <img 
-                        className="w-full h-full object-cover" 
-                        src={firstEventImage} 
-                        alt="Miniatura de evento" 
+                      <img
+                        className="w-full h-full object-cover"
+                        src={firstEventImage}
+                        alt="Miniatura de evento"
                         referrerPolicy="no-referrer"
                       />
                       {dayEvents.some(e => e.stars) && (
@@ -763,7 +755,7 @@ export default function App() {
 
         {/* Right Side: Arcane Ledger Activities Panel */}
         <aside className="w-full lg:w-80 xl:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative">
-          
+
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#c3c6cf]/40 pb-4">
               <div>
@@ -785,7 +777,7 @@ export default function App() {
                   <h4 className="font-serif text-[#002446] font-semibold text-lg">Tempo de Estudo Livre</h4>
                   <p className="text-xs text-[#73777f] mt-1">Sem rituais oficiais agendados para este dia. Aproveite para praticar na Ala de Duelos ou estudar na Biblioteca.</p>
                 </div>
-                <button 
+                <button
                   onClick={() => openCreateModalForDay(selectedDay)}
                   className="bg-[#f1eee5] border border-[#735c00]/30 hover:bg-[#fed65b] text-[#241a00] hover:border-[#735c00] text-xs font-caps uppercase tracking-wider py-2 px-4 rounded-xl transition-all flex items-center gap-2 mx-auto cursor-pointer"
                 >
@@ -794,7 +786,7 @@ export default function App() {
               </div>
             ) : (
               <div className="space-y-6 relative before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-[2px] before:bg-dotted before:border-l-2 before:border-dotted before:border-[#c3c6cf]">
-                
+
                 {selectedDayEvents.map((event) => {
                   // Determine icon and theme for visual rhythm
                   let EventIcon = Wand2;
@@ -829,7 +821,7 @@ export default function App() {
                             {event.type}
                           </span>
                           {/* Delete button — absolutely positioned inside relative container with pr-6 */}
-                          <button 
+                          <button
                             onClick={() => handleDeleteEvent(event.id)}
                             title="Deletar Atividade"
                             className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-[#ba1a1a] hover:bg-[#ffdad6] p-1 rounded transition-opacity shrink-0 cursor-pointer"
@@ -851,9 +843,9 @@ export default function App() {
                         {/* Image banner with blurry instructor tag */}
                         {event.image && (
                           <div className="rounded-xl overflow-hidden border border-[#c3c6cf] h-32 relative shadow-sm my-1 group-hover:shadow transition-shadow">
-                            <img 
-                              className="w-full h-full object-cover" 
-                              src={event.image} 
+                            <img
+                              className="w-full h-full object-cover"
+                              src={event.image}
                               alt={event.title}
                               referrerPolicy="no-referrer"
                             />
@@ -881,7 +873,7 @@ export default function App() {
                               <span className="font-mono">{event.manaProgress}% Média</span>
                             </div>
                             <div className="h-2 w-full bg-[#e5e2da] rounded-full overflow-hidden relative border border-[#c3c6cf]/30">
-                              <div 
+                              <div
                                 className="h-full bg-[#002446] rounded-full transition-all duration-1000"
                                 style={{ width: `${event.manaProgress}%`, boxShadow: '0 0 8px #abc8f5' }}
                               />
@@ -904,7 +896,7 @@ export default function App() {
               <span className="text-[10px] font-caps text-[#735c00] uppercase tracking-wider block">Consid. do Archmage</span>
               <p className="text-xs text-[#73777f]">Média de fluxo de mana exigido no período letivo do dia: {maxManaRequired > 0 ? `${maxManaRequired}% Mestre` : 'Nenhum'}</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-[#e5e2da]/70 p-3 rounded-xl border border-[#c3c6cf]/40 text-center">
                 <p className="text-[10px] font-caps text-[#43474e] uppercase font-semibold">Vagas Totais</p>
@@ -923,7 +915,7 @@ export default function App() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
@@ -932,7 +924,7 @@ export default function App() {
             >
               {/* Gold borders */}
               <div className="h-1.5 bg-[#735c00] w-full" />
-              
+
               <div className="p-6 md:p-8 space-y-6">
                 <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
                   <div>
@@ -942,7 +934,7 @@ export default function App() {
                     </h3>
                     <p className="text-xs text-[#73777f]">Inscreva uma aula mística no calendário da Majestic Battle Academy.</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setIsModalOpen(false)}
                     className="p-1 rounded-full hover:bg-[#e5e2da] text-[#43474e] transition-colors cursor-pointer"
                   >
@@ -957,7 +949,7 @@ export default function App() {
                       <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                         Dia do Mês
                       </label>
-                      <input 
+                      <input
                         type="number"
                         min="1"
                         max={currentMonth.daysCount}
@@ -973,7 +965,7 @@ export default function App() {
                       <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                         Horário (Período)
                       </label>
-                      <input 
+                      <input
                         type="text"
                         required
                         placeholder="Ex: 09:00 — 11:30"
@@ -989,7 +981,7 @@ export default function App() {
                     <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                       Nome da Disciplina / Atividade
                     </label>
-                    <input 
+                    <input
                       type="text"
                       required
                       placeholder="Ex: Tática de Combate Avançado contra Seres de Trevas"
@@ -1005,7 +997,7 @@ export default function App() {
                       <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                         Instrutor Responsável
                       </label>
-                      <input 
+                      <input
                         type="text"
                         required
                         placeholder="Ex: Mestre Valerius"
@@ -1020,7 +1012,7 @@ export default function App() {
                       <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                         Tipo de Disciplina
                       </label>
-                      <select 
+                      <select
                         value={newEventType}
                         onChange={(e) => setNewEventType(e.target.value as EventType)}
                         className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
@@ -1039,7 +1031,7 @@ export default function App() {
                     <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                       Descrição Detalhada do Saber
                     </label>
-                    <textarea 
+                    <textarea
                       rows={3}
                       placeholder="Indique as orientações e materiais misticos exigidos aos estudantes..."
                       value={newEventDesc}
@@ -1061,9 +1053,8 @@ export default function App() {
                             type="button"
                             key={p.id}
                             onClick={() => setNewEventImage(p.url)}
-                            className={`h-12 rounded-lg overflow-hidden relative border-2 cursor-pointer transition-all ${
-                              isSelected ? 'border-[#735c00] scale-105 shadow' : 'border-transparent opacity-60 hover:opacity-100'
-                            }`}
+                            className={`h-12 rounded-lg overflow-hidden relative border-2 cursor-pointer transition-all ${isSelected ? 'border-[#735c00] scale-105 shadow' : 'border-transparent opacity-60 hover:opacity-100'
+                              }`}
                             title={p.name}
                           >
                             <img src={p.url} alt={p.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -1077,7 +1068,7 @@ export default function App() {
                       })}
                     </div>
                     {/* Manual URL input fallback */}
-                    <input 
+                    <input
                       type="text"
                       placeholder="Ou cole uma URL customizada de imagem"
                       value={newEventImage}
@@ -1092,7 +1083,7 @@ export default function App() {
                       <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                         Requisito de Mana: {newEventMana}%
                       </label>
-                      <input 
+                      <input
                         type="range"
                         min="0"
                         max="100"
@@ -1108,7 +1099,7 @@ export default function App() {
                         <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                           Vagas
                         </label>
-                        <input 
+                        <input
                           type="text"
                           value={newEventSpots}
                           onChange={(e) => setNewEventSpots(e.target.value)}
@@ -1120,7 +1111,7 @@ export default function App() {
                         <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
                           Rank
                         </label>
-                        <select 
+                        <select
                           value={newEventRank}
                           onChange={(e) => setNewEventRank(e.target.value)}
                           className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-2 py-1.5 text-xs focus:outline-none"
@@ -1137,7 +1128,7 @@ export default function App() {
                   {/* Checkbox options */}
                   <div className="flex gap-4 items-center">
                     <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
-                      <input 
+                      <input
                         type="checkbox"
                         checked={newEventCrystal}
                         onChange={(e) => setNewEventCrystal(e.target.checked)}
@@ -1149,14 +1140,14 @@ export default function App() {
 
                   {/* Actions buttons */}
                   <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
                       className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-3 rounded-xl transition-colors cursor-pointer"
                     >
                       Cancelar
                     </button>
-                    <button 
+                    <button
                       type="submit"
                       className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow cursor-pointer border border-[#abc8f5]/20"
                     >

@@ -1,6 +1,8 @@
 {
-  "name": "Majestic Battle Academy",
-  "description": "Calendário acadêmico interativo e diário de atividades mágicas (Arcane Ledger) para os magos novatos da prestigiada Majestic Battle Academy.",
+  "name": "Hall of the Novice EX",
+  "description": "Calendário acadêmico interativo e diário de atividades da academia.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

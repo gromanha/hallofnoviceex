@@ -19,14 +19,30 @@ import {
   Clock,
   AlertCircle,
   ShieldCheck,
+  Shield,
+  Flame,
+  Eye,
+  Moon,
+  Star,
 } from 'lucide-react';
-import { MagicalEvent, MonthData, EventType } from './types';
+import { MagicalEvent, MonthData, EventType, EventTypeItem } from './types';
 import { apiGet } from './lib/api';
 import { useHashRoute } from './hashRouter';
 import { useAuth } from './hooks/useAuth';
 import LoginGate from './components/LoginGate';
 import AdminPanel from './components/AdminPanel';
 import bgImage from './assets/id.png';
+import logoImage from './assets/logo.png';
+
+// Mapeamento de nomes de icones Lucide → componentes
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  Wand2, Swords, FlaskConical, BookOpen, Sparkles,
+  Shield, Flame, Eye, Moon, Star, Layers,
+};
+
+function resolveIcon(name: string): React.ComponentType<any> {
+  return ICON_MAP[name] || Layers;
+}
 
 const REAL_MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -92,6 +108,21 @@ export default function App() {
   useEffect(() => {
     void fetchEvents();
   }, [fetchEvents]);
+
+  const [eventTypes, setEventTypes] = useState<EventTypeItem[]>([]);
+
+  const fetchEventTypes = useCallback(async () => {
+    try {
+      const data = await apiGet<EventTypeItem[]>('/api/event-types');
+      setEventTypes(data);
+    } catch {
+      // mantem vazio se falhar
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchEventTypes();
+  }, [fetchEventTypes]);
 
   const [currentMonthIdx, setCurrentMonthIdx] = useState(0);
   const currentMonth = DEFAULT_MONTHS[currentMonthIdx];
@@ -236,34 +267,33 @@ export default function App() {
               </span>
             </button>
 
-            {([
-              { key: 'spells' as EventType, icon: Wand2, label: 'Spells (Magias)', iconColor: 'text-[#002446]' },
-              { key: 'tactics' as EventType, icon: Swords, label: 'Tactics (Táticas)', iconColor: 'text-[#735c00]' },
-              { key: 'alchemy' as EventType, icon: FlaskConical, label: 'Alchemy (Alquimia)', iconColor: 'text-emerald-700' },
-            ]).map(f => (
-              <button
-                key={f.key}
-                onClick={() => setActiveFilter(f.key)}
-                className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === f.key
-                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <f.icon className={`w-4 h-4 ${f.iconColor}`} />
-                  <span className="text-sm">{f.label}</span>
-                </div>
-                <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                  {events.filter(e => e.month === currentMonth.name && e.type === f.key).length}
-                </span>
-              </button>
-            ))}
+            {eventTypes.map(et => {
+              const IconComp = resolveIcon(et.icon);
+              return (
+                <button
+                  key={et.key}
+                  onClick={() => setActiveFilter(et.key)}
+                  className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
+                    ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                    : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                    }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <IconComp className="w-4 h-4" style={{ color: et.color }} />
+                    <span className="text-sm">{et.label}</span>
+                  </div>
+                  <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
+                    {events.filter(e => e.month === currentMonth.name && e.type === et.key).length}
+                  </span>
+                </button>
+              );
+            })}
           </nav>
 
           {activeFilter !== 'all' && (
             <div className="mx-4 p-3 bg-[#f1eee5] rounded-xl border border-[#735c00]/10 text-xs parchment-texture">
               <span className="font-caps text-[10px] text-[#735c00] block uppercase mb-1">Filtro Ativo</span>
-              <p className="text-[#43474e]">O calendário agora destaca apenas eventos da disciplina <strong className="capitalize text-[#002446]">{activeFilter}</strong>.</p>
+              <p className="text-[#43474e]">O calendário agora destaca apenas eventos da disciplina <strong className="capitalize text-[#002446]">{eventTypes.find(e => e.key === activeFilter)?.label || activeFilter}</strong>.</p>
               <button
                 onClick={() => setActiveFilter('all')}
                 className="mt-2 text-[#735c00] hover:underline font-semibold flex items-center gap-1 cursor-pointer text-[11px]"
@@ -307,6 +337,7 @@ export default function App() {
           <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
+                <img src={logoImage} alt="Logo HoN EX" className="h-10 sm:h-12 md:h-14 w-auto shrink-0 drop-shadow" />
                 <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-cinzel text-[#1a3a5f] font-bold tracking-tight">Calendario Hall of the Novice EX</h2>
                 {activeFilter !== 'all' && (
                   <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20">
@@ -410,12 +441,14 @@ export default function App() {
                   {allDayEventsForIndicators.length > 0 && (
                     <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
                       {allDayEventsForIndicators.map((e, index) => {
-                        let dotColor = 'bg-[#1a3a5f]';
-                        if (e.type === 'tactics') dotColor = 'bg-[#735c00]';
-                        if (e.type === 'alchemy') dotColor = 'bg-emerald-700';
-                        if (e.type === 'ritual') dotColor = 'bg-purple-700';
+                        const typeDef = eventTypes.find(t => t.key === e.type);
+                        const dotBg = typeDef ? typeDef.color : '#1a3a5f';
                         return (
-                          <div key={e.id || index} className={`w-1.5 h-1.5 rounded-full ${dotColor} crystal-glow animate-pulse`} />
+                          <div
+                            key={e.id || index}
+                            className="w-1.5 h-1.5 rounded-full crystal-glow animate-pulse"
+                            style={{ backgroundColor: dotBg }}
+                          />
                         );
                       })}
                     </div>
@@ -477,23 +510,16 @@ export default function App() {
             ) : (
               <div className="space-y-6 relative before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-[2px] before:bg-dotted before:border-l-2 before:border-dotted before:border-[#c3c6cf]">
                 {selectedDayEvents.map((event) => {
-                  let EventIcon = Wand2;
-                  let typeColor = 'text-[#002446]';
-                  let typeBg = 'bg-[#d3e3ff]/60 border-[#abc8f5]';
-
-                  if (event.type === 'tactics') {
-                    EventIcon = Swords;
-                    typeColor = 'text-[#735c00]';
-                    typeBg = 'bg-[#ffe088]/40 border-[#fed65b]';
-                  } else if (event.type === 'alchemy') {
-                    EventIcon = FlaskConical;
-                    typeColor = 'text-emerald-800';
-                    typeBg = 'bg-emerald-50 border-emerald-300';
-                  }
+                  const typeDef = eventTypes.find(t => t.key === event.type);
+                  const EventIcon = resolveIcon(typeDef?.icon || 'Wand2');
+                  const typeColor = typeDef ? typeDef.color : '#1a3a5f';
 
                   return (
                     <div key={event.id} className="relative pl-8 group">
-                      <div className="absolute left-0 top-1 w-7 h-7 rounded-full border-2 border-[#735c00] bg-[#fcf9f0] flex items-center justify-center text-[#735c00] z-10 hover:bg-[#fed65b] transition-colors shadow-sm">
+                      <div
+                        className="absolute left-0 top-1 w-7 h-7 rounded-full border-2 border-[#735c00] bg-[#fcf9f0] flex items-center z-10 hover:bg-[#fed65b] transition-colors shadow-sm"
+                        style={{ color: typeColor }}
+                      >
                         <EventIcon className="w-3.5 h-3.5" />
                       </div>
 
@@ -503,7 +529,10 @@ export default function App() {
                             <Clock className="w-3 h-3" />
                             {event.time}
                           </span>
-                          <span className={`text-[9px] font-caps px-2 py-0.5 rounded-full border ${typeBg} ${typeColor} uppercase font-semibold whitespace-nowrap`}>
+                          <span
+                            className="text-[9px] font-caps px-2 py-0.5 rounded-full border uppercase font-semibold whitespace-nowrap"
+                            style={{ color: typeColor, borderColor: typeColor + '40', backgroundColor: typeColor + '15' }}
+                          >
                             {event.type}
                           </span>
                         </div>

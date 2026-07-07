@@ -1,9 +1,13 @@
-export type EventType =
-  | 'spells'
-  | 'tactics'
-  | 'alchemy'
-  | 'ritual'
-  | 'other';
+export type EventType = string;
+
+export interface EventTypeItem {
+  id: string;
+  key: string;
+  label: string;
+  color: string;
+  icon: string;
+  sort_order: number;
+}
 
 export interface MagicalEvent {
   id: string;

@@ -235,6 +235,87 @@ app.delete('/api/admin/events/:id', async (req, res) => {
   }
 });
 
+// ── Event Types CRUD ──────────────────────────────────────────
+
+app.get('/api/event-types', async (_req, res) => {
+  try {
+    const { data, error } = await supabaseAnon
+      .from('event_types')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('[event-types] list error', err);
+    res.status(500).json({ error: 'event_types_list_failed', detail: err.message });
+  }
+});
+
+app.post('/api/admin/event-types', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { key, label, color, icon, sort_order } = req.body || {};
+    if (!key || !label) {
+      return res.status(400).json({ error: 'key_and_label_required' });
+    }
+    const slug = String(key).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
+    const { data, error } = await supabaseAdmin
+      .from('event_types')
+      .insert({
+        key: slug,
+        label: String(label),
+        color: color || '#1a3a5f',
+        icon: icon || 'Wand2',
+        sort_order: sort_order ?? 0,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[event-types] insert error', err);
+    res.status(500).json({ error: 'event_type_create_failed', detail: err.message });
+  }
+});
+
+app.patch('/api/admin/event-types/:id', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.params;
+    const payload = { ...req.body };
+    if (payload.key) {
+      payload.key = String(payload.key).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
+    }
+    const { data, error } = await supabaseAdmin
+      .from('event_types')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[event-types] update error', err);
+    res.status(500).json({ error: 'event_type_update_failed', detail: err.message });
+  }
+});
+
+app.delete('/api/admin/event-types/:id', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.params;
+    const { error } = await supabaseAdmin.from('event_types').delete().eq('id', id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[event-types] delete error', err);
+    res.status(500).json({ error: 'event_type_delete_failed', detail: err.message });
+  }
+});
+
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'not_found', path: req.path });

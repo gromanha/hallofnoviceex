@@ -1,3 +1,5 @@
 dist-calendario/
 calendario/dist/
 calendario/node_modules/
+node_modules/
+.env*

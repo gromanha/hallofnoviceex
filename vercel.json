@@ -1,18 +1,18 @@
 {
   "buildCommand": "cd calendario && npm install && npm run build",
   "outputDirectory": ".",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/calendario/assets/:file*",
-      "destination": "/calendario/dist/assets/:file*"
+      "src": "/calendario/assets/(.*)",
+      "dest": "/calendario/dist/assets/$1"
     },
     {
-      "source": "/calendario/:path*",
-      "destination": "/calendario/dist/index.html"
+      "src": "/calendario(/.*)?",
+      "dest": "/calendario/dist/index.html"
     },
     {
-      "source": "/calendario",
-      "destination": "/calendario/dist/index.html"
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }

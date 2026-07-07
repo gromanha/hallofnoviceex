@@ -236,9 +236,6 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState<number>(TODAY.getDate());
   const [activeFilter, setActiveFilter] = useState<'all' | 'spells' | 'tactics' | 'alchemy'>('all');
 
-  // Mouse Trail State
-  const [trail, setTrail] = useState({ x: 0, y: 0, visible: false });
-
   // Custom event creation states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState('');
@@ -256,20 +253,6 @@ export default function App() {
   // Magic announcements & prophecy system
   const [prophecy, setProphecy] = useState(PROPHECIES[0]);
   const [showProphecyToast, setShowProphecyToast] = useState(false);
-
-  // Track coordinates for cursor following in the Calendar section
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setTrail({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      visible: true
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setTrail(prev => ({ ...prev, visible: false }));
-  };
 
   // Switch months securely
   const prevMonth = () => {
@@ -547,8 +530,6 @@ export default function App() {
         {/* Central Calendar Panel */}
         <section
           id="calendar-section"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
           className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 xl:p-8 relative"
           style={{
             backgroundImage: `linear-gradient(rgba(252, 249, 240, 0.82), rgba(252, 249, 240, 0.82)), url(${bgImage})`,
@@ -558,18 +539,6 @@ export default function App() {
             backgroundAttachment: 'scroll'
           }}
         >
-          {/* Custom coordinate tracker glow: Mouse Trail */}
-          {trail.visible && (
-            <div
-              className="absolute pointer-events-none z-50 rounded-full w-[160px] h-[160px] transition-opacity duration-300"
-              style={{
-                left: trail.x,
-                top: trail.y,
-                transform: 'translate(-50%, -50%)',
-                background: 'radial-gradient(circle, rgba(171, 200, 245, 0.3) 0%, rgba(171, 200, 245, 0) 70%)',
-              }}
-            />
-          )}
 
           <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
             <div className="min-w-0">

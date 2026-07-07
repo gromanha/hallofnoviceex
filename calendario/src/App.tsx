@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   motion,
   AnimatePresence
@@ -6,7 +6,6 @@ import {
 import {
   BookOpen,
   Sparkles,
-  PlusCircle,
   Layers,
   Wand2,
   Swords,
@@ -16,52 +15,19 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  Check,
-  Plus,
-  Trash2,
   Compass,
-  Star,
   Clock,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventType } from './types';
+import { apiGet } from './lib/api';
+import { useHashRoute } from './hashRouter';
+import { useAuth } from './hooks/useAuth';
+import LoginGate from './components/LoginGate';
+import AdminPanel from './components/AdminPanel';
 import bgImage from './assets/id.png';
 
-// Predefined magic imagery URLs matching the original design
-const IMAGE_PRESETS = [
-  {
-    id: 'tomo_mana',
-    name: 'Estudo de Tomos',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvnLps7sbd0iDk9pmEdea7jgzB3rOZPX-R2A_t4YChYqg3e8-EPusUhRKdas8hPiKB0CQ1qbq-5pTR8WFXM3aQhOm24fTjOP4fk0sb90ZtKs5NiRv2mVN7qBVcQtiQn7le9sY2lwKfLEDWwFsMR2ek58kW00qnNb2NE1ew5RrxxezpqcfrWLkJYSky1ezbihsyLGBTbmYmCGq3ZKxS7QOdIAZBmnsstB1P2i6-AD2sZcTUbsvd5E0J'
-  },
-  {
-    id: 'citadela',
-    name: 'Cidadela da Academia',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnY5IXC2xfoiO8g3rkbO-AzQz_rDAHMxAmREWuHqRVlgVdQxPs37y1Z6yynhSCClv04gLs3YFRwbK9v3LaKlAzL4ulfW2o-5XG7cmvPur7gZiJeTZJYwE-gTwwdH7r--o7z2E5yqnHn_bgnarT3MUp7pGuZh-efeWx_5x2zFcmDhsfgwbJqs6q84js8lgMhoJ05iCK9V4bZWaXozRflt7P1Ybc1JC_t74hWN9m4lzZsVv68s3UqZLg'
-  },
-  {
-    id: 'diagrama_tatico',
-    name: 'Formação de Mana',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAheS6lxFYOrofOOY1F95IEsJO3zDuR_3DWs7bb3uxgW5yDFXkM12qYjkFXGodvOsQ7WoiukGsJTk4Hd5N7bYNqx8gVxrV79Gcqpf3DIqE2PJHkuuS2QI7bWP_15VeNW8s_Jt3bbBeRGUOVcYJ_2TRpcuwre053n6FINxidBOtUz_lPPTtvA2OhJdOWVnpp0kxUnRc_rtBRW4FIz9FejgGgprw3ccSQIbW9WNauzuQoUwJT6itcQG3X'
-  },
-  {
-    id: 'patrulha',
-    name: 'Vigília Noturna',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBOp26158hZh0yri8svOM7U9bu-TfeCCEOFI2sylTZz_VvbjKZYZStwWTTn91DFl7TETCsrHoES0q-RUqk4oqLSAKP430R6rAoc510iHC0zngAGPHULtaaYnP1K20B2r8Uk6dZKIKJcCBSN7avQjbAkphIsBoWaR6BZ7SqffO9wrJozPz-GuaVRacp3G0IAgNoJ0SZSFnZW5eyfvjir9qx8BDEM8jhoR3hTg86nPI0TLdUJlpgW7ZMN'
-  },
-  {
-    id: 'jardim',
-    name: 'Herborologia Jardim',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAqYLIlGYkEDPKux1Ac1HbSSOazw-RXPpc7dC2udaqhYQB6luHevWBAO3Pl6ghWY9fCO6YxRZMd1f61tlYfUX4Y0DMF_LJrxOxyKJbivCZthff_c1cKAJDnCdU7_OwE2SJ_nWUTNdcwRPifKzB6Wm94DaruuWgEjyMgT2K2-U6Udm5zXvG0AEGD_srsx7tbFmlDgrg7csbpRJTx6WAFYVqLNm9SeiBHNNqJkgvISiC9gpareaqanAPE'
-  },
-  {
-    id: 'sala_aula',
-    name: 'Sala de Aula Arcana',
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAEGdE74nVQCdZnrmKM_JAx9adPp-8RmT3s088G4hFCmSrSL6fmsW1YA4RWxg1Rj4wZLVSVt1HOd9a87h-6vej8DzXtDHDqSvvIyb5i90XUdesRFECRKRU3qRpUAfc-ScZ7k74snWfBqMrrtN2lPQiuYlyTLdWwkvE28W-FTFXVqY9KIfl_JK8sgsCwPh-x3rMOCAHj5rRbLAEIesohSqRnp0IsmBDuEnJ8NlKhun4q8x0jOi7ICMqt'
-  }
-];
-
-// Build REAL months dynamically, starting from the current month
 const REAL_MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
@@ -71,10 +37,9 @@ function buildRealMonths(startYear: number, startMonth: number, count = 3): Mont
   return Array.from({ length: count }, (_, i) => {
     const d = new Date(startYear, startMonth + i, 1);
     const year = d.getFullYear();
-    const month = d.getMonth(); // 0-indexed
+    const month = d.getMonth();
     const daysCount = new Date(year, month + 1, 0).getDate();
-    const firstWeekday = d.getDay(); // 0=Sun
-    // Days from previous month to fill the first row
+    const firstWeekday = d.getDay();
     const prevMonthDays: number[] = [];
     if (firstWeekday > 0) {
       const prevTotal = new Date(year, month, 0).getDate();
@@ -95,97 +60,6 @@ function buildRealMonths(startYear: number, startMonth: number, count = 3): Mont
 const TODAY = new Date();
 const DEFAULT_MONTHS: MonthData[] = buildRealMonths(TODAY.getFullYear(), TODAY.getMonth(), 12);
 
-const INITIAL_EVENTS: MagicalEvent[] = [
-  {
-    id: 'evt-1',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 1,
-    time: "08:00 — 10:30",
-    title: "Iniciação Hermética: Estudo de Tomos de Mana",
-    description: "Reunião de recepção dos novatos para desvendar os mistérios dos antigos tomos flutuantes na Grande Biblioteca Central.",
-    instructor: "Arquimago Valerius",
-    image: IMAGE_PRESETS[0].url,
-    type: "aula-pratica",
-    crystal: true,
-    indicators: ['primary']
-  },
-  {
-    id: 'evt-2',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 3,
-    time: "09:00 — 11:30",
-    title: "Tática de Batalha: Formações de Mana",
-    description: "Estudo das linhas de fluxo em combate e posicionamento avançado de barreiras rúnicas de contenção.",
-    instructor: "Archmage Valerius",
-    image: IMAGE_PRESETS[2].url,
-    type: "aula-pratica",
-    crystal: true,
-    stars: true,
-    indicators: ['primary', 'secondary']
-  },
-  {
-    id: 'evt-3',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 3,
-    time: "14:00 — 16:00",
-    title: "Ritual de Cristais: Focalização Elemental",
-    description: "Traga seu prisma pessoal de nível 3 para o Salão Sul. Foco em alinhamento de canais de energia elemental pura.",
-    instructor: "Mestra Seraphina",
-    type: "ritual-sagrado",
-    indicators: ['secondary']
-  },
-  {
-    id: 'evt-4',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 3,
-    time: "20:00 — 22:00",
-    title: "Vigília nos Portões: Patrulha Noturna",
-    description: "Ronda de vigilância mística ao redor dos portões principais da academia sob a luz das estrelas e escudos translúcidos.",
-    instructor: "Guarda Rúnico Alistair",
-    image: IMAGE_PRESETS[3].url,
-    type: "ritual-sagrado",
-    indicators: ['error']
-  },
-  {
-    id: 'evt-5',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 5,
-    time: "11:00 — 13:00",
-    title: "Mistura de Elixires e Essências de Fogo",
-    description: "Destilação experimental de lágrimas de fênix e pó de enxofre em ambiente alquímico controlado de nível 2.",
-    instructor: "Alquimista Ignis",
-    type: "aula-pratica",
-    crystal: false,
-    indicators: ['secondary', 'error']
-  },
-  {
-    id: 'evt-6',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 8,
-    time: "10:00 — 12:30",
-    title: "Análise Avançada de Diagramas Táticos",
-    description: "Discussão aprofundada de táticas defensivas contra hordas elementais e conjuração síncrona com os generais de prata.",
-    instructor: "Arquimago Valerius",
-    image: IMAGE_PRESETS[5].url,
-    type: "aula-pratica",
-    crystal: true,
-    indicators: ['primary']
-  },
-  {
-    id: 'evt-7',
-    month: REAL_MONTH_NAMES[TODAY.getMonth()],
-    day: 16,
-    time: "09:00 — 12:00",
-    title: "Herborologia e Botânica Arcana: Cultivo de Lavanda Mística",
-    description: "Excursão prática aos jardins sagrados para colheita de lavanda mística sob o orvalho da manhã e rituais de crescimento rápido.",
-    instructor: "Mestra Flora",
-    image: IMAGE_PRESETS[4].url,
-    type: "outros",
-    crystal: true,
-    indicators: ['primary', 'secondary']
-  }
-];
-
 const PROPHECIES = [
   "Os ventos de mana estão altamente favoráveis para poções hoje. +15% de eficiência na destilação elemental de fogo.",
   "Alerta do Sanctum: Um duende de mana fugitivo foi avistado perto dos jardins de Lavanda Mística. Mantenham os grimórios fechados.",
@@ -195,41 +69,41 @@ const PROPHECIES = [
 ];
 
 export default function App() {
-  // Persistence state
-  const [events, setEvents] = useState<MagicalEvent[]>(() => {
-    const saved = localStorage.getItem('academic_ledger_events_v2');
-    return saved ? JSON.parse(saved) : INITIAL_EVENTS;
-  });
+  const [route, navigate] = useHashRoute();
+  const auth = useAuth();
+
+  const [events, setEvents] = useState<MagicalEvent[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState<string | null>(null);
+
+  const fetchEvents = useCallback(async () => {
+    setEventsLoading(true);
+    setEventsError(null);
+    try {
+      const data = await apiGet<MagicalEvent[]>('/api/events');
+      setEvents(data);
+    } catch (err: any) {
+      setEventsError(err?.message || 'Falha ao carregar eventos.');
+    } finally {
+      setEventsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem('academic_ledger_events_v2', JSON.stringify(events));
-  }, [events]);
+    void fetchEvents();
+  }, [fetchEvents]);
 
-  // Calendar parameters — start on current real month
   const [currentMonthIdx, setCurrentMonthIdx] = useState(0);
   const currentMonth = DEFAULT_MONTHS[currentMonthIdx];
   const [selectedDay, setSelectedDay] = useState<number>(TODAY.getDate());
   const [activeFilter, setActiveFilter] = useState<'all' | EventType>('all');
 
-  // Custom event creation states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newEventTitle, setNewEventTitle] = useState('');
-  const [newEventDay, setNewEventDay] = useState<number>(3);
-  const [newEventTime, setNewEventTime] = useState('09:00 — 11:30');
-  const [newEventDesc, setNewEventDesc] = useState('');
-  const [newEventInstructor, setNewEventInstructor] = useState('Archmage Valerius');
-  const [newEventType, setNewEventType] = useState<EventType>('aula-pratica');
-  const [newEventImage, setNewEventImage] = useState(IMAGE_PRESETS[0].url);
-  const [newEventCrystal, setNewEventCrystal] = useState(true);
-
-  // Magic announcements & prophecy system
   const [prophecy, setProphecy] = useState(PROPHECIES[0]);
   const [showProphecyToast, setShowProphecyToast] = useState(false);
 
-  // Switch months securely
   const prevMonth = () => {
     setCurrentMonthIdx(prev => (prev === 0 ? DEFAULT_MONTHS.length - 1 : prev - 1));
-    setSelectedDay(1); // Reset selected day to 1st of the new month
+    setSelectedDay(1);
   };
 
   const nextMonth = () => {
@@ -237,57 +111,13 @@ export default function App() {
     setSelectedDay(1);
   };
 
-  // Random Prophecy trigger
   const triggerProphecy = () => {
     const random = PROPHECIES[Math.floor(Math.random() * PROPHECIES.length)];
     setProphecy(random);
     setShowProphecyToast(true);
-    setTimeout(() => {
-      setShowProphecyToast(false);
-    }, 6000);
+    setTimeout(() => setShowProphecyToast(false), 6000);
   };
 
-  // Add event handler
-  const handleCreateEvent = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEventTitle.trim()) return;
-
-    const added: MagicalEvent = {
-      id: `evt-${Date.now()}`,
-      month: currentMonth.name,
-      day: Number(newEventDay),
-      time: newEventTime,
-      title: newEventTitle,
-      description: newEventDesc,
-      instructor: newEventInstructor,
-      image: newEventImage,
-      type: newEventType,
-      crystal: newEventCrystal,
-      stars: newEventType === 'aula-pratica',
-      indicators: [
-        newEventType === 'aula-pratica' ? 'primary' :
-          newEventType === 'atividades-semanais' ? 'secondary' : 'error'
-      ]
-    };
-
-    setEvents(prev => [...prev, added]);
-    setIsModalOpen(false);
-
-    // Reset fields
-    setNewEventTitle('');
-    setNewEventDesc('');
-    // Trigger toast notification
-    setProphecy(`Nova atividade "${newEventTitle}" inscrita no Registro de Atividades.`);
-    setShowProphecyToast(true);
-    setTimeout(() => setShowProphecyToast(false), 4000);
-  };
-
-  // Delete event handler
-  const handleDeleteEvent = (id: string) => {
-    setEvents(prev => prev.filter(e => e.id !== id));
-  };
-
-  // Filter day events based on selected categories
   const getDayEvents = (dayNum: number, monthName: string) => {
     return events.filter(e => {
       if (e.month !== monthName || e.day !== dayNum) return false;
@@ -296,12 +126,10 @@ export default function App() {
     });
   };
 
-  // Find all events on a specific day regardless of filter for indicators
   const getAllDayEvents = (dayNum: number, monthName: string) => {
     return events.filter(e => e.month === monthName && e.day === dayNum);
   };
 
-  // Check if active filter highlights a day
   const isDayHighlightedByFilter = (dayNum: number, monthName: string) => {
     if (activeFilter === 'all') return true;
     const dayEvents = events.filter(e => e.month === monthName && e.day === dayNum);
@@ -309,20 +137,15 @@ export default function App() {
     return dayEvents.some(e => e.type === activeFilter);
   };
 
-  // Current selected day's filtered list of events
   const selectedDayEvents = getDayEvents(selectedDay, currentMonth.name);
 
-  // Generate list of days for grid
-  const daysInGrid = [];
-  // 1. Add prev month days padding
+  const daysInGrid: { dayNum: number; isCurrent: boolean; isPrev?: boolean; isNext?: boolean }[] = [];
   currentMonth.prevMonthDays.forEach(d => {
     daysInGrid.push({ dayNum: d, isCurrent: false, isPrev: true });
   });
-  // 2. Add current month days
   for (let i = 1; i <= currentMonth.daysCount; i++) {
     daysInGrid.push({ dayNum: i, isCurrent: true, isPrev: false });
   }
-  // 3. Add next month days to complete 35 or 42 grid cells
   const totalInGrid = daysInGrid.length;
   const targetCells = totalInGrid <= 35 ? 35 : 42;
   const nextMonthPadding = targetCells - totalInGrid;
@@ -330,18 +153,25 @@ export default function App() {
     daysInGrid.push({ dayNum: i, isCurrent: false, isNext: true });
   }
 
-  // Pre-fill fields when selecting day to create event
-  const openCreateModalForDay = (day: number) => {
-    setNewEventDay(day);
-    setIsModalOpen(true);
-  };
+  // --- Admin route ---
+  if (route === 'admin') {
+    if (auth.loading) {
+      return (
+        <div className="min-h-screen bg-[#fcf9f0] flex items-center justify-center text-[#73777f] text-sm">
+          Carregando…
+        </div>
+      );
+    }
+    if (!auth.user) {
+      return <LoginGate onLogin={(u, p) => auth.login(u, p)} />;
+    }
+    return <AdminPanel user={auth.user} onLogout={() => auth.logout()} />;
+  }
 
-  // Dynamic values based on selected day's events
-
+  // --- Public calendar route ---
   return (
     <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{ overscrollBehavior: 'none' }}>
 
-      {/* Toast Notification for Daily Prophecy or Magical actions */}
       <AnimatePresence>
         {showProphecyToast && (
           <motion.div
@@ -362,12 +192,9 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Header removed per user request */}
-
-      {/* Main Body */}
       <main className="flex-1 flex flex-col lg:flex-row h-auto lg:h-screen overflow-hidden">
 
-        {/* Left Side Navigation Bar */}
+        {/* Left Sidebar */}
         <aside className="w-full lg:w-56 xl:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-4 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto">
           <div className="px-6">
             <div className="flex items-center gap-3 mb-6 bg-[#fcf9f0] p-3 rounded-2xl border border-[#735c00]/10 parchment-texture">
@@ -380,18 +207,16 @@ export default function App() {
               </div>
             </div>
 
-            {/* Create Event Trigger */}
-            <button
-              id="new-event-btn"
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-[#002446] py-3 rounded-xl text-white font-caps text-xs tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#abc8f5]/20"
+            <a
+              href="#/admin"
+              className="w-full bg-[#002446] py-3 rounded-xl text-white font-caps text-xs tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#abc8f5]/20 no-underline"
             >
-              <PlusCircle className="w-4 h-4 text-[#fed65b]" />
-              New Event
-            </button>
+              <ShieldCheck className="w-4 h-4 text-[#fed65b]" />
+              Painel Admin
+            </a>
           </div>
 
-          {/* Interactive Navigation Filter Categories */}
+          {/* Filters */}
           <nav className="flex-1 px-3 space-y-1">
             <p className="text-[9px] font-caps uppercase tracking-widest text-[#73777f] px-3 mb-2">Filtros de Disciplina</p>
 
@@ -411,56 +236,30 @@ export default function App() {
               </span>
             </button>
 
-            <button
-              onClick={() => setActiveFilter('spells')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'spells'
-                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <Wand2 className="w-4 h-4 text-[#002446]" />
-                <span className="text-sm">Spells (Magias)</span>
-              </div>
-              <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                {events.filter(e => e.month === currentMonth.name && e.type === 'spells').length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('tactics')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'tactics'
-                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <Swords className="w-4 h-4 text-[#735c00]" />
-                <span className="text-sm">Tactics (Táticas)</span>
-              </div>
-              <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                {events.filter(e => e.month === currentMonth.name && e.type === 'tactics').length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('alchemy')}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'alchemy'
-                ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <FlaskConical className="w-4 h-4 text-emerald-700" />
-                <span className="text-sm">Alchemy (Alquimia)</span>
-              </div>
-              <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                {events.filter(e => e.month === currentMonth.name && e.type === 'alchemy').length}
-              </span>
-            </button>
+            {([
+              { key: 'spells' as EventType, icon: Wand2, label: 'Spells (Magias)', iconColor: 'text-[#002446]' },
+              { key: 'tactics' as EventType, icon: Swords, label: 'Tactics (Táticas)', iconColor: 'text-[#735c00]' },
+              { key: 'alchemy' as EventType, icon: FlaskConical, label: 'Alchemy (Alquimia)', iconColor: 'text-emerald-700' },
+            ]).map(f => (
+              <button
+                key={f.key}
+                onClick={() => setActiveFilter(f.key)}
+                className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === f.key
+                  ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
+                  : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <f.icon className={`w-4 h-4 ${f.iconColor}`} />
+                  <span className="text-sm">{f.label}</span>
+                </div>
+                <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
+                  {events.filter(e => e.month === currentMonth.name && e.type === f.key).length}
+                </span>
+              </button>
+            ))}
           </nav>
 
-          {/* Quick Stats of Filter */}
           {activeFilter !== 'all' && (
             <div className="mx-4 p-3 bg-[#f1eee5] rounded-xl border border-[#735c00]/10 text-xs parchment-texture">
               <span className="font-caps text-[10px] text-[#735c00] block uppercase mb-1">Filtro Ativo</span>
@@ -474,8 +273,14 @@ export default function App() {
             </div>
           )}
 
-          {/* Settings / Support at bottom */}
           <div className="mt-auto px-3 space-y-1 pt-4 border-t border-[#c3c6cf]/30">
+            <button
+              onClick={triggerProphecy}
+              className="w-full text-left text-[#43474e] hover:bg-[#e5e2da] rounded-full px-4 py-2 flex items-center gap-3 cursor-pointer text-xs transition-colors"
+            >
+              <Sparkles className="w-4 h-4 text-[#735c00]" />
+              Profecia do Dia
+            </button>
             <div className="text-[#43474e] hover:bg-[#e5e2da] rounded-full px-4 py-2 flex items-center gap-3 cursor-pointer text-xs transition-colors">
               <Settings className="w-4 h-4 text-[#73777f]" />
               Settings
@@ -487,7 +292,7 @@ export default function App() {
           </div>
         </aside>
 
-        {/* Central Calendar Panel */}
+        {/* Calendar Panel */}
         <section
           id="calendar-section"
           className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 xl:p-8 relative"
@@ -499,7 +304,6 @@ export default function App() {
             backgroundAttachment: 'scroll'
           }}
         >
-
           <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -512,35 +316,32 @@ export default function App() {
               </div>
               <p className="text-xs text-[#73777f] font-sans mt-1">
                 <span className="font-semibold text-[#735c00]">{currentMonth.name} {currentMonth.cycle}</span>
-                {' — '}Selecione um dia ou dê duplo clique para adicionar evento.
+                {' — '}Selecione um dia para ver os eventos.
               </p>
             </div>
 
-            {/* Nav arrows to cycle months */}
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={prevMonth}
-                title="Mês Anterior"
-                className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]"
-              >
+              <button onClick={prevMonth} title="Mês Anterior" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <span className="text-sm font-serif text-[#735c00] font-semibold hidden sm:block min-w-[100px] text-center">
                 {currentMonth.name}
               </span>
-              <button
-                onClick={nextMonth}
-                title="Próximo Mês"
-                className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]"
-              >
+              <button onClick={nextMonth} title="Próximo Mês" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Calendar Grid Container */}
+          {eventsError && (
+            <div className="mb-4 text-xs text-[#ba1a1a] bg-[#ffdad6] border border-[#ba1a1a]/30 rounded-lg px-4 py-3">
+              {eventsError}
+              <button onClick={() => void fetchEvents()} className="ml-2 underline">tentar novamente</button>
+            </div>
+          )}
+
+          {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none">
-            {/* Days of Week Headers */}
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
               <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30">
                 <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
@@ -548,24 +349,17 @@ export default function App() {
               </div>
             ))}
 
-            {/* Calendar Cells */}
             {daysInGrid.map((cell, idx) => {
               const { dayNum, isCurrent, isPrev, isNext } = cell;
-
-              // Find events on this day
               const dayEvents = getDayEvents(dayNum, currentMonth.name);
               const hasEvents = dayEvents.length > 0;
               const hasCrystal = dayEvents.some(e => e.crystal);
               const firstEventImage = dayEvents.find(e => e.image)?.image;
               const isSelected = isCurrent && selectedDay === dayNum;
 
-              // Non-current month styles
               if (!isCurrent) {
                 return (
-                  <div
-                    key={`p-${idx}`}
-                    className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between"
-                  >
+                  <div key={`p-${idx}`} className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between">
                     <span className="font-serif text-sm sm:text-lg text-[#73777f]">{dayNum}</span>
                     <span className="text-[7px] sm:text-[8px] font-caps text-[#73777f]/60 text-right hidden sm:block">
                       {isPrev ? 'anterior' : 'próximo'}
@@ -574,34 +368,26 @@ export default function App() {
                 );
               }
 
-              // Highlight matching indicator dots for all events on that day
               const allDayEventsForIndicators = getAllDayEvents(dayNum, currentMonth.name);
-
-              // Is highlighted by current category filter?
               const matchesFilter = isDayHighlightedByFilter(dayNum, currentMonth.name);
 
               return (
                 <div
                   key={`c-${dayNum}`}
                   onClick={() => setSelectedDay(dayNum)}
-                  onDoubleClick={() => openCreateModalForDay(dayNum)}
                   className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
                     ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
                     : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
                     } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
                     }`}
                 >
-                  {/* Filigree aesthetic & glowing highlights */}
                   <div className="absolute inset-0 bg-transparent pointer-events-none rounded-xl" />
 
-                  {/* Top Row: Number, Crystals, indicator dots */}
                   <div className="flex justify-between items-start z-10">
-                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-[#241a00]' : 'text-[#735c00]'
-                      }`}>
+                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-[#241a00]' : 'text-[#735c00]'}`}>
                       {dayNum < 10 ? `0${dayNum}` : dayNum}
                     </span>
 
-                    {/* Today indicator label */}
                     {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
                       <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
                         ? 'bg-[#241a00] text-[#fed65b] border-[#fed65b]/20'
@@ -611,7 +397,6 @@ export default function App() {
                       </span>
                     )}
 
-                    {/* Floating místico crystal */}
                     {hasCrystal && matchesFilter && (
                       <div className="floating-crystal transform scale-90 md:scale-100">
                         <svg fill="none" height="20" viewBox="0 0 16 24" width="14" xmlns="http://www.w3.org/2000/svg">
@@ -622,42 +407,25 @@ export default function App() {
                     )}
                   </div>
 
-                  {/* Indicator dots for multiple events */}
                   {allDayEventsForIndicators.length > 0 && (
                     <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
                       {allDayEventsForIndicators.map((e, index) => {
-                        let dotColor = 'bg-[#1a3a5f]'; // spells
+                        let dotColor = 'bg-[#1a3a5f]';
                         if (e.type === 'tactics') dotColor = 'bg-[#735c00]';
                         if (e.type === 'alchemy') dotColor = 'bg-emerald-700';
                         if (e.type === 'ritual') dotColor = 'bg-purple-700';
-
                         return (
-                          <div
-                            key={e.id || index}
-                            className={`w-1.5 h-1.5 rounded-full ${dotColor} crystal-glow animate-pulse`}
-                          />
+                          <div key={e.id || index} className={`w-1.5 h-1.5 rounded-full ${dotColor} crystal-glow animate-pulse`} />
                         );
                       })}
                     </div>
                   )}
 
-                  {/* Thumbnail display if any event has an image */}
                   {firstEventImage && matchesFilter ? (
                     <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[#c3c6cf]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={firstEventImage}
-                        alt="Miniatura de evento"
-                        referrerPolicy="no-referrer"
-                      />
-                      {dayEvents.some(e => e.stars) && (
-                        <div className="absolute inset-0 bg-[#735c00]/10 flex items-center justify-center">
-                          <Star className="w-3 h-3 sm:w-4 sm:h-4 text-[#fed65b] fill-[#fed65b] drop-shadow" />
-                        </div>
-                      )}
+                      <img className="w-full h-full object-cover" src={firstEventImage} alt="Miniatura de evento" referrerPolicy="no-referrer" />
                     </div>
                   ) : (
-                    // Free day text
                     <div className="mt-2 sm:mt-4 flex flex-col justify-end text-right">
                       {hasEvents ? (
                         <span className="text-[8px] sm:text-[9px] font-semibold font-sans italic text-[#735c00] opacity-80 truncate">
@@ -675,16 +443,14 @@ export default function App() {
             })}
           </div>
 
-          {/* Quick interactive note below calendar */}
           <div className="mt-8 flex items-center gap-3 p-4 bg-[#f1eee5]/50 rounded-2xl border border-[#735c00]/10 text-xs text-[#43474e] parchment-texture">
             <AlertCircle className="w-5 h-5 text-[#735c00]" />
-            <p><strong>Segredo Rúnico:</strong> Você sabia que é possível gerenciar as atividades acadêmicas? Dê um duplo clique sobre qualquer dia do calendário para invocar o painel de criação de eventos imediatos.</p>
+            <p><strong>Segredo Rúnico:</strong> Acesse o <a href="#/admin" className="text-[#002446] font-semibold hover:underline">Painel Admin</a> para gerenciar as atividades acadêmicas publicadas no calendário.</p>
           </div>
         </section>
 
-        {/* Right Side: Arcane Ledger Activities Panel */}
+        {/* Right Side: Arcane Ledger */}
         <aside className="w-full lg:w-80 xl:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative">
-
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#c3c6cf]/40 pb-4">
               <div>
@@ -696,8 +462,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* Selected Day events listing */}
-            {selectedDayEvents.length === 0 ? (
+            {eventsLoading ? (
+              <div className="text-center py-10 text-[#73777f] text-xs">Carregando eventos…</div>
+            ) : selectedDayEvents.length === 0 ? (
               <div className="text-center py-10 px-4 bg-[#fcf9f0] border border-[#735c00]/10 rounded-2xl parchment-texture space-y-4">
                 <div className="w-12 h-12 bg-[#ebe8df] rounded-full flex items-center justify-center mx-auto text-[#73777f]">
                   <Compass className="w-6 h-6 animate-spin" style={{ animationDuration: '20s' }} />
@@ -706,18 +473,10 @@ export default function App() {
                   <h4 className="font-serif text-[#002446] font-semibold text-lg">Tempo de Estudo Livre</h4>
                   <p className="text-xs text-[#73777f] mt-1">Sem rituais oficiais agendados para este dia. Aproveite para praticar na Ala de Duelos ou estudar na Biblioteca.</p>
                 </div>
-                <button
-                  onClick={() => openCreateModalForDay(selectedDay)}
-                  className="bg-[#f1eee5] border border-[#735c00]/30 hover:bg-[#fed65b] text-[#241a00] hover:border-[#735c00] text-xs font-caps uppercase tracking-wider py-2 px-4 rounded-xl transition-all flex items-center gap-2 mx-auto cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" /> Registrar Ritual
-                </button>
               </div>
             ) : (
               <div className="space-y-6 relative before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-[2px] before:bg-dotted before:border-l-2 before:border-dotted before:border-[#c3c6cf]">
-
                 {selectedDayEvents.map((event) => {
-                  // Determine icon and theme for visual rhythm
                   let EventIcon = Wand2;
                   let typeColor = 'text-[#002446]';
                   let typeBg = 'bg-[#d3e3ff]/60 border-[#abc8f5]';
@@ -734,13 +493,11 @@ export default function App() {
 
                   return (
                     <div key={event.id} className="relative pl-8 group">
-                      {/* Interactive indicator pin node */}
                       <div className="absolute left-0 top-1 w-7 h-7 rounded-full border-2 border-[#735c00] bg-[#fcf9f0] flex items-center justify-center text-[#735c00] z-10 hover:bg-[#fed65b] transition-colors shadow-sm">
                         <EventIcon className="w-3.5 h-3.5" />
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        {/* Time & type indicator + delete button */}
                         <div className="flex justify-between items-center gap-2 pr-6 relative">
                           <span className="text-[10px] font-caps text-[#735c00] font-semibold tracking-widest uppercase flex items-center gap-1 shrink-0">
                             <Clock className="w-3 h-3" />
@@ -749,35 +506,19 @@ export default function App() {
                           <span className={`text-[9px] font-caps px-2 py-0.5 rounded-full border ${typeBg} ${typeColor} uppercase font-semibold whitespace-nowrap`}>
                             {event.type}
                           </span>
-                          {/* Delete button — absolutely positioned inside relative container with pr-6 */}
-                          <button
-                            onClick={() => handleDeleteEvent(event.id)}
-                            title="Deletar Atividade"
-                            className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-[#ba1a1a] hover:bg-[#ffdad6] p-1 rounded transition-opacity shrink-0 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
                         </div>
 
-                        {/* Title */}
                         <h4 className="text-lg font-serif text-[#002446] leading-snug font-bold">
                           {event.title}
                         </h4>
 
-                        {/* Event description */}
                         <p className="text-xs text-[#43474e] leading-relaxed">
                           {event.description}
                         </p>
 
-                        {/* Image banner with blurry instructor tag */}
                         {event.image && (
                           <div className="rounded-xl overflow-hidden border border-[#c3c6cf] h-32 relative shadow-sm my-1 group-hover:shadow transition-shadow">
-                            <img
-                              className="w-full h-full object-cover"
-                              src={event.image}
-                              alt={event.title}
-                              referrerPolicy="no-referrer"
-                            />
+                            <img className="w-full h-full object-cover" src={event.image} alt={event.title} referrerPolicy="no-referrer" />
                             {event.instructor && (
                               <div className="absolute bottom-0 inset-x-0 bg-[#002446]/75 backdrop-blur-sm px-3 py-1.5 text-[9px] text-white font-caps uppercase tracking-widest flex justify-between">
                                 <span>Instrutor: {event.instructor}</span>
@@ -787,15 +528,13 @@ export default function App() {
                           </div>
                         )}
 
-                        {/* Instructor fallback without image */}
                         {!event.image && event.instructor && (
                           <div className="text-[10px] font-caps text-[#73777f] uppercase bg-[#e5e2da]/40 p-2 rounded-lg border border-[#c3c6cf]/20">
                             <strong>Orientador:</strong> {event.instructor}
                           </div>
                         )}
 
-                        {/* Interactive mana requirements stats */}
-                        {event.manaProgress > 0 && (
+                        {event.manaProgress && event.manaProgress > 0 && (
                           <div className="mt-1 space-y-1">
                             <div className="flex justify-between text-[9px] font-caps text-[#43474e]">
                               <span>Requisitos de Mana do Estudante</span>
@@ -813,222 +552,11 @@ export default function App() {
                     </div>
                   );
                 })}
-
               </div>
             )}
-
           </div>
-
-
-
-          {/* Creation Modal (Invocação de Atividades) */}
-          <AnimatePresence>
-            {isModalOpen && (
-              <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 180 }}
-                  className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden relative parchment-texture"
-                >
-                  {/* Gold borders */}
-                  <div className="h-1.5 bg-[#735c00] w-full" />
-
-                  <div className="p-6 md:p-8 space-y-6">
-                    <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
-                      <div>
-                        <h3 className="text-2xl font-serif text-[#735c00] font-bold flex items-center gap-2">
-                          <Sparkles className="w-6 h-6 text-[#fed65b] fill-[#fed65b]" />
-                          Novo Evento
-                        </h3>
-                        <p className="text-xs text-[#73777f]">Inscreva uma nova atividade na Hall of the Novice EX.</p>
-                      </div>
-                      <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="p-1 rounded-full hover:bg-[#e5e2da] text-[#43474e] transition-colors cursor-pointer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-
-                    <form onSubmit={handleCreateEvent} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* Day Selector */}
-                        <div>
-                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                            Dia do Mês
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            max={currentMonth.daysCount}
-                            required
-                            value={newEventDay}
-                            onChange={(e) => setNewEventDay(Number(e.target.value))}
-                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                          />
-                        </div>
-
-                        {/* Time Input */}
-                        <div>
-                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                            Horário (Período)
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="Ex: 09:00 — 11:30"
-                            value={newEventTime}
-                            onChange={(e) => setNewEventTime(e.target.value)}
-                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Title */}
-                      <div>
-                        <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                          Nome da Disciplina / Atividade
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: Tática de Combate Avançado contra Seres de Trevas"
-                          value={newEventTitle}
-                          onChange={(e) => setNewEventTitle(e.target.value)}
-                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* Instructor */}
-                        <div>
-                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                            Instrutor Responsável
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="Ex: Mestre Valerius"
-                            value={newEventInstructor}
-                            onChange={(e) => setNewEventInstructor(e.target.value)}
-                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                          />
-                        </div>
-
-                        {/* Type Selector */}
-                        <div>
-                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                            Tipo de Disciplina
-                          </label>
-                          <select
-                            value={newEventType}
-                            onChange={(e) => setNewEventType(e.target.value as EventType)}
-                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                          >
-                            <option value="spells">Magia (Spells)</option>
-                            <option value="tactics">Tática de Batalha (Tactics)</option>
-                            <option value="alchemy">Alquimia (Alchemy)</option>
-                            <option value="ritual">Ritual Sagrado (Ritual)</option>
-                            <option value="other">Outros Saberes</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <div>
-                        <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                          Descrição Detalhada da Atividade
-                        </label>
-                        <textarea
-                          rows={3}
-                          placeholder="Indique as orientações e materiais exigidos aos estudantes..."
-                          value={newEventDesc}
-                          onChange={(e) => setNewEventDesc(e.target.value)}
-                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30 resize-none"
-                        />
-                      </div>
-
-                      {/* Illustration Image Preset Picker Grid */}
-                      <div>
-                        <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                          Banner
-                        </label>
-                        <div className="grid grid-cols-6 gap-2">
-                          {IMAGE_PRESETS.map((p) => {
-                            const isSelected = newEventImage === p.url;
-                            return (
-                              <button
-                                type="button"
-                                key={p.id}
-                                onClick={() => setNewEventImage(p.url)}
-                                className={`h-12 rounded-lg overflow-hidden relative border-2 cursor-pointer transition-all ${isSelected ? 'border-[#735c00] scale-105 shadow' : 'border-transparent opacity-60 hover:opacity-100'
-                                  }`}
-                                title={p.name}
-                              >
-                                <img src={p.url} alt={p.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                {isSelected && (
-                                  <div className="absolute inset-0 bg-[#735c00]/20 flex items-center justify-center">
-                                    <Check className="w-4 h-4 text-white drop-shadow font-bold" />
-                                  </div>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                        {/* Manual URL input fallback */}
-                        <input
-                          type="text"
-                          placeholder="Ou cole uma URL customizada de imagem"
-                          value={newEventImage}
-                          onChange={(e) => setNewEventImage(e.target.value)}
-                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-1.5 text-xs focus:outline-none mt-2"
-                        />
-                      </div>
-
-
-
-
-
-                      {/* Checkbox options */}
-                      <div className="flex gap-4 items-center">
-                        <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={newEventCrystal}
-                            onChange={(e) => setNewEventCrystal(e.target.checked)}
-                            className="accent-[#735c00] cursor-pointer rounded"
-                          />
-                          Mostrar Cristal Flutuante
-                        </label>
-                      </div>
-
-                      {/* Actions buttons */}
-                      <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
-                        <button
-                          type="button"
-                          onClick={() => setIsModalOpen(false)}
-                          className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-3 rounded-xl transition-colors cursor-pointer"
-                        >
-                          Cancelar
-                        </button>
-                        <button
-                          type="submit"
-                          className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow cursor-pointer border border-[#abc8f5]/20"
-                        >
-                          Inscrever Registro
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </motion.div>
-              </div>
-            )}
-          </AnimatePresence>
-
         </aside>
-        </main>
-        </div>
-    );
+      </main>
+    </div>
+  );
 }

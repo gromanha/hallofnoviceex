@@ -1,9 +1,9 @@
 export type EventType =
-  | 'aula-pratica'
-  | 'tatica-batalha'
-  | 'alquimia'
-  | 'ritual-sagrado'
-  | 'outros';
+  | 'spells'
+  | 'tactics'
+  | 'alchemy'
+  | 'ritual'
+  | 'other';
 
 export interface MagicalEvent {
   id: string;

@@ -1,8 +1,8 @@
 export type EventType =
   | 'aula-pratica'
-  | 'evento-sazonal'
-  | 'atividades-semanais'
-  | 'evento-social'
+  | 'tatica-batalha'
+  | 'alquimia'
+  | 'ritual-sagrado'
   | 'outros';
 
 export interface MagicalEvent {
@@ -18,6 +18,9 @@ export interface MagicalEvent {
   crystal?: boolean; // Show floating crystal icon
   stars?: boolean; // Show star over thumbnail
   indicators?: string[]; // Color list e.g. ['primary', 'secondary', 'error']
+  manaProgress?: number; // Mana requirement percentage
+  spots?: number; // Available spots
+  rank?: string; // Event rank
 }
 
 export interface MonthData {

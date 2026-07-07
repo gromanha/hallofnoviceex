@@ -823,277 +823,214 @@ export default function App() {
 
           </div>
 
-          {/* Dynamic Footer stats panel card */}
-          <div className="mt-8 pt-6 border-t border-[#c3c6cf] space-y-4 bg-[#fcf9f0]/40 p-4 rounded-xl border border-[#735c00]/10 parchment-texture">
-            <div>
-              <span className="text-[10px] font-caps text-[#735c00] uppercase tracking-wider block">Consid. do Archmage</span>
-              <p className="text-xs text-[#73777f]">Média de fluxo de mana exigido no período letivo do dia: {maxManaRequired > 0 ? `${maxManaRequired}% Mestre` : 'Nenhum'}</p>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[#e5e2da]/70 p-3 rounded-xl border border-[#c3c6cf]/40 text-center">
-                <p className="text-[10px] font-caps text-[#43474e] uppercase font-semibold">Vagas Totais</p>
-                <p className="text-xl font-bold text-[#002446] mt-0.5">{selectedDaySpots}</p>
-              </div>
-              <div className="bg-[#e5e2da]/70 p-3 rounded-xl border border-[#c3c6cf]/40 text-center">
-                <p className="text-[10px] font-caps text-[#43474e] uppercase font-semibold">Rank Período</p>
-                <p className="text-xl font-bold text-[#735c00] mt-0.5">{selectedDayRank}</p>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </main>
 
-      {/* Creation Modal (Invocação de Atividades) */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 30 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 30 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 180 }}
-              className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden relative parchment-texture"
-            >
-              {/* Gold borders */}
-              <div className="h-1.5 bg-[#735c00] w-full" />
+          {/* Creation Modal (Invocação de Atividades) */}
+          <AnimatePresence>
+            {isModalOpen && (
+              <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, y: 30 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 180 }}
+                  className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden relative parchment-texture"
+                >
+                  {/* Gold borders */}
+                  <div className="h-1.5 bg-[#735c00] w-full" />
 
-              <div className="p-6 md:p-8 space-y-6">
-                <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
-                  <div>
-                    <h3 className="text-2xl font-serif text-[#735c00] font-bold flex items-center gap-2">
-                      <Sparkles className="w-6 h-6 text-[#fed65b] fill-[#fed65b]" />
-                      Novo Evento
-                    </h3>
-                    <p className="text-xs text-[#73777f]">Inscreva uma nova atividade na Hall of the Novice EX.</p>
-                  </div>
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="p-1 rounded-full hover:bg-[#e5e2da] text-[#43474e] transition-colors cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleCreateEvent} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Day Selector */}
-                    <div>
-                      <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                        Dia do Mês
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        max={currentMonth.daysCount}
-                        required
-                        value={newEventDay}
-                        onChange={(e) => setNewEventDay(Number(e.target.value))}
-                        className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                      />
-                    </div>
-
-                    {/* Time Input */}
-                    <div>
-                      <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                        Horário (Período)
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: 09:00 — 11:30"
-                        value={newEventTime}
-                        onChange={(e) => setNewEventTime(e.target.value)}
-                        className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <div>
-                    <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                      Nome da Disciplina / Atividade
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ex: Tática de Combate Avançado contra Seres de Trevas"
-                      value={newEventTitle}
-                      onChange={(e) => setNewEventTitle(e.target.value)}
-                      className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Instructor */}
-                    <div>
-                      <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                        Instrutor Responsável
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: Mestre Valerius"
-                        value={newEventInstructor}
-                        onChange={(e) => setNewEventInstructor(e.target.value)}
-                        className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
-                      />
-                    </div>
-
-                    {/* Type Selector */}
-                    <div>
-                      <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                        Tipo de Disciplina
-                      </label>
-                      <select
-                        value={newEventType}
-                        onChange={(e) => setNewEventType(e.target.value as EventType)}
-                        className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                  <div className="p-6 md:p-8 space-y-6">
+                    <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
+                      <div>
+                        <h3 className="text-2xl font-serif text-[#735c00] font-bold flex items-center gap-2">
+                          <Sparkles className="w-6 h-6 text-[#fed65b] fill-[#fed65b]" />
+                          Novo Evento
+                        </h3>
+                        <p className="text-xs text-[#73777f]">Inscreva uma nova atividade na Hall of the Novice EX.</p>
+                      </div>
+                      <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="p-1 rounded-full hover:bg-[#e5e2da] text-[#43474e] transition-colors cursor-pointer"
                       >
-                        <option value="spells">Magia (Spells)</option>
-                        <option value="tactics">Tática de Batalha (Tactics)</option>
-                        <option value="alchemy">Alquimia (Alchemy)</option>
-                        <option value="ritual">Ritual Sagrado (Ritual)</option>
-                        <option value="other">Outros Saberes</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                      Descrição Detalhada da Atividade
-                    </label>
-                    <textarea
-                      rows={3}
-                      placeholder="Indique as orientações e materiais exigidos aos estudantes..."
-                      value={newEventDesc}
-                      onChange={(e) => setNewEventDesc(e.target.value)}
-                      className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30 resize-none"
-                    />
-                  </div>
-
-                  {/* Illustration Image Preset Picker Grid */}
-                  <div>
-                    <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                      Banner
-                    </label>
-                    <div className="grid grid-cols-6 gap-2">
-                      {IMAGE_PRESETS.map((p) => {
-                        const isSelected = newEventImage === p.url;
-                        return (
-                          <button
-                            type="button"
-                            key={p.id}
-                            onClick={() => setNewEventImage(p.url)}
-                            className={`h-12 rounded-lg overflow-hidden relative border-2 cursor-pointer transition-all ${isSelected ? 'border-[#735c00] scale-105 shadow' : 'border-transparent opacity-60 hover:opacity-100'
-                              }`}
-                            title={p.name}
-                          >
-                            <img src={p.url} alt={p.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                            {isSelected && (
-                              <div className="absolute inset-0 bg-[#735c00]/20 flex items-center justify-center">
-                                <Check className="w-4 h-4 text-white drop-shadow font-bold" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {/* Manual URL input fallback */}
-                    <input
-                      type="text"
-                      placeholder="Ou cole uma URL customizada de imagem"
-                      value={newEventImage}
-                      onChange={(e) => setNewEventImage(e.target.value)}
-                      className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-1.5 text-xs focus:outline-none mt-2"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Mana progress requirement slider */}
-                    <div>
-                      <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                        Requisito de Mana: {newEventMana}%
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={newEventMana}
-                        onChange={(e) => setNewEventMana(Number(e.target.value))}
-                        className="w-full accent-[#735c00]"
-                      />
+                        <X className="w-5 h-5" />
+                      </button>
                     </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <form onSubmit={handleCreateEvent} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Day Selector */}
+                        <div>
+                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
+                            Dia do Mês
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max={currentMonth.daysCount}
+                            required
+                            value={newEventDay}
+                            onChange={(e) => setNewEventDay(Number(e.target.value))}
+                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                          />
+                        </div>
+
+                        {/* Time Input */}
+                        <div>
+                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
+                            Horário (Período)
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Ex: 09:00 — 11:30"
+                            value={newEventTime}
+                            onChange={(e) => setNewEventTime(e.target.value)}
+                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Title */}
                       <div>
                         <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                          Vagas
+                          Nome da Disciplina / Atividade
                         </label>
                         <input
                           type="text"
-                          value={newEventSpots}
-                          onChange={(e) => setNewEventSpots(e.target.value)}
-                          placeholder="12/40"
-                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-2 py-1.5 text-xs focus:outline-none"
+                          required
+                          placeholder="Ex: Tática de Combate Avançado contra Seres de Trevas"
+                          value={newEventTitle}
+                          onChange={(e) => setNewEventTitle(e.target.value)}
+                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
                         />
                       </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Instructor */}
+                        <div>
+                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
+                            Instrutor Responsável
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Ex: Mestre Valerius"
+                            value={newEventInstructor}
+                            onChange={(e) => setNewEventInstructor(e.target.value)}
+                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                          />
+                        </div>
+
+                        {/* Type Selector */}
+                        <div>
+                          <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
+                            Tipo de Disciplina
+                          </label>
+                          <select
+                            value={newEventType}
+                            onChange={(e) => setNewEventType(e.target.value as EventType)}
+                            className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                          >
+                            <option value="spells">Magia (Spells)</option>
+                            <option value="tactics">Tática de Batalha (Tactics)</option>
+                            <option value="alchemy">Alquimia (Alchemy)</option>
+                            <option value="ritual">Ritual Sagrado (Ritual)</option>
+                            <option value="other">Outros Saberes</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Description */}
                       <div>
                         <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                          Rank
+                          Descrição Detalhada da Atividade
                         </label>
-                        <select
-                          value={newEventRank}
-                          onChange={(e) => setNewEventRank(e.target.value)}
-                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-2 py-1.5 text-xs focus:outline-none"
-                        >
-                          <option value="S-Class">S-Class</option>
-                          <option value="A-Class">A-Class</option>
-                          <option value="B-Class">B-Class</option>
-                          <option value="C-Class">C-Class</option>
-                        </select>
+                        <textarea
+                          rows={3}
+                          placeholder="Indique as orientações e materiais exigidos aos estudantes..."
+                          value={newEventDesc}
+                          onChange={(e) => setNewEventDesc(e.target.value)}
+                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30 resize-none"
+                        />
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Checkbox options */}
-                  <div className="flex gap-4 items-center">
-                    <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={newEventCrystal}
-                        onChange={(e) => setNewEventCrystal(e.target.checked)}
-                        className="accent-[#735c00] cursor-pointer rounded"
-                      />
-                      Mostrar Cristal Flutuante
-                    </label>
-                  </div>
+                      {/* Illustration Image Preset Picker Grid */}
+                      <div>
+                        <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
+                          Banner
+                        </label>
+                        <div className="grid grid-cols-6 gap-2">
+                          {IMAGE_PRESETS.map((p) => {
+                            const isSelected = newEventImage === p.url;
+                            return (
+                              <button
+                                type="button"
+                                key={p.id}
+                                onClick={() => setNewEventImage(p.url)}
+                                className={`h-12 rounded-lg overflow-hidden relative border-2 cursor-pointer transition-all ${isSelected ? 'border-[#735c00] scale-105 shadow' : 'border-transparent opacity-60 hover:opacity-100'
+                                  }`}
+                                title={p.name}
+                              >
+                                <img src={p.url} alt={p.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                {isSelected && (
+                                  <div className="absolute inset-0 bg-[#735c00]/20 flex items-center justify-center">
+                                    <Check className="w-4 h-4 text-white drop-shadow font-bold" />
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {/* Manual URL input fallback */}
+                        <input
+                          type="text"
+                          placeholder="Ou cole uma URL customizada de imagem"
+                          value={newEventImage}
+                          onChange={(e) => setNewEventImage(e.target.value)}
+                          className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-1.5 text-xs focus:outline-none mt-2"
+                        />
+                      </div>
 
-                  {/* Actions buttons */}
-                  <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
-                    <button
-                      type="button"
-                      onClick={() => setIsModalOpen(false)}
-                      className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-3 rounded-xl transition-colors cursor-pointer"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow cursor-pointer border border-[#abc8f5]/20"
-                    >
-                      Inscrever Registro
-                    </button>
+
+
+
+
+                      {/* Checkbox options */}
+                      <div className="flex gap-4 items-center">
+                        <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newEventCrystal}
+                            onChange={(e) => setNewEventCrystal(e.target.checked)}
+                            className="accent-[#735c00] cursor-pointer rounded"
+                          />
+                          Mostrar Cristal Flutuante
+                        </label>
+                      </div>
+
+                      {/* Actions buttons */}
+                      <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
+                        <button
+                          type="button"
+                          onClick={() => setIsModalOpen(false)}
+                          className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-3 rounded-xl transition-colors cursor-pointer"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow cursor-pointer border border-[#abc8f5]/20"
+                        >
+                          Inscrever Registro
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </form>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            )}
+          </AnimatePresence>
 
-    </div>
-  );
+        </div>
+        );
 }

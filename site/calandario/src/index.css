@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Hanken Grotesk", sans-serif;
+  --font-caps: "Space Grotesk", sans-serif;
+
+  /* Custom palette matching the original HTML configuration */
+  --color-primary-fixed: #d3e3ff;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-outline: #73777f;
+  --color-outline-variant: #c3c6cf;
+  --color-secondary-container: #fed65b;
+  --color-on-secondary-fixed: #241a00;
+  --color-primary-container: #1a3a5f;
+  --color-error-container: #ffdad6;
+  --color-inverse-surface: #31312b;
+  --color-on-surface: #1c1c17;
+  --color-primary-fixed-dim: #abc8f5;
+  --color-on-surface-variant: #43474e;
+  --color-on-primary-container: #87a4cf;
+  --color-inverse-on-surface: #f4f1e8;
+  --color-on-tertiary-fixed: #231141;
+  --color-surface-container-low: #f6f3ea;
+  --color-on-tertiary-fixed-variant: #503d6f;
+  --color-inverse-primary: #abc8f5;
+  --color-secondary: #735c00;
+  --color-secondary-fixed-dim: #e9c349;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e5e2da;
+  --color-surface: #fcf9f0;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-container: #af99d1;
+  --color-on-primary-fixed-variant: #2a486e;
+  --color-primary: #002446;
+  --color-on-primary-fixed: #001c39;
+  --color-surface-container-highest: #e5e2da;
+  --color-on-error-container: #93000a;
+  --color-tertiary-fixed: #ecdcff;
+  --color-on-secondary-container: #745c00;
+  --color-on-tertiary: #ffffff;
+  --color-surface-bright: #fcf9f0;
+  --color-background: #fcf9f0;
+  --color-surface-container-high: #ebe8df;
+  --color-surface-dim: #dddad1;
+  --color-surface-tint: #426087;
+  --color-on-background: #1c1c17;
+  --color-tertiary-fixed-dim: #d3bcf7;
+  --color-on-secondary-fixed-variant: #574500;
+  --color-surface-container: #f1eee5;
+  --color-tertiary: #2c1a49;
+  --color-tertiary-container: #423061;
+  --color-on-secondary: #ffffff;
+  --color-secondary-fixed: #ffe088;
+}
+
+/* Base custom definitions */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+}
+
+.filigree-corner {
+  position: relative;
+}
+
+.filigree-corner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2C2 10.8366 9.16344 18 18 18H22' stroke='%23735c00' stroke-width='0.5'/%3E%3Cpath d='M2 6C2 12.6274 7.37258 18 14 18' stroke='%23735c00' stroke-width='0.5'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.parchment-texture {
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+  background-blend-mode: multiply;
+}
+
+.crystal-glow {
+  box-shadow: 0 0 15px rgba(171, 200, 245, 0.4);
+}
+
+.mana-vial-gradient {
+  background: linear-gradient(180deg, rgba(171, 200, 245, 0.2) 0%, rgba(66, 96, 135, 0.6) 100%);
+}
+
+/* Arcane Glow Effects */
+.arcane-glow {
+  transition: all 0.3s ease;
+}
+
+.arcane-glow:hover {
+  box-shadow: 0 0 20px rgba(171, 200, 245, 0.6), inset 0 0 15px rgba(254, 214, 91, 0.2);
+  animation: arcane-pulse 2s infinite ease-in-out;
+  transform: translateY(-2px);
+  z-index: 10;
+}
+
+@keyframes arcane-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(171, 200, 245, 0.6), inset 0 0 10px rgba(254, 214, 91, 0.1); }
+  50% { box-shadow: 0 0 35px rgba(171, 200, 245, 0.8), inset 0 0 20px rgba(254, 214, 91, 0.3); }
+}
+
+/* Enhanced Today Pulse */
+.today-pulse {
+  animation: today-magical-pulse 3s infinite ease-in-out;
+}
+
+@keyframes today-magical-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(116, 92, 0, 0.3), inset 0 0 10px rgba(254, 214, 91, 0.2);
+    border-color: rgba(115, 92, 0, 0.6);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(116, 92, 0, 0.5), inset 0 0 15px rgba(254, 214, 91, 0.4);
+    border-color: rgba(115, 92, 0, 1);
+  }
+}
+
+/* Floating Crystal Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 2px #abc8f5); opacity: 0.7; }
+  50% { filter: drop-shadow(0 0 8px #abc8f5); opacity: 1; }
+}
+
+.floating-crystal {
+  animation: float 4s ease-in-out infinite, glow 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 20;
+}

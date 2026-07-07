@@ -1,0 +1,14 @@
+{
+  "buildCommand": "cd calendario && npm install && npm run build",
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/calendario/:path*",
+      "destination": "/dist-calendario/:path*"
+    },
+    {
+      "source": "/calendario",
+      "destination": "/dist-calendario/index.html"
+    }
+  ]
+}

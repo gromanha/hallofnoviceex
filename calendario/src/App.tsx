@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   motion,
   AnimatePresence
@@ -6,7 +6,6 @@ import {
 import {
   BookOpen,
   Sparkles,
-  User,
   PlusCircle,
   Layers,
   Wand2,
@@ -20,13 +19,10 @@ import {
   Check,
   Plus,
   Trash2,
-  Gem,
   Compass,
-  Map,
   Star,
   Clock,
-  AlertCircle,
-  Eye
+  AlertCircle
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventType } from './types';
 import bgImage from './assets/id.png';
@@ -135,7 +131,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     title: "Ritual de Cristais: Focalização Elemental",
     description: "Traga seu prisma pessoal de nível 3 para o Salão Sul. Foco em alinhamento de canais de energia elemental pura.",
     instructor: "Mestra Seraphina",
-    type: "atividades-semanais",
+    type: "ritual-sagrado",
     indicators: ['secondary']
   },
   {
@@ -147,7 +143,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Ronda de vigilância mística ao redor dos portões principais da academia sob a luz das estrelas e escudos translúcidos.",
     instructor: "Guarda Rúnico Alistair",
     image: IMAGE_PRESETS[3].url,
-    type: "atividades-semanais",
+    type: "ritual-sagrado",
     indicators: ['error']
   },
   {
@@ -184,7 +180,7 @@ const INITIAL_EVENTS: MagicalEvent[] = [
     description: "Excursão prática aos jardins sagrados para colheita de lavanda mística sob o orvalho da manhã e rituais de crescimento rápido.",
     instructor: "Mestra Flora",
     image: IMAGE_PRESETS[4].url,
-    type: "evento-sazonal",
+    type: "outros",
     crystal: true,
     indicators: ['primary', 'secondary']
   }
@@ -1031,6 +1027,8 @@ export default function App() {
             )}
           </AnimatePresence>
 
+        </aside>
+        </main>
         </div>
-        );
+    );
 }

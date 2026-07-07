@@ -1,11 +1,11 @@
-import { supabaseAdmin, supabaseAnon } from './lib/supabase.js';
+import { getSupabaseAdmin, getSupabaseAnon } from './lib/supabase.js';
 import { requireAdmin } from './lib/auth.js';
 
 export default async function handler(req, res) {
   try {
     // GET — leitura pública
     if (req.method === 'GET') {
-      const { data, error } = await supabaseAnon
+      const { data, error } = await getSupabaseAnon()
         .from('event_types')
         .select('*')
         .order('sort_order', { ascending: true });
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'key_and_label_required' });
       }
       const slug = String(key).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getSupabaseAdmin()
         .from('event_types')
         .insert({
           key: slug,
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         if (payload.key) {
           payload.key = String(payload.key).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
         }
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
           .from('event_types')
           .update(payload)
           .eq('id', id)
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'DELETE') {
-        const { error } = await supabaseAdmin.from('event_types').delete().eq('id', id);
+        const { error } = await getSupabaseAdmin().from('event_types').delete().eq('id', id);
         if (error) throw error;
         return res.json({ ok: true });
       }

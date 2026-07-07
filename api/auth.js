@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './lib/supabase.js';
+import { getSupabaseAdmin } from './lib/supabase.js';
 import { signAdminToken, setAuthCookie, clearAuthCookie, requireAdmin } from './lib/auth.js';
 import bcrypt from 'bcryptjs';
 
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'password_too_short' });
       }
 
-      const { count, error: countErr } = await supabaseAdmin
+      const { count, error: countErr } = await getSupabaseAdmin()
         .from('admins')
         .select('*', { count: 'exact', head: true });
       if (countErr) throw countErr;
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       }
 
       const password_hash = await bcrypt.hash(String(password), 12);
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getSupabaseAdmin()
         .from('admins')
         .insert({ username: String(username), password_hash, display_name: display_name || null })
         .select('id, username, display_name')
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       if (!username || !password) {
         return res.status(400).json({ error: 'username_and_password_required' });
       }
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getSupabaseAdmin()
         .from('admins')
         .select('id, username, display_name, password_hash')
         .eq('username', String(username))

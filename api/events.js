@@ -1,11 +1,11 @@
-import { supabaseAdmin, supabaseAnon } from './lib/supabase.js';
+import { getSupabaseAdmin, getSupabaseAnon } from './lib/supabase.js';
 import { requireAdmin } from './lib/auth.js';
 
 export default async function handler(req, res) {
   try {
     // GET — leitura pública
     if (req.method === 'GET') {
-      const { data, error } = await supabaseAnon
+      const { data, error } = await getSupabaseAnon()
         .from('events')
         .select('*')
         .order('day', { ascending: true });
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       if (!payload.month || !payload.day || !payload.time || !payload.title || !payload.type) {
         return res.status(400).json({ error: 'missing_required_fields' });
       }
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getSupabaseAdmin()
         .from('events')
         .insert(payload)
         .select()
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       if (!id) return res.status(400).json({ error: 'id_required' });
 
       if (req.method === 'PATCH') {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
           .from('events')
           .update({ ...req.body, updated_at: new Date().toISOString() })
           .eq('id', id)
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'DELETE') {
-        const { error } = await supabaseAdmin.from('events').delete().eq('id', id);
+        const { error } = await getSupabaseAdmin().from('events').delete().eq('id', id);
         if (error) throw error;
         return res.json({ ok: true });
       }

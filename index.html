@@ -7,8 +7,8 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta name="theme-color" content="#1A5E5E" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0F1419" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#1D6A6A" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121921" media="(prefers-color-scheme: dark)">
     <title>Hall of the Novice EX | Majestic Battle Academy</title>
     <!-- Preconnect para Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,32 +18,32 @@
     <style>
         /* Design System e Variáveis de Cor baseadas no Códice da Comunidade */
         :root {
-            --bg-app: #F8F5EE; /* Marfim Pergaminho Suave */
-            --bg-sidebar: #FDFCFA; /* Branco Pérola Quente */
+            --bg-app: #FAF6ED; /* Parchment Ivory — warm sunlit stone */
+            --bg-sidebar: #FFFFFF; /* Pearl White */
             --bg-card: #FFFFFF;
-            --text-main: #2D3748; /* Cinza-Ardósia Profundo */
-            --text-muted: #5A6B7A;
-            --border-color: rgba(29, 106, 106, 0.08);
+            --text-main: #3E4A56; /* Slate Ink */
+            --text-muted: #6B7A8A; /* Muted Slate */
+            --border-color: rgba(29, 106, 106, 0.1); /* Teal Border */
             
-            /* Paleta Sharlayan Refinada */
-            --teal: #1A5E5E; /* Verde-Água Sharlayan Profundo */
-            --teal-dark: #0F3D3D;
-            --teal-light: #E4F0F0;
-            --teal-accent: #2D7A7A;
-            --gold: #C9A227; /* Ouro Antiquado */
-            --gold-light: #F4E4C1;
-            --gold-accent: #D4B84A;
-            --gold-muted: #A68B1F;
-            --lavender: #8B7AA8; /* Lavanda do Campus Elegante */
-            --lavender-light: #E8E3EF;
-            --lavender-muted: #6B5A8A;
+            /* Sharlayan Teal Palette */
+            --teal: #1D6A6A; /* Sharlayan Teal */
+            --teal-dark: #124949; /* Deep Teal */
+            --teal-light: #E8F4F4; /* Teal Mist */
+            --teal-accent: #2A8A8A;
+            --gold: #D4AF37; /* Scholar's Gold */
+            --gold-light: #F5E6B8; /* Gold Parchment */
+            --gold-accent: #E5C158; /* Gold Highlight */
+            --gold-muted: #8B7318;
+            --lavender: #9B8BB4; /* Campus Lavender */
+            --lavender-light: #EDE8F3; /* Lavender Mist */
+            --lavender-muted: #7A6B94;
             
-            /* Cores de Suporte */
-            --rose: #C46B7D; /* Rosa Acadêmico */
+            /* Supporting Colors */
+            --rose: #C46B7D; /* Rose Academic */
             --rose-light: #F4E3E7;
-            --sage: #6B8F7D; /* Verde Salvia */
+            --sage: #6B8F71; /* Sage Green */
             --sage-light: #E3EDE5;
-            --cream: #F9F6F0; /* Creme Pergaminho */
+            --cream: #FAF6ED;
             
             /* Crystal — Magical Accent */
             --crystal: #5ECFCF;
@@ -60,30 +60,30 @@
             --space-3xl: 64px;
             --space-4xl: 96px;
 
-            /* Sombras e Efeitos */
-            --shadow-sm: 0 1px 3px rgba(45, 55, 72, 0.04), 0 1px 2px rgba(45, 55, 72, 0.06);
-            --shadow-md: 0 4px 6px rgba(45, 55, 72, 0.04), 0 10px 20px rgba(45, 55, 72, 0.06);
-            --shadow-lg: 0 10px 15px rgba(45, 55, 72, 0.04), 0 20px 40px rgba(45, 55, 72, 0.08);
-            --shadow-xl: 0 15px 25px rgba(45, 55, 72, 0.06), 0 25px 50px rgba(45, 55, 72, 0.1);
-            --radius-lg: 16px;
-            --radius-md: 12px;
+            /* Shadows & Effects — DESIGN.md */
+            --shadow-sm: 0 2px 8px rgba(62, 74, 86, 0.04);
+            --shadow-md: 0 8px 24px rgba(62, 74, 86, 0.08);
+            --shadow-lg: 0 16px 40px rgba(62, 74, 86, 0.12);
+            --shadow-xl: 0 16px 40px rgba(62, 74, 86, 0.12);
+            --radius-lg: 20px;
+            --radius-md: 14px;
             --radius-sm: 8px;
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             
-            /* Cores do Modal */
-            --modal-bg: #FDFCFA;
-            --modal-text: #2D3748;
-            --modal-header-bg: linear-gradient(180deg, rgba(248, 245, 238, 0.8) 0%, rgba(253, 252, 250, 1) 100%);
+            /* Modal Colors */
+            --modal-bg: #FFFFFF;
+            --modal-text: #3E4A56;
+            --modal-header-bg: linear-gradient(180deg, rgba(250, 246, 237, 0.8) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
-        /* Modo Noturno Eorzeano */
+        /* Eorzean Nightfall — Dark Mode */
         [data-theme="dark"] {
-            --bg-app: #0F1419; /* Noite Profunda */
-            --bg-sidebar: #141B22; /* Azul-Nebulosa */
-            --bg-card: #1A2332;
-            --text-main: #E8ECF1;
-            --text-muted: #8896A6;
-            --border-color: rgba(196, 162, 39, 0.1);
+            --bg-app: #121921; /* Deep Night */
+            --bg-sidebar: #18222C; /* Nebula Blue */
+            --bg-card: #18222C;
+            --text-main: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border-color: rgba(229, 193, 88, 0.1);
             
             --teal: #4ECDC4;
             --teal-dark: #38A89D;
@@ -105,15 +105,15 @@
             --crystal: #7EEEE5;
             --crystal-light: rgba(126, 238, 229, 0.1);
             
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.25);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15), 0 20px 40px rgba(0, 0, 0, 0.25);
-            --shadow-xl: 0 15px 25px rgba(0, 0, 0, 0.2), 0 25px 50px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.35);
+            --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.35);
             
-            /* Cores do Modal (Modo Escuro) */
-            --modal-bg: #141B22;
-            --modal-text: #E8ECF1;
-            --modal-header-bg: linear-gradient(180deg, rgba(15, 20, 25, 0.8) 0%, rgba(20, 27, 34, 1) 100%);
+            /* Modal Colors (Dark Mode) */
+            --modal-bg: #18222C;
+            --modal-text: #E2E8F0;
+            --modal-header-bg: linear-gradient(180deg, rgba(18, 25, 33, 0.8) 0%, rgba(24, 34, 44, 1) 100%);
         }
 
         /* Configurações Gerais */
@@ -131,6 +131,8 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-app);
             color: var(--text-main);
+            font-size: 15px;
+            line-height: 1.75;
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
             overflow-x: hidden;
@@ -145,11 +147,11 @@
             background: rgba(0, 0, 0, 0.02);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(26, 94, 94, 0.4);
+            background: rgba(29, 106, 106, 0.4);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(26, 94, 94, 0.6);
+            background: rgba(29, 106, 106, 0.6);
         }
 
         [data-theme="dark"] ::-webkit-scrollbar-track {
@@ -313,7 +315,7 @@
 
         .nav-link.active {
             font-weight: 600;
-            border-color: rgba(201, 162, 39, 0.2);
+            border-color: rgba(212, 175, 55, 0.25);
             box-shadow: var(--shadow-sm);
         }
 
@@ -333,7 +335,7 @@
             background: linear-gradient(135deg, var(--lavender-light) 0%, var(--teal-light) 100%);
             border-radius: var(--radius-md);
             text-align: center;
-            border: 1px solid rgba(201, 162, 39, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .sidebar-footer p {
@@ -356,12 +358,12 @@
             cursor: pointer;
             text-decoration: none;
             transition: var(--transition);
-            box-shadow: 0 4px 10px rgba(26, 94, 94, 0.25);
+            box-shadow: 0 4px 10px rgba(29, 106, 106, 0.2);
         }
 
         .btn-discord:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(26, 94, 94, 0.35);
+            box-shadow: 0 6px 15px rgba(29, 106, 106, 0.3);
         }
 
         /* Main Content Area */
@@ -494,7 +496,7 @@
         /* Hero Banner - Com a imagem identidade visual 2k no background */
         .hero-banner {
             position: relative;
-            background: linear-gradient(135deg, rgba(15, 61, 61, 0.94) 0%, rgba(26, 94, 94, 0.88) 50%, rgba(139, 122, 168, 0.25) 100%), url('assets/id.png') no-repeat center center;
+            background: linear-gradient(135deg, rgba(18, 73, 73, 0.94) 0%, rgba(29, 106, 106, 0.88) 50%, rgba(155, 139, 180, 0.25) 100%), url('assets/id.png') no-repeat center center;
             background-size: cover;
             border-radius: var(--radius-lg);
             padding: clamp(32px, 5vw, 56px) clamp(32px, 5vw, 60px);
@@ -504,7 +506,7 @@
             justify-content: space-between;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(201, 162, 39, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .hero-content {
@@ -537,14 +539,14 @@
             gap: var(--space-xs);
             padding: var(--space-sm) clamp(20px, 3vw, 32px);
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-muted) 100%);
-            color: #FFFFFF;
+            color: var(--teal-dark);
             border: none;
             border-radius: 25px;
             font-weight: 700;
             font-size: 13px;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -552,7 +554,7 @@
         .btn-hero:hover {
             transform: translateY(-2px);
             background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold) 100%);
-            box-shadow: 0 6px 16px rgba(201, 162, 39, 0.4);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
         }
 
         /* Grid de Conteúdo (Dashboard) */
@@ -657,13 +659,13 @@
         }
 
         .post-card-header.bg-teal {
-            background: linear-gradient(135deg, var(--teal-light) 0%, rgba(26, 94, 94, 0.35) 100%);
+            background: linear-gradient(135deg, var(--teal-light) 0%, rgba(29, 106, 106, 0.35) 100%);
         }
         .post-card-header.bg-gold {
-            background: linear-gradient(135deg, var(--gold-light) 0%, rgba(201, 162, 39, 0.35) 100%);
+            background: linear-gradient(135deg, var(--gold-light) 0%, rgba(212, 175, 55, 0.35) 100%);
         }
         .post-card-header.bg-lavender {
-            background: linear-gradient(135deg, var(--lavender-light) 0%, rgba(139, 122, 168, 0.35) 100%);
+            background: linear-gradient(135deg, var(--lavender-light) 0%, rgba(155, 139, 180, 0.35) 100%);
         }
         .post-card-header.bg-mixed {
             background: linear-gradient(135deg, var(--teal-light) 0%, var(--lavender-light) 100%);
@@ -922,17 +924,17 @@
             border-radius: var(--radius-sm);
             padding: var(--space-md);
             text-align: center;
-            border: 1px solid rgba(26, 94, 94, 0.06);
+            border: 1px solid rgba(29, 106, 106, 0.06);
         }
 
         .stat-card.alt-gold {
             background-color: var(--gold-light);
-            border-color: rgba(201, 162, 39, 0.06);
+            border-color: rgba(212, 175, 55, 0.06);
         }
 
         .stat-card.alt-lavender {
             background-color: var(--lavender-light);
-            border-color: rgba(139, 122, 168, 0.06);
+            border-color: rgba(155, 139, 180, 0.06);
         }
 
         .stat-value {
@@ -1005,9 +1007,9 @@
             height: 85vh;
             background-color: var(--modal-bg);
             color: var(--modal-text);
-            border-radius: var(--radius-lg);
-            border: 2px solid var(--gold-muted);
-            box-shadow: var(--shadow-xl);
+            border-radius: 20px;
+            border: 3px double var(--gold);
+            box-shadow: var(--shadow-lg);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -1026,7 +1028,7 @@
 
         .modal-card-header {
             padding: var(--space-xl) var(--space-2xl);
-            border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
             background: var(--modal-header-bg);
             display: flex;
             justify-content: space-between;
@@ -1042,7 +1044,7 @@
         .modal-tag {
             display: inline-block;
             padding: var(--space-2xs) var(--space-sm);
-            background-color: rgba(26, 94, 94, 0.1);
+            background-color: rgba(29, 106, 106, 0.1);
             color: var(--teal);
             font-size: 11px;
             font-weight: 700;
@@ -1101,7 +1103,7 @@
             font-family: 'Cinzel', serif;
             color: var(--teal-dark);
             margin: var(--space-xl) 0 var(--space-md) 0;
-            border-bottom: 2px solid rgba(26, 94, 94, 0.12);
+            border-bottom: 2px solid rgba(29, 106, 106, 0.12);
             padding-bottom: var(--space-xs);
             font-size: 18px;
         }
@@ -1150,18 +1152,18 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            border: 1px solid rgba(201, 162, 39, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         [data-theme="dark"] .modal-card-body table {
-            background-color: rgba(20, 27, 34, 0.5);
+            background-color: rgba(24, 34, 44, 0.5);
             border-color: rgba(232, 197, 71, 0.1);
         }
 
         .modal-card-body th, .modal-card-body td {
             padding: var(--space-sm) var(--space-md);
             text-align: left;
-            border-bottom: 1px solid rgba(45, 55, 72, 0.06);
+            border-bottom: 1px solid rgba(62, 74, 86, 0.06);
             font-size: 13px;
         }
 
@@ -1175,20 +1177,20 @@
 
         [data-theme="dark"] .modal-card-body th {
             background-color: var(--teal-dark);
-            color: #E8ECF1;
+            color: var(--text-main);
         }
 
         .modal-card-body tr:hover {
-            background-color: rgba(248, 245, 238, 0.6);
+            background-color: rgba(250, 246, 237, 0.6);
         }
 
         [data-theme="dark"] .modal-card-body tr:hover {
-            background-color: rgba(20, 27, 34, 0.5);
+            background-color: rgba(24, 34, 44, 0.5);
         }
 
         /* Caixas de Alerta e Notas */
         .modal-card-body .academic-note {
-            background-color: rgba(139, 122, 168, 0.06);
+            background-color: rgba(155, 139, 180, 0.06);
             border-left: 4px solid var(--lavender);
             padding: var(--space-lg);
             margin: var(--space-xl) 0;
@@ -1197,8 +1199,8 @@
         }
 
         .modal-card-body .alert-box {
-            background-color: rgba(201, 162, 39, 0.06);
-            border-left: 4px solid var(--gold-muted);
+            background-color: rgba(212, 175, 55, 0.06);
+            border-left: 4px solid var(--gold);
             padding: var(--space-lg);
             margin: var(--space-xl) 0;
             border-radius: 0 8px 8px 0;
@@ -1206,7 +1208,7 @@
         }
 
         .modal-card-body blockquote {
-            background-color: rgba(201, 162, 39, 0.04);
+            background-color: rgba(212, 175, 55, 0.04);
             border-left: 4px solid var(--gold);
             padding: var(--space-md) var(--space-lg);
             margin: var(--space-lg) 0;
@@ -1214,23 +1216,23 @@
             border-radius: 0 6px 6px 0;
         }
 
-        /* Blocos de Código (Macros e Prompts) */
+        /* Code Blocks */
         .modal-card-body pre {
-            background-color: #1A2332;
-            color: #E8ECF1;
+            background-color: var(--bg-card);
+            color: var(--text-main);
             padding: var(--space-lg);
             border-radius: 8px;
             overflow-x: auto;
             font-family: 'Courier New', Courier, monospace;
             font-size: 13px;
             margin: var(--space-md) 0;
-            border-left: 4px solid var(--gold-muted);
+            border-left: 4px solid var(--gold);
             white-space: pre-wrap;
             word-wrap: break-word;
         }
 
         .modal-card-body code {
-            background-color: rgba(26, 94, 94, 0.1);
+            background-color: rgba(29, 106, 106, 0.1);
             color: var(--teal);
             padding: 2px 6px;
             border-radius: 4px;
@@ -1269,7 +1271,7 @@
         .modal-footer-meta {
             margin-top: var(--space-xl);
             padding-top: var(--space-lg);
-            border-top: 1px solid rgba(201, 162, 39, 0.12);
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
             display: flex;
             align-items: center;
             justify-content: space-between;

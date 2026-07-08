@@ -41,9 +41,13 @@
             /* Cores de Suporte */
             --rose: #C46B7D; /* Rosa Acadêmico */
             --rose-light: #F4E3E7;
-            --sage: #6B8F71; /* Verde Salvia */
+            --sage: #6B8F7D; /* Verde Salvia */
             --sage-light: #E3EDE5;
             --cream: #F9F6F0; /* Creme Pergaminho */
+            
+            /* Crystal — Magical Accent */
+            --crystal: #5ECFCF;
+            --crystal-light: #D4F5F5;
             
             /* Escala de Espaçamento (4pt base) */
             --space-2xs: 4px;
@@ -98,6 +102,8 @@
             --sage: #7FB888;
             --sage-light: rgba(127, 184, 136, 0.1);
             --cream: #1E2A36;
+            --crystal: #7EEEE5;
+            --crystal-light: rgba(126, 238, 229, 0.1);
             
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.25);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -1494,6 +1500,22 @@
                 background: #fff;
                 color: #000;
             }
+        }
+
+        /* ── Watercolor Gradients (from DESIGN.md) ── */
+        .wash-teal {
+            background: linear-gradient(135deg, var(--teal-light) 0%, transparent 100%);
+        }
+        .wash-gold {
+            background: linear-gradient(135deg, var(--gold-light) 0%, transparent 100%);
+        }
+        .wash-sunset {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--lavender-light) 100%);
+        }
+
+        /* ── Crystal Glow (from DESIGN.md) ── */
+        .crystal-glow {
+            box-shadow: 0 0 12px rgba(94, 207, 207, 0.15);
         }
     </style>
 </head>

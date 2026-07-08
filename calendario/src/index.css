@@ -185,6 +185,27 @@ a:focus-visible,
 
   /* Focus */
   --color-focus-ring: #735C00;
+
+  /* Crystal — Magical Accent */
+  --color-crystal: #5ECFCF;
+  --color-crystal-light: #D4F5F5;
+
+  /* Flora & Rose — Supporting */
+  --color-rose: #C46B7D;
+  --color-rose-light: #F4E3E7;
+  --color-sage: #6B8F71;
+  --color-sage-light: #E3EDE5;
+}
+
+/* ── Watercolor Gradients (from DESIGN.md) ── */
+.wash-teal {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, transparent 100%);
+}
+.wash-gold {
+  background: linear-gradient(135deg, var(--color-secondary-light) 0%, transparent 100%);
+}
+.wash-sunset {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-tertiary-light) 100%);
 }
 
 /* Base custom definitions */
@@ -210,7 +231,7 @@ a:focus-visible,
 }
 
 .crystal-glow {
-  box-shadow: 0 0 15px rgba(29, 106, 106, 0.4);
+  box-shadow: 0 0 12px rgba(94, 207, 207, 0.15);
 }
 
 .mana-vial-gradient {

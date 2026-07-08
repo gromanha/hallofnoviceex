@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-08T14:00:00Z",
+  "title": "Design System: Calendario Hall of the Novice EX",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Sharlayan Teal",
+        "canonical": "#1D6A6A",
+        "tonalRamp": ["#0A2E2E", "#0F3D3D", "#145050", "#1D6A6A", "#2A8585", "#4A9E9E", "#7ABABA", "#B5E0E0"]
+      },
+      "primary-deep": {
+        "role": "primary",
+        "displayName": "Deep Teal",
+        "canonical": "#124949",
+        "tonalRamp": ["#061E1E", "#0A2E2E", "#0F3D3D", "#124949", "#1A6060", "#257575", "#3A9090", "#5AAEAE"]
+      },
+      "primary-light": {
+        "role": "primary",
+        "displayName": "Teal Mist",
+        "canonical": "#E8F4F4",
+        "tonalRamp": ["#C0E0E0", "#D0E8E8", "#E0F0F0", "#E8F4F4", "#F0F8F8", "#F5FAFA", "#FAFCFC", "#FDFFFF"]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Scholar's Gold",
+        "canonical": "#D4AF37",
+        "tonalRamp": ["#6B581C", "#8A7224", "#A68C2C", "#D4AF37", "#E0C050", "#E8CF70", "#F0DF98", "#F8EF C8"]
+      },
+      "secondary-light": {
+        "role": "secondary",
+        "displayName": "Gold Parchment",
+        "canonical": "#F5E6B8",
+        "tonalRamp": ["#C8B070", "#D4C088", "#E0D0A0", "#F5E6B8", "#F8ECCA", "#FAF0D8", "#FCF4E4", "#FEFAF2"]
+      },
+      "secondary-accent": {
+        "role": "secondary",
+        "displayName": "Gold Highlight",
+        "canonical": "#E5C158",
+        "tonalRamp": ["#7A6428", "#9A8030", "#B89C40", "#E5C158", "#EACC70", "#F0D888", "#F5E4A0", "#FAF0C0"]
+      },
+      "tertiary": {
+        "role": "tertiary",
+        "displayName": "Campus Lavender",
+        "canonical": "#9B8BB4",
+        "tonalRamp": ["#4A4060", "#5E5078", "#746890", "#9B8BB4", "#AEA0C4", "#C0B4D0", "#D4CC E0", "#E8E4F0"]
+      },
+      "tertiary-light": {
+        "role": "tertiary",
+        "displayName": "Lavender Mist",
+        "canonical": "#EDE8F3",
+        "tonalRamp": ["#C0B8D0", "#D0C8DC", "#E0D8E8", "#EDE8F3", "#F2EFF6", "#F6F4F8", "#FAF8FB", "#FDFCFE"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Parchment Ivory",
+        "canonical": "#FAF6ED",
+        "tonalRamp": ["#E0D8C8", "#E8E0D0", "#F0E8D8", "#FAF6ED", "#FCFAF5", "#FDFCF8", "#FEFDFB", "#FFFFFF"]
+      },
+      "neutral-surface": {
+        "role": "neutral",
+        "displayName": "Pearl White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#E8E8E8", "#F0F0F0", "#F5F5F5", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]
+      },
+      "neutral-surface-alt": {
+        "role": "neutral",
+        "displayName": "Linen",
+        "canonical": "#F6F3EA",
+        "tonalRamp": ["#D8D0C0", "#E0D8C8", "#EAE4D8", "#F6F3EA", "#F8F6F0", "#FAF8F4", "#FCFBF8", "#FEFDFC"]
+      },
+      "neutral-text": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#3E4A56",
+        "tonalRamp": ["#1A2028", "#252E38", "#323E4A", "#3E4A56", "#506070", "#687888", "#8090A0", "#A0B0C0"]
+      },
+      "neutral-muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#6B7A8A",
+        "tonalRamp": ["#3A4450", "#4A5660", "#5A6878", "#6B7A8A", "#8090A0", "#98A8B8", "#B0C0D0", "#D0E0F0"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Calendar title, section headers. Always Cinzel." },
+      "headline": { "displayName": "Headline", "purpose": "Sidebar sections, modal titles, event headings." },
+      "title": { "displayName": "Title", "purpose": "Event titles in ledger, card headers." },
+      "body": { "displayName": "Body", "purpose": "Event descriptions, readable content." },
+      "label": { "displayName": "Label", "purpose": "Filter labels, metadata, category tags." },
+      "mono": { "displayName": "Mono", "purpose": "Day numbers, timestamps, technical identifiers." }
+    },
+    "shadows": [
+      { "name": "card-ambient", "value": "0 1px 3px rgba(62, 74, 86, 0.06)", "purpose": "Default state for cards and containers." },
+      { "name": "card-hover", "value": "0 4px 12px rgba(62, 74, 86, 0.1)", "purpose": "Appears on hover/focus for interactive cards." },
+      { "name": "modal-elevated", "value": "0 16px 48px rgba(62, 74, 86, 0.15)", "purpose": "Modal overlays and focused elements." },
+      { "name": "crystal-glow", "value": "0 0 12px rgba(171, 200, 245, 0.4)", "purpose": "Decorative glow for crystal icons." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state transitions." },
+      { "name": "ease-out", "value": "cubic-bezier(0.0, 0, 0.2, 1)", "purpose": "Elements entering the screen." },
+      { "name": "ease-in-out", "value": "cubic-bezier(0.4, 0, 0.6, 1)", "purpose": "Elements changing state." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button for save, submit, navigate.",
+      "html": "<button class=\"ds-btn-primary\">Salvar</button>",
+      "css": ".ds-btn-primary { background: #1D6A6A; color: #fff; padding: 10px 20px; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.15s; } .ds-btn-primary:hover { background: #124949; transform: translateY(-1px); } .ds-btn-primary:focus-visible { outline: 2px solid #735C00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Secondary CTA for important actions. Gold background with deep teal text.",
+      "html": "<button class=\"ds-btn-accent\">Criar Evento</button>",
+      "css": ".ds-btn-accent { background: #D4AF37; color: #124949; padding: 10px 20px; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.15s; } .ds-btn-accent:hover { background: #E5C158; transform: translateY(-1px); } .ds-btn-accent:focus-visible { outline: 2px solid #735C00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Tertiary action for cancel, close, secondary interactions.",
+      "html": "<button class=\"ds-btn-ghost\">Cancelar</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #6B7A8A; padding: 8px 12px; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(29, 106, 106, 0.1); border-radius: 8px; cursor: pointer; transition: background 0.2s, color 0.2s; } .ds-btn-ghost:hover { background: #F6F3EA; color: #3E4A56; } .ds-btn-ghost:focus-visible { outline: 2px solid #735C00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Calendar Cell",
+      "kind": "custom",
+      "refersTo": "calendar-cell",
+      "description": "Individual day cell in the calendar grid. Shows day number, event count, and crystal indicator.",
+      "html": "<div class=\"ds-calendar-cell\"><span class=\"ds-calendar-day\">15</span><span class=\"ds-calendar-count\">2 Ativ.</span></div>",
+      "css": ".ds-calendar-cell { background: #FAF6ED; border: 1px solid rgba(29, 106, 106, 0.2); border-radius: 12px; padding: 12px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s; } .ds-calendar-cell:hover { transform: translateY(-2px); border-color: #D4AF37; box-shadow: 0 4px 12px rgba(62, 74, 86, 0.1); } .ds-calendar-cell.selected { background: #D4AF37; border-color: #735C00; } .ds-calendar-day { font-family: 'Cinzel', Georgia, serif; font-size: 18px; font-weight: 700; color: #735C00; } .ds-calendar-cell.selected .ds-calendar-day { color: #124949; } .ds-calendar-count { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 11px; color: #6B7A8A; }"
+    },
+    {
+      "name": "Event Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Event listing in the daily ledger. Shows time, title, type, and instructor.",
+      "html": "<div class=\"ds-event-card\"><span class=\"ds-event-time\">09:00 — 11:30</span><h4 class=\"ds-event-title\">Aula de Magia Arcana</h4><span class=\"ds-event-type\">Spells</span></div>",
+      "css": ".ds-event-card { background: #FFFFFF; border: 1px solid rgba(29, 106, 106, 0.1); border-radius: 16px; padding: 16px; transition: box-shadow 0.2s, border-color 0.2s; } .ds-event-card:hover { box-shadow: 0 4px 12px rgba(62, 74, 86, 0.1); border-color: #D4AF37; } .ds-event-time { font-family: 'Space Grotesk', monospace; font-size: 10px; font-weight: 600; color: #735C00; letter-spacing: 0.08em; text-transform: uppercase; } .ds-event-title { font-family: 'Cinzel', Georgia, serif; font-size: 15px; font-weight: 600; color: #124949; margin: 8px 0; } .ds-event-type { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #1D6A6A; background: #E8F4F4; padding: 2px 8px; border-radius: 9999px; letter-spacing: 0.08em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Filter Button",
+      "kind": "button",
+      "refersTo": "nav-link",
+      "description": "Sidebar filter button for event type selection.",
+      "html": "<button class=\"ds-filter-btn\"><span>Todos Registros</span><span class=\"ds-filter-count\">12</span></button>",
+      "css": ".ds-filter-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-radius: 9999px; border: none; background: transparent; color: #6B7A8A; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; cursor: pointer; transition: background 0.2s, color 0.2s; } .ds-filter-btn:hover { background: #E8F4F4; color: #1D6A6A; } .ds-filter-btn.active { background: #D4AF37; color: #124949; font-weight: 600; } .ds-filter-count { font-family: 'Space Grotesk', monospace; font-size: 10px; background: rgba(255,255,255,0.5); padding: 2px 8px; border-radius: 9999px; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text input for forms. Linen background with teal-tinted border.",
+      "html": "<input class=\"ds-input\" placeholder=\"Título do evento\" />",
+      "css": ".ds-input { width: 100%; background: #F6F3EA; border: 1px solid rgba(29, 106, 106, 0.2); border-radius: 12px; padding: 10px 14px; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; color: #3E4A56; transition: border-color 0.2s, box-shadow 0.2s; } .ds-input:focus { outline: none; border-color: #1D6A6A; box-shadow: 0 0 0 3px rgba(29, 106, 106, 0.15); } .ds-input::placeholder { color: #6B7A8A; }"
+    },
+    {
+      "name": "Modal",
+      "kind": "custom",
+      "refersTo": "modal",
+      "description": "Overlay modal for event and type forms. Gold border treatment.",
+      "html": "<div class=\"ds-modal\"><div class=\"ds-modal-bar\"></div><div class=\"ds-modal-content\"><h3>Novo Evento</h3></div></div>",
+      "css": ".ds-modal { background: #FAF6ED; border: 2px solid #D4AF37; border-radius: 20px; max-width: 480px; width: 100%; box-shadow: 0 16px 48px rgba(62, 74, 86, 0.15); } .ds-modal-bar { height: 4px; background: #D4AF37; border-radius: 20px 20px 0 0; } .ds-modal-content { padding: 24px; } .ds-modal-content h3 { font-family: 'Cinzel', Georgia, serif; font-size: 18px; font-weight: 600; color: #735C00; }"
+    },
+    {
+      "name": "Chip / Tag",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Small pill badge for event type labels.",
+      "html": "<span class=\"ds-chip\">Spells</span>",
+      "css": ".ds-chip { display: inline-block; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 9999px; background: #E8F4F4; color: #1D6A6A; } .ds-chip.gold { background: #F5E6B8; color: #735C00; } .ds-chip.lavender { background: #EDE8F3; color: #9B8BB4; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Schedule Board",
+    "overview": "The calendario design system evokes an ancient academy's schedule board — a living document pinned to a parchment wall, where events are cataloged with the quiet authority of a well-organized institution. Every surface rests on warm ivory parchment; teal carries the institutional identity of the Sharlayan academy; gold marks moments of distinction and active states; lavender adds scholarly softness that prevents the palette from feeling rigid. This system explicitly rejects the sterile utilitarianism of generic calendar apps and the neon-timed urgency of gaming event trackers.",
+    "keyCharacteristics": [
+      "Warm parchment foundation with institutional teal identity",
+      "Serif display type (Cinzel) paired with modern sans-serif body (Hanken Grotesk)",
+      "Soft ambient shadows and gentle transitions — never jarring",
+      "Generous whitespace and calm hierarchy",
+      "Gold reserved for active states and moments of distinction",
+      "Color-coded event types that create visual rhythm without clutter"
+    ],
+    "rules": [
+      { "name": "The Gold Scarcity Rule", "body": "Scholar's Gold appears on ≤10% of any given screen. Its rarity is what makes it meaningful.", "section": "colors" },
+      { "name": "The Parchment Foundation Rule", "body": "The warm ivory background (#FAF6ED) is non-negotiable. Never replace it with pure white (#FFF) or cool gray.", "section": "colors" },
+      { "name": "The Serif Authority Rule", "body": "Cinzel is reserved for display, headlines, and titles — moments where the design speaks with authority. It never appears in body text, labels, or UI chrome.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, elevation, focus).", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the warm parchment background (#FAF6ED) as the canvas for every surface.",
+      "Do reserve Scholar's Gold (#D4AF37) for moments of distinction — CTAs, active states, selected days.",
+      "Do use Cinzel for display and headlines to carry the academic authority of the brand.",
+      "Do keep shadows diffused and ambient. The system breathes through gentle lifts, not dramatic drops.",
+      "Do use generous whitespace and calm hierarchy.",
+      "Do color-code event types with teal, gold, and lavender to create visual rhythm."
+    ],
+    "donts": [
+      "Don't use generic calendar app aesthetics — sterile white backgrounds, flat utilitarian design.",
+      "Don't use gaming event tracker aesthetics — neon timers, countdown urgency, aggressive dark themes.",
+      "Don't replace the warm parchment background with pure white (#FFF) or cool gray.",
+      "Don't use Cinzel in body text, labels, or UI chrome.",
+      "Don't overuse gold. If every element is gold, none of them are special.",
+      "Don't use tight, harsh shadows.",
+      "Don't use navy blue (#002446) as the primary color. The institutional identity is Sharlayan Teal (#1D6A6A)."
+    ]
+  }
+}

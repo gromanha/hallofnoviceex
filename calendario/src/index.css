@@ -14,7 +14,7 @@ html {
 
 /* ── Focus Visible ── */
 :focus-visible {
-  outline: 2px solid #735c00;
+  outline: 2px solid #735C00;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -23,7 +23,7 @@ button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #735c00;
+  outline: 2px solid #735C00;
   outline-offset: 2px;
 }
 
@@ -39,8 +39,8 @@ a:focus-visible,
   left: 16px;
   z-index: 100;
   padding: 12px 24px;
-  background: #002446;
-  color: #fed65b;
+  background: #124949;
+  color: #D4AF37;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -48,13 +48,13 @@ a:focus-visible,
   letter-spacing: 0.1em;
   text-decoration: none;
   border-radius: 0 0 12px 12px;
-  box-shadow: 0 4px 12px rgba(0, 36, 70, 0.3);
+  box-shadow: 0 4px 12px rgba(18, 73, 73, 0.3);
   transition: top 0.2s ease;
 }
 
 .skip-link:focus {
   top: 0;
-  outline: 2px solid #fed65b;
+  outline: 2px solid #D4AF37;
   outline-offset: 2px;
 }
 
@@ -80,7 +80,7 @@ a:focus-visible,
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 36, 70, 0.4);
+  background: rgba(18, 73, 73, 0.4);
   backdrop-filter: blur(4px);
   z-index: 40;
   opacity: 0;
@@ -120,17 +120,17 @@ a:focus-visible,
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  border: 1px solid #c3c6cf;
-  background: #fcf9f0;
-  color: #43474e;
+  border: 1px solid rgba(29, 106, 106, 0.2);
+  background: #FAF6ED;
+  color: #3E4A56;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .hamburger:hover {
-  background: #f1eee5;
-  border-color: #735c00;
+  background: #E8F4F4;
+  border-color: #1D6A6A;
 }
 
 @media (max-width: 1023px) {
@@ -145,54 +145,41 @@ a:focus-visible,
   --font-caps: "Space Grotesk", sans-serif;
   --font-cinzel: "Cinzel", Georgia, serif;
 
-  /* Custom palette matching the original HTML configuration */
-  --color-primary-fixed: #d3e3ff;
-  --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
-  --color-outline: #73777f;
-  --color-outline-variant: #c3c6cf;
-  --color-secondary-container: #fed65b;
-  --color-on-secondary-fixed: #241a00;
-  --color-primary-container: #1a3a5f;
-  --color-error-container: #ffdad6;
-  --color-inverse-surface: #31312b;
-  --color-on-surface: #1c1c17;
-  --color-primary-fixed-dim: #abc8f5;
-  --color-on-surface-variant: #43474e;
-  --color-on-primary-container: #87a4cf;
-  --color-inverse-on-surface: #f4f1e8;
-  --color-on-tertiary-fixed: #231141;
-  --color-surface-container-low: #f6f3ea;
-  --color-on-tertiary-fixed-variant: #503d6f;
-  --color-inverse-primary: #abc8f5;
-  --color-secondary: #735c00;
-  --color-secondary-fixed-dim: #e9c349;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-variant: #e5e2da;
-  --color-surface: #fcf9f0;
+  /* Sharlayan Teal palette — aligned with main HoN brand */
+  --color-primary: #1D6A6A;
+  --color-primary-deep: #124949;
+  --color-primary-light: #E8F4F4;
   --color-on-primary: #ffffff;
-  --color-on-tertiary-container: #af99d1;
-  --color-on-primary-fixed-variant: #2a486e;
-  --color-primary: #002446;
-  --color-on-primary-fixed: #001c39;
-  --color-surface-container-highest: #e5e2da;
-  --color-on-error-container: #93000a;
-  --color-tertiary-fixed: #ecdcff;
-  --color-on-secondary-container: #745c00;
+
+  /* Scholar's Gold */
+  --color-secondary: #D4AF37;
+  --color-secondary-light: #F5E6B8;
+  --color-secondary-accent: #E5C158;
+  --color-on-secondary: #124949;
+
+  /* Campus Lavender */
+  --color-tertiary: #9B8BB4;
+  --color-tertiary-light: #EDE8F3;
   --color-on-tertiary: #ffffff;
-  --color-surface-bright: #fcf9f0;
-  --color-background: #fcf9f0;
-  --color-surface-container-high: #ebe8df;
-  --color-surface-dim: #dddad1;
-  --color-surface-tint: #426087;
-  --color-on-background: #1c1c17;
-  --color-tertiary-fixed-dim: #d3bcf7;
-  --color-on-secondary-fixed-variant: #574500;
-  --color-surface-container: #f1eee5;
-  --color-tertiary: #2c1a49;
-  --color-tertiary-container: #423061;
-  --color-on-secondary: #ffffff;
-  --color-secondary-fixed: #ffe088;
+
+  /* Neutrals — warm parchment foundation */
+  --color-background: #FAF6ED;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F6F3EA;
+  --color-on-background: #3E4A56;
+  --color-on-surface: #3E4A56;
+  --color-on-surface-variant: #6B7A8A;
+  --color-outline: #6B7A8A;
+  --color-outline-variant: rgba(29, 106, 106, 0.1);
+
+  /* Semantic */
+  --color-error: #BA1A1A;
+  --color-error-container: #FFDAD6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000A;
+
+  /* Focus */
+  --color-focus-ring: #735C00;
 }
 
 /* Base custom definitions */
@@ -224,11 +211,11 @@ a:focus-visible,
 }
 
 .crystal-glow {
-  box-shadow: 0 0 15px rgba(171, 200, 245, 0.4);
+  box-shadow: 0 0 15px rgba(29, 106, 106, 0.4);
 }
 
 .mana-vial-gradient {
-  background: linear-gradient(180deg, rgba(171, 200, 245, 0.2) 0%, rgba(66, 96, 135, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(29, 106, 106, 0.2) 0%, rgba(18, 73, 73, 0.6) 100%);
 }
 
 /* Arcane Glow Effects */
@@ -237,15 +224,15 @@ a:focus-visible,
 }
 
 .arcane-glow:hover {
-  box-shadow: 0 0 20px rgba(171, 200, 245, 0.6), inset 0 0 15px rgba(254, 214, 91, 0.2);
+  box-shadow: 0 0 20px rgba(29, 106, 106, 0.6), inset 0 0 15px rgba(212, 175, 55, 0.2);
   animation: arcane-pulse 2s infinite ease-in-out;
   transform: translateY(-2px);
   z-index: 10;
 }
 
 @keyframes arcane-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(171, 200, 245, 0.6), inset 0 0 10px rgba(254, 214, 91, 0.1); }
-  50% { box-shadow: 0 0 35px rgba(171, 200, 245, 0.8), inset 0 0 20px rgba(254, 214, 91, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px rgba(29, 106, 106, 0.6), inset 0 0 10px rgba(212, 175, 55, 0.1); }
+  50% { box-shadow: 0 0 35px rgba(29, 106, 106, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.3); }
 }
 
 /* Enhanced Today Pulse */
@@ -255,12 +242,12 @@ a:focus-visible,
 
 @keyframes today-magical-pulse {
   0%, 100% { 
-    box-shadow: 0 0 15px rgba(116, 92, 0, 0.3), inset 0 0 10px rgba(254, 214, 91, 0.2);
-    border-color: rgba(115, 92, 0, 0.6);
+    box-shadow: 0 0 15px rgba(29, 106, 106, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.2);
+    border-color: rgba(29, 106, 106, 0.6);
   }
   50% { 
-    box-shadow: 0 0 25px rgba(116, 92, 0, 0.5), inset 0 0 15px rgba(254, 214, 91, 0.4);
-    border-color: rgba(115, 92, 0, 1);
+    box-shadow: 0 0 25px rgba(29, 106, 106, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.4);
+    border-color: rgba(29, 106, 106, 1);
   }
 }
 
@@ -271,8 +258,8 @@ a:focus-visible,
 }
 
 @keyframes glow {
-  0%, 100% { filter: drop-shadow(0 0 2px #abc8f5); opacity: 0.7; }
-  50% { filter: drop-shadow(0 0 8px #abc8f5); opacity: 1; }
+  0%, 100% { filter: drop-shadow(0 0 2px #1D6A6A); opacity: 0.7; }
+  50% { filter: drop-shadow(0 0 8px #1D6A6A); opacity: 1; }
 }
 
 .floating-crystal {
@@ -295,7 +282,7 @@ a:focus-visible,
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(62, 74, 86, 0.08);
+  box-shadow: 0 8px 24px rgba(29, 106, 106, 0.08);
 }
 
 /* ── Filter Button Active State ── */
@@ -321,7 +308,7 @@ a:focus-visible,
 }
 
 .calendar-cell:focus-visible {
-  outline: 2px solid #735c00;
+  outline: 2px solid #735C00;
   outline-offset: 2px;
 }
 

@@ -265,26 +265,26 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   const typeModalRef = useFocusTrap(showTypeForm);
 
   return (
-    <div className="min-h-screen bg-[#fcf9f0] text-[#1c1c17]">
+    <div className="min-h-screen bg-[#FAF6ED] text-[#3E4A56]">
       {/* Top bar */}
-      <header className="bg-[#002446] text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-[#1D6A6A] text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <CalendarDays className="w-5 h-5 text-[#fed65b]" />
+          <CalendarDays className="w-5 h-5 text-[#D4AF37]" />
           <h1 className="text-lg font-serif font-bold">Painel Admin — HoN EX</h1>
         </div>
         <div className="flex items-center gap-4 text-xs">
-          <span className="text-[#abc8f5]">
+          <span className="text-[#E8F4F4]">
             Logado como <strong className="text-white">{user.display_name || user.username}</strong>
           </span>
           <button
             onClick={() => void onLogout()}
-            className="flex items-center gap-1 text-[#fed65b] hover:underline cursor-pointer"
+            className="flex items-center gap-1 text-[#D4AF37] hover:underline cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" /> Sair
           </button>
           <a
             href="#/"
-            className="text-[#abc8f5] hover:text-white hover:underline cursor-pointer"
+            className="text-[#E8F4F4] hover:text-white hover:underline cursor-pointer"
           >
             ← Calendário
           </a>
@@ -293,13 +293,13 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
       <main className="max-w-5xl mx-auto p-6 space-y-6">
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-[#c3c6cf]/40">
+        <div className="flex gap-1 border-b border-[rgba(29,106,106,0.1)]/40">
           <button
             onClick={() => setTab('events')}
             className={`px-5 py-3 text-sm font-caps uppercase tracking-wider cursor-pointer transition-colors border-b-2 ${
               tab === 'events'
-                ? 'border-[#735c00] text-[#735c00] font-bold'
-                : 'border-transparent text-[#73777f] hover:text-[#43474e]'
+                ? 'border-[#735C00] text-[#735C00] font-bold'
+                : 'border-transparent text-[#6B7A8A] hover:text-[#3E4A56]'
             }`}
           >
             <CalendarDays className="w-4 h-4 inline mr-2" />
@@ -309,8 +309,8 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
             onClick={() => setTab('types')}
             className={`px-5 py-3 text-sm font-caps uppercase tracking-wider cursor-pointer transition-colors border-b-2 ${
               tab === 'types'
-                ? 'border-[#735c00] text-[#735c00] font-bold'
-                : 'border-transparent text-[#73777f] hover:text-[#43474e]'
+                ? 'border-[#735C00] text-[#735C00] font-bold'
+                : 'border-transparent text-[#6B7A8A] hover:text-[#3E4A56]'
             }`}
           >
             <Tag className="w-4 h-4 inline mr-2" />
@@ -319,7 +319,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
         </div>
 
         {error && (
-          <div className="text-xs text-[#ba1a1a] bg-[#ffdad6] border border-[#ba1a1a]/30 rounded-lg px-4 py-3">
+          <div className="text-xs text-[#BA1A1A] bg-[#FFDAD6] border border-[#BA1A1A]/30 rounded-lg px-4 py-3">
             {error}
             <button onClick={() => setError(null)} className="ml-2 underline">dispensar</button>
           </div>
@@ -329,20 +329,20 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
         {tab === 'events' && (
           <>
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-serif font-bold text-[#002446]">Eventos</h2>
+              <h2 className="text-xl font-serif font-bold text-[#124949]">Eventos</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => void fetchEvents()}
-                  className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] cursor-pointer"
+                  className="p-2 border border-[rgba(29,106,106,0.15)] rounded-lg hover:bg-[#E8F4F4] cursor-pointer"
                   title="Recarregar"
                 >
-                  <RefreshCw className="w-4 h-4 text-[#43474e]" />
+                  <RefreshCw className="w-4 h-4 text-[#3E4A56]" />
                 </button>
                 <button
                   onClick={openEventCreate}
-                  className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-widest px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer border border-[#abc8f5]/20"
+                  className="bg-[#1D6A6A] hover:brightness-110 text-white text-xs font-caps uppercase tracking-widest px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer border border-[#E8F4F4]/20"
                 >
-                  <PlusCircle className="w-4 h-4 text-[#fed65b]" /> Novo Evento
+                  <PlusCircle className="w-4 h-4 text-[#D4AF37]" /> Novo Evento
                 </button>
               </div>
             </div>
@@ -352,11 +352,11 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
             )}
 
             {!loading && events.length > 0 && (
-              <div className="bg-[#fcf9f0] border border-[#c3c6cf] rounded-2xl overflow-hidden">
+              <div className="bg-[#FAF6ED] border border-[rgba(29,106,106,0.15)] rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-[#f1eee5] text-left text-[10px] font-caps uppercase tracking-widest text-[#73777f]">
+                      <tr className="bg-[#E8F4F4] text-left text-[10px] font-caps uppercase tracking-widest text-[#6B7A8A]">
                         <th className="px-4 py-3">Dia</th>
                         <th className="px-4 py-3">Mês</th>
                         <th className="px-4 py-3">Horário</th>
@@ -368,28 +368,28 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                     </thead>
                     <tbody>
                       {events.map(evt => (
-                        <tr key={evt.id} className="border-t border-[#c3c6cf]/40 hover:bg-[#f1eee5]/50">
-                          <td className="px-4 py-3 font-serif font-bold text-[#002446]">
+                        <tr key={evt.id} className="border-t border-[rgba(29,106,106,0.15)]/40 hover:bg-[#E8F4F4]/50">
+                          <td className="px-4 py-3 font-serif font-bold text-[#124949]">
                             {evt.day < 10 ? `0${evt.day}` : evt.day}
                           </td>
-                          <td className="px-4 py-3 text-[#43474e]">{evt.month}</td>
-                          <td className="px-4 py-3 text-[#735c00] flex items-center gap-1">
+                          <td className="px-4 py-3 text-[#3E4A56]">{evt.month}</td>
+                          <td className="px-4 py-3 text-[#735C00] flex items-center gap-1">
                             <Clock className="w-3 h-3" /> {evt.time}
                           </td>
-                          <td className="px-4 py-3 font-semibold text-[#002446] max-w-[200px] truncate">
+                          <td className="px-4 py-3 font-semibold text-[#124949] max-w-[200px] truncate">
                             {evt.title}
                           </td>
                           <td className="px-4 py-3">
-                            <span className="text-[9px] font-caps px-2 py-0.5 rounded-full border border-[#c3c6cf] bg-[#f1eee5] text-[#43474e] uppercase">
+                            <span className="text-[9px] font-caps px-2 py-0.5 rounded-full border border-[rgba(29,106,106,0.15)] bg-[#E8F4F4] text-[#3E4A56] uppercase">
                               {getTypeLabel(evt.type)}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-[#73777f] text-xs">{evt.instructor || '—'}</td>
+                          <td className="px-4 py-3 text-[#6B7A8A] text-xs">{evt.instructor || '—'}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => openEventEdit(evt)}
-                                className="p-1.5 rounded hover:bg-[#e5e2da] text-[#735c00] cursor-pointer"
+                                className="p-1.5 rounded hover:bg-[#E8F4F4] text-[#735C00] cursor-pointer"
                                 title="Editar"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
@@ -397,7 +397,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                               <button
                                 onClick={() => void handleEventDelete(evt.id)}
                                 disabled={deletingEventId === evt.id}
-                                className="p-1.5 rounded hover:bg-[#ffdad6] text-[#ba1a1a] cursor-pointer disabled:opacity-50"
+                                className="p-1.5 rounded hover:bg-[#FFDAD6] text-[#BA1A1A] cursor-pointer disabled:opacity-50"
                                 title="Deletar"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -413,9 +413,9 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
             )}
 
             {!loading && events.length === 0 && (
-              <div className="text-center py-16 text-[#73777f]">
+              <div className="text-center py-16 text-[#6B7A8A]">
                 <p className="text-sm">Nenhum evento encontrado.</p>
-                <button onClick={openEventCreate} className="mt-3 text-[#735c00] hover:underline text-xs cursor-pointer">
+                <button onClick={openEventCreate} className="mt-3 text-[#735C00] hover:underline text-xs cursor-pointer">
                   Criar o primeiro evento
                 </button>
               </div>
@@ -427,30 +427,30 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
         {tab === 'types' && (
           <>
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-serif font-bold text-[#002446]">Tipos de Atividade</h2>
+              <h2 className="text-xl font-serif font-bold text-[#124949]">Tipos de Atividade</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => void fetchEventTypes()}
-                  className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] cursor-pointer"
+                  className="p-2 border border-[rgba(29,106,106,0.15)] rounded-lg hover:bg-[#E8F4F4] cursor-pointer"
                   title="Recarregar"
                 >
-                  <RefreshCw className="w-4 h-4 text-[#43474e]" />
+                  <RefreshCw className="w-4 h-4 text-[#3E4A56]" />
                 </button>
                 <button
                   onClick={openTypeCreate}
-                  className="bg-[#002446] hover:brightness-110 text-white text-xs font-caps uppercase tracking-widest px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer border border-[#abc8f5]/20"
+                  className="bg-[#1D6A6A] hover:brightness-110 text-white text-xs font-caps uppercase tracking-widest px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer border border-[#E8F4F4]/20"
                 >
-                  <PlusCircle className="w-4 h-4 text-[#fed65b]" /> Novo Tipo
+                  <PlusCircle className="w-4 h-4 text-[#D4AF37]" /> Novo Tipo
                 </button>
               </div>
             </div>
 
             {eventTypes.length > 0 && (
-              <div className="bg-[#fcf9f0] border border-[#c3c6cf] rounded-2xl overflow-hidden">
+              <div className="bg-[#FAF6ED] border border-[rgba(29,106,106,0.15)] rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-[#f1eee5] text-left text-[10px] font-caps uppercase tracking-widest text-[#73777f]">
+                      <tr className="bg-[#E8F4F4] text-left text-[10px] font-caps uppercase tracking-widest text-[#6B7A8A]">
                         <th className="px-4 py-3 w-10">#</th>
                         <th className="px-4 py-3">Chave (key)</th>
                         <th className="px-4 py-3">Nome</th>
@@ -461,24 +461,24 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                     </thead>
                     <tbody>
                       {eventTypes.map(et => (
-                        <tr key={et.id} className="border-t border-[#c3c6cf]/40 hover:bg-[#f1eee5]/50">
-                          <td className="px-4 py-3 text-[#73777f]">
+                        <tr key={et.id} className="border-t border-[rgba(29,106,106,0.15)]/40 hover:bg-[#E8F4F4]/50">
+                          <td className="px-4 py-3 text-[#6B7A8A]">
                             <GripVertical className="w-3.5 h-3.5" />
                           </td>
-                          <td className="px-4 py-3 font-mono text-xs text-[#735c00]">{et.key}</td>
-                          <td className="px-4 py-3 font-semibold text-[#002446]">{et.label}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-[#735C00]">{et.key}</td>
+                          <td className="px-4 py-3 font-semibold text-[#124949]">{et.label}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 rounded-full border border-[#c3c6cf]" style={{ backgroundColor: et.color }} />
-                              <span className="text-xs font-mono text-[#73777f]">{et.color}</span>
+                              <div className="w-4 h-4 rounded-full border border-[rgba(29,106,106,0.15)]" style={{ backgroundColor: et.color }} />
+                              <span className="text-xs font-mono text-[#6B7A8A]">{et.color}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-xs text-[#43474e]">{et.icon}</td>
+                          <td className="px-4 py-3 text-xs text-[#3E4A56]">{et.icon}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => openTypeEdit(et)}
-                                className="p-1.5 rounded hover:bg-[#e5e2da] text-[#735c00] cursor-pointer"
+                                className="p-1.5 rounded hover:bg-[#E8F4F4] text-[#735C00] cursor-pointer"
                                 title="Editar"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
@@ -486,7 +486,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                               <button
                                 onClick={() => void handleTypeDelete(et.id)}
                                 disabled={deletingTypeId === et.id}
-                                className="p-1.5 rounded hover:bg-[#ffdad6] text-[#ba1a1a] cursor-pointer disabled:opacity-50"
+                                className="p-1.5 rounded hover:bg-[#FFDAD6] text-[#BA1A1A] cursor-pointer disabled:opacity-50"
                                 title="Deletar"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -502,9 +502,9 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
             )}
 
             {eventTypes.length === 0 && (
-              <div className="text-center py-16 text-[#73777f]">
+              <div className="text-center py-16 text-[#6B7A8A]">
                 <p className="text-sm">Nenhum tipo cadastrado.</p>
-                <button onClick={openTypeCreate} className="mt-3 text-[#735c00] hover:underline text-xs cursor-pointer">
+                <button onClick={openTypeCreate} className="mt-3 text-[#735C00] hover:underline text-xs cursor-pointer">
                   Criar o primeiro tipo
                 </button>
               </div>
@@ -515,55 +515,55 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
       {/* ═══════ EVENT MODAL ═══════ */}
       {showEventForm && (
-        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
-          <div ref={eventModalRef} className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl">
-            <div className="h-1.5 bg-[#735c00] w-full" />
+        <div className="fixed inset-0 bg-[#124949]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
+          <div ref={eventModalRef} className="bg-[#FAF6ED] border-2 border-[#D4AF37] rounded-2xl w-full max-w-xl shadow-2xl">
+            <div className="h-1.5 bg-[#D4AF37] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
-              <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
-                <h3 className="text-lg font-serif font-bold text-[#735c00]">
+              <div className="flex justify-between items-center border-b border-[rgba(29,106,106,0.1)]/40 pb-4">
+                <h3 className="text-lg font-serif font-bold text-[#735C00]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer" aria-label="Fechar">
-                  <X className="w-5 h-5 text-[#43474e]" />
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[#E8F4F4] cursor-pointer" aria-label="Fechar">
+                  <X className="w-5 h-5 text-[#3E4A56]" />
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Mês</label>
-                  <select value={eventForm.month} onChange={e => setEventField('month', e.target.value)} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30">
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Mês</label>
+                  <select value={eventForm.month} onChange={e => setEventField('month', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30">
                     {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Dia</label>
-                  <input type="number" min={1} max={31} value={eventForm.day} onChange={e => setEventField('day', Number(e.target.value))} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30" />
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Dia</label>
+                  <input type="number" min={1} max={31} value={eventForm.day} onChange={e => setEventField('day', Number(e.target.value))} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Horário</label>
-                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="09:00 — 11:30" className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30" />
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Horário</label>
+                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="09:00 — 11:30" className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Título</label>
-                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30" />
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Título</label>
+                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Descrição</label>
-                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30 resize-none" />
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Descrição</label>
+                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30 resize-none" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Instrutor</label>
-                  <input type="text" value={eventForm.instructor} onChange={e => setEventField('instructor', e.target.value)} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30" />
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Instrutor</label>
+                  <input type="text" value={eventForm.instructor} onChange={e => setEventField('instructor', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Tipo</label>
-                  <select value={eventForm.type} onChange={e => setEventField('type', e.target.value)} className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30">
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Tipo</label>
+                  <select value={eventForm.type} onChange={e => setEventField('type', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30">
                     <option value="">Selecione…</option>
                     {eventTypes.map(et => (
                       <option key={et.id} value={et.key}>{et.label}</option>
@@ -573,27 +573,27 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">URL da Imagem</label>
-                <input type="text" value={eventForm.image} onChange={e => setEventField('image', e.target.value)} placeholder="https://..." className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30" />
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">URL da Imagem</label>
+                <input type="text" value={eventForm.image} onChange={e => setEventField('image', e.target.value)} placeholder="https://..." className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
               </div>
 
               <div className="flex gap-6 items-center">
-                <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
-                  <input type="checkbox" checked={eventForm.crystal} onChange={e => setEventField('crystal', e.target.checked)} className="accent-[#735c00] rounded" />
+                <label className="flex items-center gap-2 text-xs text-[#3E4A56] cursor-pointer">
+                  <input type="checkbox" checked={eventForm.crystal} onChange={e => setEventField('crystal', e.target.checked)} className="accent-[#1D6A6A] rounded" />
                   Cristal
                 </label>
-                <label className="flex items-center gap-2 text-xs text-[#43474e] cursor-pointer">
-                  <input type="checkbox" checked={eventForm.stars} onChange={e => setEventField('stars', e.target.checked)} className="accent-[#735c00] rounded" />
+                <label className="flex items-center gap-2 text-xs text-[#3E4A56] cursor-pointer">
+                  <input type="checkbox" checked={eventForm.stars} onChange={e => setEventField('stars', e.target.checked)} className="accent-[#1D6A6A] rounded" />
                   Estrelas
                 </label>
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-2.5 rounded-xl cursor-pointer">
+              <div className="flex gap-3 justify-end pt-4 border-t border-[rgba(29,106,106,0.1)]/40">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-[#E8F4F4] hover:bg-[#D4E8E8] text-[#3E4A56] text-xs font-caps uppercase tracking-wider px-5 py-2.5 rounded-xl cursor-pointer">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingEvent} className="bg-[#002446] hover:brightness-110 disabled:opacity-50 text-white text-xs font-caps uppercase tracking-wider px-6 py-2.5 rounded-xl cursor-pointer border border-[#abc8f5]/20 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-[#fed65b]" />
+                <button type="submit" disabled={savingEvent} className="bg-[#1D6A6A] hover:brightness-110 disabled:opacity-50 text-white text-xs font-caps uppercase tracking-wider px-6 py-2.5 rounded-xl cursor-pointer border border-[#E8F4F4]/20 flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#D4AF37]" />
                   {savingEvent ? 'Salvando…' : editingEventId ? 'Salvar' : 'Criar'}
                 </button>
               </div>
@@ -604,68 +604,68 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
       {/* ═══════ TYPE MODAL ═══════ */}
       {showTypeForm && (
-        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
-          <div ref={typeModalRef} className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-md shadow-2xl">
-            <div className="h-1.5 bg-[#735c00] w-full" />
+        <div className="fixed inset-0 bg-[#124949]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
+          <div ref={typeModalRef} className="bg-[#FAF6ED] border-2 border-[#D4AF37] rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="h-1.5 bg-[#D4AF37] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
-              <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
-                <h3 className="text-lg font-serif font-bold text-[#735c00]">
+              <div className="flex justify-between items-center border-b border-[rgba(29,106,106,0.1)]/40 pb-4">
+                <h3 className="text-lg font-serif font-bold text-[#735C00]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer" aria-label="Fechar">
-                  <X className="w-5 h-5 text-[#43474e]" />
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[#E8F4F4] cursor-pointer" aria-label="Fechar">
+                  <X className="w-5 h-5 text-[#3E4A56]" />
                 </button>
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Chave (key)</label>
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Chave (key)</label>
                 <input
                   type="text"
                   required
                   value={typeForm.key}
                   onChange={e => setTypeField('key', e.target.value)}
                   placeholder="ex: spells, alchemy"
-                  className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                  className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#735C00]/30"
                 />
-                <p className="text-[9px] text-[#73777f] mt-1">Slug lowercase, sem espaços (ex: my-type)</p>
+                <p className="text-[9px] text-[#6B7A8A] mt-1">Slug lowercase, sem espaços (ex: my-type)</p>
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Nome de exibição</label>
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Nome de exibição</label>
                 <input
                   type="text"
                   required
                   value={typeForm.label}
                   onChange={e => setTypeField('label', e.target.value)}
                   placeholder="ex: Spells (Magias)"
-                  className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                  className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Cor</label>
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Cor</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
                       value={typeForm.color}
                       onChange={e => setTypeField('color', e.target.value)}
-                      className="w-10 h-10 rounded-lg border border-[#c3c6cf] cursor-pointer p-0"
+                      className="w-10 h-10 rounded-lg border border-[rgba(29,106,106,0.15)] cursor-pointer p-0"
                     />
                     <input
                       type="text"
                       value={typeForm.color}
                       onChange={e => setTypeField('color', e.target.value)}
-                      className="flex-1 bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                      className="flex-1 bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#735C00]/30"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Ícone</label>
+                  <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Ícone</label>
                   <select
                     value={typeForm.icon}
                     onChange={e => setTypeField('icon', e.target.value)}
-                    className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                    className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30"
                   >
                     {ICON_OPTIONS.map(name => (
                       <option key={name} value={name}>{name}</option>
@@ -675,22 +675,22 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">Ordem</label>
+                <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Ordem</label>
                 <input
                   type="number"
                   min={0}
                   value={typeForm.sort_order}
                   onChange={e => setTypeField('sort_order', Number(e.target.value))}
-                  className="w-full bg-[#f1eee5] border border-[#c3c6cf] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735c00]/30"
+                  className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-[#c3c6cf]/40">
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-[#ebe8df] hover:bg-[#e5e2da] text-[#43474e] text-xs font-caps uppercase tracking-wider px-5 py-2.5 rounded-xl cursor-pointer">
+              <div className="flex gap-3 justify-end pt-4 border-t border-[rgba(29,106,106,0.1)]/40">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-[#E8F4F4] hover:bg-[#D4E8E8] text-[#3E4A56] text-xs font-caps uppercase tracking-wider px-5 py-2.5 rounded-xl cursor-pointer">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingType} className="bg-[#002446] hover:brightness-110 disabled:opacity-50 text-white text-xs font-caps uppercase tracking-wider px-6 py-2.5 rounded-xl cursor-pointer border border-[#abc8f5]/20 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-[#fed65b]" />
+                <button type="submit" disabled={savingType} className="bg-[#1D6A6A] hover:brightness-110 disabled:opacity-50 text-white text-xs font-caps uppercase tracking-wider px-6 py-2.5 rounded-xl cursor-pointer border border-[#E8F4F4]/20 flex items-center gap-2">
+                  <Check className="w-4 h-4 text-[#D4AF37]" />
                   {savingType ? 'Salvando…' : editingTypeId ? 'Salvar' : 'Criar'}
                 </button>
               </div>

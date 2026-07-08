@@ -1,260 +1,275 @@
-# Design Document — Calendario Hall of the Novice EX
-
-## Visao Geral
-
-Calendario interativo de atividades academicas de uma academia de magia ficticia.
-O usuario publico navega o calendario, seleciona dias e ve os eventos.
-Um administrador autenticado gerencia (CRUD) os eventos por um painel separado.
-
+---
+name: Calendario Hall of the Novice EX
+description: Interactive academic event calendar for the FFXIV guild — scholarly, warm, immersive.
+colors:
+  primary: "#1D6A6A"
+  primary-deep: "#124949"
+  primary-light: "#E8F4F4"
+  secondary: "#D4AF37"
+  secondary-light: "#F5E6B8"
+  secondary-accent: "#E5C158"
+  tertiary: "#9B8BB4"
+  tertiary-light: "#EDE8F3"
+  neutral-bg: "#FAF6ED"
+  neutral-surface: "#FFFFFF"
+  neutral-surface-alt: "#F6F3EA"
+  neutral-text: "#3E4A56"
+  neutral-muted: "#6B7A8A"
+  neutral-border: "rgba(29, 106, 106, 0.1)"
+  error: "#BA1A1A"
+  error-container: "#FFDAD6"
+  focus-ring: "#735C00"
+typography:
+  display:
+    fontFamily: "Cinzel, Georgia, serif"
+    fontSize: "clamp(1.5rem, 4vw, 2.5rem)"
+    fontWeight: 700
+    lineHeight: 1.2
+  headline:
+    fontFamily: "Cinzel, Georgia, serif"
+    fontSize: "18px"
+    fontWeight: 600
+    lineHeight: 1.3
+  title:
+    fontFamily: "Cinzel, Georgia, serif"
+    fontSize: "15px"
+    fontWeight: 600
+    lineHeight: 1.35
+  body:
+    fontFamily: "Hanken Grotesk, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.6
+  label:
+    fontFamily: "Space Grotesk, system-ui, sans-serif"
+    fontSize: "10px"
+    fontWeight: 600
+    letterSpacing: "0.08em"
+    textTransform: "uppercase"
+  mono:
+    fontFamily: "Space Grotesk, monospace"
+    fontSize: "12px"
+    fontWeight: 500
+rounded:
+  sm: "8px"
+  md: "12px"
+  lg: "16px"
+  xl: "20px"
+  pill: "9999px"
+spacing:
+  xs: "4px"
+  sm: "8px"
+  md: "16px"
+  lg: "24px"
+  xl: "32px"
+  xxl: "48px"
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.md}"
+    padding: "10px 20px"
+  button-primary-hover:
+    backgroundColor: "{colors.primary-deep}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.md}"
+    padding: "10px 20px"
+  button-accent:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.primary-deep}"
+    rounded: "{rounded.md}"
+    padding: "10px 20px"
+  button-ghost:
+    backgroundColor: "transparent"
+    textColor: "{colors.neutral-muted}"
+    rounded: "{rounded.sm}"
+    padding: "8px 12px"
+  card:
+    backgroundColor: "{colors.neutral-surface}"
+    textColor: "{colors.neutral-text}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  card-elevated:
+    backgroundColor: "{colors.neutral-surface}"
+    textColor: "{colors.neutral-text}"
+    rounded: "{rounded.lg}"
+    padding: "20px"
+  input:
+    backgroundColor: "{colors.neutral-surface-alt}"
+    textColor: "{colors.neutral-text}"
+    rounded: "{rounded.md}"
+    padding: "10px 14px"
+  nav-link:
+    backgroundColor: "transparent"
+    textColor: "{colors.neutral-muted}"
+    rounded: "{rounded.pill}"
+    padding: "10px 16px"
+  nav-link-active:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.primary-deep}"
+    rounded: "{rounded.pill}"
+    padding: "10px 16px"
+  chip:
+    backgroundColor: "{colors.primary-light}"
+    textColor: "{colors.primary}"
+    rounded: "{rounded.pill}"
+    padding: "4px 10px"
+  modal:
+    backgroundColor: "{colors.neutral-surface}"
+    textColor: "{colors.neutral-text}"
+    rounded: "{rounded.xl}"
+    padding: "24px"
 ---
 
-## Arquitetura
+# Design System: Calendario Hall of the Novice EX
 
-```
-calendario/
-├── server.js                 # Express API (porta 3001)
-├── vite.config.ts            # Vite + proxy /api → :3001
-├── supabase-schema.sql       # SQL para criar tabelas no Supabase
-├── .env                      # Variaveis de ambiente (NAO committar)
-├── src/
-│   ├── main.tsx              # Entry point React
-│   ├── App.tsx               # Roteamento por hash + calendario publico
-│   ├── types.ts              # Types TypeScript
-│   ├── index.css             # Tailwind + custom CSS (animacoes, textures)
-│   ├── hashRouter.ts         # Hash router leve (#/ e #/admin)
-│   ├── lib/
-│   │   └── api.ts            # Fetch wrappers (GET/POST/PATCH/DELETE) + timeout
-│   ├── hooks/
-│   │   ├── useAuth.ts        # Hook de autenticacao (login/logout/me)
-│   │   └── useFocusTrap.ts   # Focus trap para modais (a11y)
-│   ├── components/
-│   │   ├── LoginGate.tsx     # Tela de login do admin
-│   │   └── AdminPanel.tsx    # Painel CRUD de eventos
-│   └── assets/
-│       ├── logo.png          # Logo do site
-│       ├── id.png            # Background do calendario
-│       └── door.png          # Asset decorativo
-```
+## 1. Overview
 
-### Fluxo de dados
+**Creative North Star: "The Schedule Board"**
 
-```
-Browser  ──fetch──>  Vite proxy (/api/*)  ──>  Express server.js  ──>  Supabase
-                      localhost:3000           localhost:3001             REST API
-```
+The calendario design system evokes an ancient academy's schedule board — a living document pinned to a parchment wall, where events are cataloged with the quiet authority of a well-organized institution. Every surface rests on warm ivory parchment; teal carries the institutional identity of the Sharlayan academy; gold marks moments of distinction and active states; lavender adds scholarly softness that prevents the palette from feeling rigid.
 
-- **Eventos publicos**: `GET /api/events`, `GET /api/event-types` (anon, sem auth)
-- **CRUD admin**: `POST/PATCH/DELETE /api/events`, `POST/PATCH/DELETE /api/event-types` (requer cookie JWT)
-- **Auth**: `GET /api/auth?op=me`, `POST /api/auth?op=login|logout|setup`
+This system explicitly rejects the sterile utilitarianism of generic calendar apps (Google Calendar, Outlook) and the neon-timed urgency of gaming event trackers. It is not a corporate scheduling tool — it is a guild artifact, a living record of the academy's activities that feels at home in a fantasy university.
 
----
+**Key Characteristics:**
+- Warm parchment foundation with institutional teal identity
+- Serif display type (Cinzel) paired with modern sans-serif body (Hanken Grotesk)
+- Soft ambient shadows and gentle transitions — never jarring
+- Generous whitespace and calm hierarchy
+- Gold reserved for active states and moments of distinction
+- Color-coded event types that create visual rhythm without clutter
 
-## Stack Tecnica
+## 2. Colors
 
-| Camada       | Tecnologia                          |
-|--------------|-------------------------------------|
-| Frontend     | React 19, TypeScript, Vite 6        |
-| Estilo       | Tailwind CSS 4 + CSS custom         |
-| Animacoes    | Motion (Framer Motion)              |
-| Icones       | Lucide React                        |
-| Backend      | Express 4, Node.js                  |
-| Auth         | JWT (jsonwebtoken) + bcryptjs       |
-| Banco        | Supabase (PostgreSQL managed)       |
-| Cookies      | cookie-parser (httpOnly, sameSite)  |
-| Dev          | concurrently (Vite + Express)       |
+The palette is rooted in the Sharlayan aesthetic: teal as institutional identity, gold as scholarly distinction, lavender as quiet warmth, all resting on an ivory parchment canvas. Colors are used deliberately — teal for structure and navigation, gold for emphasis and achievement, lavender for soft accents.
 
----
+### Primary
+- **Sharlayan Teal** (#1D6A6A): The institutional anchor. Used for headers, active navigation, primary buttons, and section titles. This is the color that says "this is HoN."
+- **Deep Teal** (#124949): The deepened variant for hover states, dark backgrounds, and emphasis moments. Provides weight without introducing a new hue.
+- **Teal Mist** (#E8F4F4): A barely-there teal wash for card hover backgrounds, stat card tints, and light-mode active states. Adds institutional warmth without shouting.
 
-## Paleta de Cores
+### Secondary
+- **Scholar's Gold** (#D4AF37): The accent of distinction. Reserved for CTAs, active-state borders, selected calendar days, and moments of achievement. Used sparingly — its rarity is the point.
+- **Gold Parchment** (#F5E6B8): A warm, muted gold for tag backgrounds and subtle highlights. Softer sibling for larger surfaces.
+- **Gold Highlight** (#E5C158): A brighter gold for hover states on gold elements and interactive accents.
 
-Tema visual: pergaminho antigo + ouro + azul profundo.
+### Tertiary
+- **Campus Lavender** (#9B8BB4): A soft, scholarly purple for secondary tags, decorative accents, and visual variety. Adds depth without competing with teal.
+- **Lavender Mist** (#EDE8F3): The palest lavender tint for tag backgrounds and gentle surface washes.
 
-| Token                    | Cor      | Uso                                 |
-|--------------------------|----------|-------------------------------------|
-| `--color-surface`        | `#fcf9f0`| Fundo principal (papel pergaminho)  |
-| `--color-primary`        | `#002446`| Azul escuro — botoes, titulos       |
-| `--color-secondary`      | `#735c00`| Dourado — bordas, acentos, cristais |
-| `--color-secondary-container` | `#fed65b` | Amarelo ouro — highlights, selected |
-| `--color-outline`        | `#73777f`| Texto secundario                    |
-| `--color-outline-variant`| `#c3c6cf`| Bordas leves                        |
-| `--color-error`          | `#ba1a1a`| Erros, deletar                      |
-| `--color-error-container`| `#ffdad6`| Fundo de erro                       |
-| `--color-surface-container` | `#f1eee5` | Cards, painel direito             |
-| `--color-primary-container` | `#1a3a5f` | Fundo header admin, toasts        |
-| `--color-primary-fixed-dim` | `#abc8f5` | Cristais, detalhes azuis claros  |
+### Neutral
+- **Parchment Ivory** (#FAF6ED): The canvas background. Not white — warm, aged, inviting. Every surface rests on this.
+- **Pearl White** (#FFFFFF): Card and modal backgrounds. Clean but not stark against the ivory canvas.
+- **Linen** (#F6F3EA): Sidebar background and alternating surface tint. Slightly warmer than pure white.
+- **Slate Ink** (#3E4A56): Primary text color. A deep blue-gray that reads as authoritative without the harshness of pure black.
+- **Muted Slate** (#6B7A8A): Secondary text, labels, metadata. Provides hierarchy without visual noise.
+- **Teal Border** (rgba(29, 106, 106, 0.1)): A barely-visible teal-tinted divider. Adds institutional cohesion to borders and separators.
+- **Error** (#BA1A1A): Destructive actions and error states. Used sparingly.
+- **Error Container** (#FFDAD6): Light error background for alerts and validation messages.
+- **Focus Ring** (#735C00): A warm gold-brown for keyboard focus indicators. Visible against all backgrounds.
 
----
+### Named Rules
+**The Gold Scarcity Rule.** Scholar's Gold appears on ≤10% of any given screen. Its rarity is what makes it meaningful. Use it for CTAs, achievement markers, and active-state accents — never for backgrounds or large fills.
 
-## Tipografia
+**The Parchment Foundation Rule.** The warm ivory background (#FAF6ED) is non-negotiable. Never replace it with pure white (#FFF) or cool gray. The warmth of the canvas is what makes the entire system feel inviting rather than clinical.
 
-| Fonte            | CSS Class  | Uso                                    |
-|------------------|------------|----------------------------------------|
-| Playfair Display | `font-serif`| Titulos de eventos, numeracao dos dias |
-| Hanken Grotesk   | `font-sans` | Texto corrido, descricoes              |
-| Space Grotesk    | `font-caps` | Labels uppercase, badges, filtros      |
-| Cinzel           | `font-cinzel`| Titulo principal do calendario        |
+## 3. Typography
 
----
+**Display Font:** Cinzel (with Georgia, serif fallback)
+**Body Font:** Hanken Grotesk (with system-ui, sans-serif fallback)
+**Label/Mono Font:** Space Grotesk (with system-ui, sans-serif fallback)
 
-## Layout (3 colunas)
+**Character:** Cinzel brings the weight of academic authority — its serif letterforms echo carved stone and embossed book covers. Hanken Grotesk provides the modern clarity needed for body text and UI elements. Space Grotesk handles labels, metadata, and mono-spaced content. Together, they balance tradition with readability: the old world meeting the new, like a well-organized lecture hall.
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  SIDEBAR ESQUERDA  │   CALENDARIO CENTRAL   │  LEDGER DIREITO│
-│  (filtros, logo)   │   (grade de dias)      │  (eventos do   │
-│                    │                        │   dia selecionado│
-│  w-56/xl:w-64      │   flex-1               │  w-80/xl:w-96   │
-│  bg #f6f3ea         │   bg #fcf9f0           │  bg #f1eee5     │
-└──────────────────────────────────────────────────────────────┘
-```
+### Hierarchy
+- **Display** (700 weight, clamp(1.5rem, 4vw, 2.5rem), 1.2 line-height): Calendar title, section headers. The largest text on the page, always Cinzel.
+- **Headline** (600 weight, 18px, 1.3 line-height): Sidebar section titles, modal titles, event detail headings. Structured and clear.
+- **Title** (600 weight, 15px, 1.35 line-height): Event titles in the ledger, card headers, list items. Concise hierarchy markers.
+- **Body** (400 weight, 14px, 1.6 line-height): Event descriptions, event details, readable content. Generous line-height for comfortable reading.
+- **Label** (600 weight, 10px, 0.08em letter-spacing, uppercase): Filter labels, metadata, category tags. Compact and structured.
+- **Mono** (500 weight, 12px): Day numbers, timestamps, technical identifiers.
 
-- **Sidebar esquerda**: Logo, botao "Painel Admin", filtros por tipo, profecia do dia
-- **Calendario central**: Grade 7 colunas (D S T Q Q S S), 5-6 semanas, navegacao por mes
-- **Ledger direito**: Lista de eventos do dia selecionado com timeline vertical
+### Named Rules
+**The Serif Authority Rule.** Cinzel is reserved for display, headlines, and titles — moments where the design speaks with authority. It never appears in body text, labels, or UI chrome. Hanken Grotesk handles everything that needs to be read quickly and at small sizes.
 
-Em mobile, as colunas empilham verticalmente.
+## 4. Elevation
 
----
+The system uses a hybrid approach: soft ambient shadows for cards and containers, with tonal layering (teal/gold/lavender tints) for visual hierarchy. Shadows are always diffused and generous — never tight, never harsh. The goal is depth that feels like objects resting on parchment, not floating above it.
 
-## Componentes
+### Shadow Vocabulary
+- **Card Ambient** (`box-shadow: 0 1px 3px rgba(62, 74, 86, 0.06)`): Default state for cards and containers. Almost imperceptible — just enough to suggest the surface is slightly lifted.
+- **Card Hover** (`box-shadow: 0 4px 12px rgba(62, 74, 86, 0.1)`): Appears on hover/focus. A gentle "breathing" lift that rewards interaction.
+- **Modal Elevated** (`box-shadow: 0 16px 48px rgba(62, 74, 86, 0.15)`): Modal overlays and focused elements. The highest lift in the system.
+- **Crystal Glow** (`box-shadow: 0 0 12px rgba(171, 200, 245, 0.4)`): Decorative glow for crystal icons and special indicators. Not structural depth.
 
-### App.tsx (publico)
-- Roteamento por hash: `#/` = calendario, `#/admin` = autenticacao
-- Busca eventos via `GET /api/events` no mount
-- Calendario interativo: selecao de dia, filtros por tipo
-- Toast de "Profecia do Dia" (aleatoria)
-- Navegacao entre meses (12 meses a partir do atual)
+### Named Rules
+**The Flat-By-Default Rule.** Surfaces are flat at rest. Shadows appear only as a response to state (hover, elevation, focus). A card that always casts a shadow feels heavy; one that lifts gently on hover feels alive.
 
-### LoginGate.tsx
-- Formulario de usuario + senha
-- Erros exibidos inline (credenciais invalidas, etc.)
-- Link "Voltar para o calendario publico"
+## 5. Components
 
-### AdminPanel.tsx
-- Toolbar: titulo, contador de eventos, botoes "Recarregar" e "Novo Evento"
-- Tabela com todos os eventos: dia, mes, horario, titulo, tipo, instrutor, acoes
-- Modal de criacao/edicao com campos: mes, dia, horario, titulo, descricao, instrutor, tipo, imagem URL, cristal, estrelas
-- Botao de deletar com confirmacao
+### Buttons
+- **Shape:** Gently rounded (12px radius), generous padding for confident click targets.
+- **Primary (Teal):** Deep teal background (#1D6A6A), white text. Used for primary actions (save, submit, navigate). Deepens on hover (#124949).
+- **Accent (Gold):** Scholar's gold background (#D4AF37), deep teal text. Reserved for the single most important CTA on any screen. Used sparingly.
+- **Ghost:** Transparent background, muted text. Used for secondary actions (cancel, close). Subtle hover state with background tint.
+- **Hover/Focus:** All buttons transition with the system easing curve (0.2s cubic-bezier(0.4, 0, 0.2, 1)). Focus ring uses the warm gold-brown (#735C00).
 
-### LoginGate.tsx
-- Card centralizado com borda dourada, topo gold bar
-- Icone BookOpen, titulo "Reitoria - HoN EX"
-- Campos: Usuario, Senha
-- Botao "Entrar no Painel" com icone Sparkles
+### Calendar Cells
+- **Shape:** Gently rounded (12px radius), responsive height.
+- **Background:** Warm parchment (#FAF6ED) with subtle texture. Selected state uses gold fill (#D4AF37).
+- **Shadow Strategy:** Flat at rest, lifted on hover (2px upward translate + ambient shadow).
+- **Border:** 1px solid teal-tinted border. On hover, border shifts to gold — a subtle signal of attention.
+- **Selected State:** Gold background, deep teal text, subtle pulse animation for the current day.
 
----
+### Cards / Event Ledger
+- **Shape:** Rounded corners (16px radius), generous padding.
+- **Background:** Pearl white (#FFFFFF) on the parchment canvas.
+- **Shadow Strategy:** Flat at rest (ambient shadow), lifted on hover (elevated shadow).
+- **Border:** 1px solid teal-tinted border. On hover, border shifts to gold.
+- **Internal Padding:** 16px standard. Event cards have timeline connectors and icon markers.
 
-## Tipos de Evento (EventType)
+### Sidebar Navigation
+- **Style:** Fixed left sidebar, warm linen background (#F6F3EA), right border.
+- **Typography:** 14px Hanken Grotesk, 400 weight. Active state uses gold background with deep teal text.
+- **Default:** Muted text, transparent background.
+- **Hover:** Teal-tinted background, teal text color.
+- **Active:** Gold background (#D4AF37), deep teal text. The gold fill is the "you are here" marker.
+- **Mobile:** Collapses to off-canvas (translateX(-100%)), toggled by hamburger button.
 
-| Valor        | Label                    | Cor indicador     |
-|--------------|--------------------------|-------------------|
-| `spells`     | Spells (Magias)          | `#1a3a5f` (azul)  |
-| `tactics`    | Tactics (Taticas)        | `#735c00` (ouro)  |
-| `alchemy`    | Alquimia (Alchemy)       | `emerald-700`     |
-| `ritual`     | Ritual Sagrado           | `purple-700`      |
-| `other`      | Outros                   | `#1a3a5f` (padrao)|
+### Chips / Tags
+- **Style:** Small pill badges (9999px radius, 10px uppercase text).
+- **Category variants:** Teal background for general, gold for premium/special, lavender for secondary.
+- **State:** Always displayed; no toggle behavior. Purely informational.
 
----
+### Modal (Event Form)
+- **Shape:** 480px max-width, 20px radius.
+- **Background:** Warm parchment (#FAF6ED).
+- **Border:** 2px gold border (#D4AF37) — the "open ledger" treatment. Formal and distinctive.
+- **Header:** Gold accent bar at top, title in gold. Close button on right.
+- **Body:** Generous 24px padding. Form fields use linen background with teal-tinted borders.
 
-## Animacoes e Efeitos
+### Inputs / Fields
+- **Style:** Linen background (#F6F3EA), teal-tinted border, 12px radius.
+- **Focus:** Gold ring (#735C00) with subtle glow. Border shifts to teal.
+- **Labels:** 10px uppercase Space Grotesk, gold color (#D4AF37). Compact and structured.
 
-| Efeito             | Classe CSS           | Descricao                                    |
-|--------------------|----------------------|----------------------------------------------|
-| Pergaminho         | `parchment-texture`  | Textura de papel sobre superficies           |
-| Cantos filigrana   | `filigree-corner`    | SVG ornamental no canto superior-esquerdo    |
-| Cristal flutuante  | `floating-crystal`   | Flutuacao vertical + brilho pulsante (4s)    |
-| Brilho cristal     | `crystal-glow`       | Box-shadow azul claro pulsante               |
-| Pulso "Hoje"       | `today-pulse`        | Borda dourada pulsante no dia atual          |
-| Brilho arcano      | `arcane-glow`        | Hover com sombra azul + dourada, translate   |
-| Toast notificacao  | motion `AnimatePresence` | Slide-in de cima com spring animation    |
+## 6. Do's and Don'ts
 
----
+### Do:
+- **Do** use the warm parchment background (#FAF6ED) as the canvas for every surface. It is the foundation of the system's inviting character.
+- **Do** reserve Scholar's Gold (#D4AF37) for moments of distinction — CTAs, active states, selected days. Its scarcity is what makes it meaningful.
+- **Do** use Cinzel for display and headlines to carry the academic authority of the brand. Let Hanken Grotesk handle everything else.
+- **Do** keep shadows diffused and ambient. The system breathes through gentle lifts, not dramatic drops.
+- **Do** use the gold border shift on card hover as a subtle "attention" signal — it's a signature pattern.
+- **Do** use generous whitespace and calm hierarchy. "Patience is pedagogy" applies to the layout itself.
+- **Do** color-code event types with teal, gold, and lavender to create visual rhythm without clutter.
 
-## API (server.js)
-
-### Endpoints publicos
-
-| Metodo | Rota              | Descricao                    |
-|--------|-------------------|------------------------------|
-| GET    | `/api/health`     | Health check                 |
-| GET    | `/api/events`     | Lista todos os eventos       |
-| GET    | `/api/event-types`| Lista tipos de atividade     |
-
-### Endpoints autenticados (cookie `hon_admin`)
-
-| Metodo | Rota                       | Descricao              |
-|--------|----------------------------|------------------------|
-| GET    | `/api/auth?op=me`          | Perfil do admin logado |
-| POST   | `/api/auth?op=login`       | Login (seta cookie)    |
-| POST   | `/api/auth?op=logout`      | Limpa cookie           |
-| POST   | `/api/auth?op=setup`       | Cria 1o admin (X-Setup-Token) |
-| POST   | `/api/events`              | Cria evento            |
-| PATCH  | `/api/events`              | Atualiza evento        |
-| DELETE | `/api/events`              | Deleta evento          |
-| POST   | `/api/event-types`         | Cria tipo              |
-| PATCH  | `/api/event-types`         | Atualiza tipo          |
-| DELETE | `/api/event-types`         | Deleta tipo            |
-
----
-
-## Supabase (Schema)
-
-### Tabela `admins`
-
-| Coluna        | Tipo   | Constraints        |
-|---------------|--------|--------------------|
-| id            | UUID   | PK, default uuid() |
-| username      | TEXT   | NOT NULL, UNIQUE   |
-| password_hash | TEXT   | NOT NULL           |
-| display_name  | TEXT   | nullable           |
-| created_at    | TIMESTAMPTZ | default now()  |
-
-### Tabela `events`
-
-| Coluna        | Tipo     | Constraints              |
-|---------------|----------|--------------------------|
-| id            | UUID     | PK, default uuid()       |
-| month         | TEXT     | NOT NULL                 |
-| day           | INTEGER  | NOT NULL                 |
-| time          | TEXT     | NOT NULL                 |
-| title         | TEXT     | NOT NULL                 |
-| description   | TEXT     | default ''               |
-| instructor    | TEXT     | default ''               |
-| type          | TEXT     | NOT NULL (spells/etc)    |
-| image         | TEXT     | default ''               |
-| crystal       | BOOLEAN  | default false            |
-| stars         | BOOLEAN  | default false            |
-| indicators    | TEXT[]   | default '{}'             |
-| mana_progress | INTEGER  | default 0                |
-| spots         | INTEGER  | nullable                 |
-| rank          | TEXT     | nullable                 |
-| created_by    | UUID     | FK → admins(id)          |
-| created_at    | TIMESTAMPTZ | default now()        |
-| updated_at    | TIMESTAMPTZ | nullable              |
-
-RLS habilitado. SELECT publico. Inserts/updates/deletes apenas via service_role (server.js).
-
----
-
-## Deploy
-
-- **Dev**: `npm run dev` (concurrently Vite :3000 + Express :3001)
-- **Build**: `npm run build` → `dist/`
-- **Producao**: Vite build servido estaticamente, API em server.js (Ex: Vercel, Railway, Render)
-- **Vercel**: `base: '/calendario/'` no vite.config.ts, rewrites necessarios
-
----
-
-## Seguranca
-
-- Senhas hasheadas com `bcryptjs` (12 rounds)
-- Cookie JWT `httpOnly`, `sameSite: strict`, `secure` em producao
-- JWT com algoritmo explicito `HS256`, secret minimo 32 caracteres
-- `SETUP_TOKEN` usado uma unica vez para criar o primeiro admin (comparacao timing-safe)
-- `.env` no `.gitignore` (nunca committado)
-- Service role key apenas no server.js (nunca exposta ao browser)
-- Validacao de inputs em todos os endpoints (UUID, mes, dia, tipo, cor, URL)
-- Rate limiting nos endpoints de auth (20 req/15 min/IP)
-- Headers de seguranca (X-Content-Type-Options, X-Frame-Options, HSTS, etc.)
-- Timeout de 15s no client-side fetch
-- URLs de imagem sanitizadas (bloqueia javascript: e data:)
+### Don't:
+- **Don't** use generic calendar app aesthetics — sterile white backgrounds, flat utilitarian design, no personality. Quoting PRODUCT.md: *"Generic calendar apps (Google Calendar, Outlook) — sterile, utilitarian, no soul."*
+- **Don't** use gaming event tracker aesthetics — neon timers, countdown urgency, aggressive dark themes. Quoting PRODUCT.md: *"Gaming event trackers with neon timers and countdown urgency."*
+- **Don't** replace the warm parchment background with pure white (#FFF) or cool gray. The warmth of the canvas is non-negotiable.
+- **Don't** use Cinzel in body text, labels, or UI chrome. It is reserved for moments of authority only.
+- **Don't** overuse gold. If every element is gold, none of them are special. The Gold Scarcity Rule is absolute.
+- **Don't** use tight, harsh shadows. If a shadow looks like it belongs on a material design button from 2014, it's too dark and too small.
+- **Don't** add decorative elements that don't serve scheduling or navigation. Every pixel should either inform or guide.
+- **Don't** use navy blue (#002446) as the primary color. The institutional identity is Sharlayan Teal (#1D6A6A), aligned with the main HoN brand.

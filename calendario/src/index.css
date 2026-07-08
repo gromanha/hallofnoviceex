@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Cinzel:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Cinzel:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 /* ── Global Reset & Base ── */
@@ -68,12 +68,12 @@ a:focus-visible,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c3c6cf;
+  background: var(--color-outline-variant);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #73777f;
+  background: var(--color-outline);
 }
 
 /* ── Mobile Menu Overlay ── */
@@ -110,6 +110,10 @@ a:focus-visible,
   .mobile-sidebar[data-open="true"] {
     transform: translateX(0);
   }
+
+  .mobile-sidebar[data-open="true"]:focus-within {
+    outline: none;
+  }
 }
 
 /* ── Hamburger Button ── */
@@ -144,6 +148,7 @@ a:focus-visible,
   --font-sans: "Hanken Grotesk", sans-serif;
   --font-caps: "Space Grotesk", sans-serif;
   --font-cinzel: "Cinzel", Georgia, serif;
+  --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, monospace;
 
   /* Sharlayan Teal palette — aligned with main HoN brand */
   --color-primary: #1D6A6A;
@@ -183,12 +188,6 @@ a:focus-visible,
 }
 
 /* Base custom definitions */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  display: inline-block;
-  line-height: 1;
-}
-
 .filigree-corner {
   position: relative;
 }
@@ -285,26 +284,66 @@ a:focus-visible,
   box-shadow: 0 8px 24px rgba(29, 106, 106, 0.08);
 }
 
+.card-hover:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+/* ── Transition Variants ── */
+.transition-bounce {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.transition-spring {
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 /* ── Filter Button Active State ── */
 .filter-btn {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.filter-btn:hover::after {
+  transform: translateX(100%);
 }
 
 .filter-btn:hover {
   transform: translateX(2px);
 }
 
+.filter-btn:active {
+  transform: translateX(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+
 .filter-btn[aria-pressed="true"] {
   transform: translateX(0);
+}
+
+.filter-btn[aria-pressed="true"]::after {
+  display: none;
 }
 
 /* ── Calendar Day Cell ── */
 .calendar-cell {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow, border-color;
 }
 
 .calendar-cell:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(62, 74, 86, 0.1);
 }
 
 .calendar-cell:focus-visible {
@@ -312,25 +351,31 @@ a:focus-visible,
   outline-offset: 2px;
 }
 
+.calendar-cell:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
 /* ── Timeline Connector ── */
 .timeline-connector {
   position: relative;
+  padding-left: 8px;
 }
 
 .timeline-connector::before {
   content: '';
   position: absolute;
   left: 14px;
-  top: 32px;
-  bottom: 0;
+  top: 40px;
+  bottom: 16px;
   width: 2px;
-  background: repeating-linear-gradient(
+  background: linear-gradient(
     to bottom,
-    #c3c6cf 0px,
-    #c3c6cf 4px,
-    transparent 4px,
-    transparent 8px
+    var(--color-outline-variant) 0%,
+    var(--color-primary) 50%,
+    var(--color-outline-variant) 100%
   );
+  border-radius: 1px;
 }
 
 /* ── Toast Animation ── */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   motion,
   AnimatePresence
@@ -170,6 +170,19 @@ export default function App() {
 
   const selectedDayEvents = getDayEvents(selectedDay, currentMonth.name);
 
+  const currentMonthEvents = useMemo(
+    () => events.filter(e => e.month === currentMonth.name),
+    [events, currentMonth.name]
+  );
+
+  const filterCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: currentMonthEvents.length };
+    for (const et of eventTypes) {
+      counts[et.key] = currentMonthEvents.filter(e => e.type === et.key).length;
+    }
+    return counts;
+  }, [currentMonthEvents, eventTypes]);
+
   const daysInGrid: { dayNum: number; isCurrent: boolean; isPrev?: boolean; isNext?: boolean }[] = [];
   currentMonth.prevMonthDays.forEach(d => {
     daysInGrid.push({ dayNum: d, isCurrent: false, isPrev: true });
@@ -253,6 +266,7 @@ export default function App() {
 
             <button
               onClick={() => setActiveFilter('all')}
+              aria-pressed={activeFilter === 'all'}
               className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
                 ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                 : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
@@ -263,7 +277,7 @@ export default function App() {
                 <span className="text-sm">Todos Registros</span>
               </div>
               <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                {events.filter(e => e.month === currentMonth.name).length}
+                {filterCounts.all}
               </span>
             </button>
 
@@ -273,6 +287,7 @@ export default function App() {
                 <button
                   key={et.key}
                   onClick={() => setActiveFilter(et.key)}
+                  aria-pressed={activeFilter === et.key}
                   className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
                     ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
                     : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
@@ -283,7 +298,7 @@ export default function App() {
                     <span className="text-sm">{et.label}</span>
                   </div>
                   <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
-                    {events.filter(e => e.month === currentMonth.name && e.type === et.key).length}
+                    {filterCounts[et.key] || 0}
                   </span>
                 </button>
               );
@@ -311,14 +326,22 @@ export default function App() {
               <Sparkles className="w-4 h-4 text-[#735c00]" />
               Profecia do Dia
             </button>
-            <div className="text-[#43474e] hover:bg-[#e5e2da] rounded-full px-4 py-2 flex items-center gap-3 cursor-pointer text-xs transition-colors">
-              <Settings className="w-4 h-4 text-[#73777f]" />
-              Settings
-            </div>
-            <div className="text-[#43474e] hover:bg-[#e5e2da] rounded-full px-4 py-2 flex items-center gap-3 cursor-pointer text-xs transition-colors">
-              <HelpCircle className="w-4 h-4 text-[#73777f]" />
-              Support
-            </div>
+            <button
+              disabled
+              className="w-full text-left text-[#43474e]/50 rounded-full px-4 py-2 flex items-center gap-3 text-xs cursor-not-allowed"
+              title="Em breve"
+            >
+              <Settings className="w-4 h-4 text-[#73777f]/50" />
+              Configurações
+            </button>
+            <button
+              disabled
+              className="w-full text-left text-[#43474e]/50 rounded-full px-4 py-2 flex items-center gap-3 text-xs cursor-not-allowed"
+              title="Em breve"
+            >
+              <HelpCircle className="w-4 h-4 text-[#73777f]/50" />
+              Ajuda
+            </button>
           </div>
         </aside>
 
@@ -341,7 +364,7 @@ export default function App() {
                 <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-cinzel text-[#1a3a5f] font-bold tracking-tight">Calendario Hall of the Novice EX</h2>
                 {activeFilter !== 'all' && (
                   <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20">
-                    Filtro: {activeFilter}
+                    Filtro: {eventTypes.find(e => e.key === activeFilter)?.label || activeFilter}
                   </span>
                 )}
               </div>
@@ -372,9 +395,9 @@ export default function App() {
           )}
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none">
-            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
-              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none" role="grid" aria-label="Calendário de eventos">
+            {['Do', 'Se', 'Te', 'Qa', 'Qi', 'Sa', 'Su'].map((day, i) => (
+              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30" role="columnheader">
                 <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
                 <span className="sm:hidden">{day}</span>
               </div>
@@ -390,7 +413,11 @@ export default function App() {
 
               if (!isCurrent) {
                 return (
-                  <div key={`p-${idx}`} className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between">
+                  <div
+                  key={`p-${idx}`}
+                  className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#f1eee5]/40 opacity-40 border border-[#c3c6cf]/30 p-1 sm:p-2 relative flex flex-col justify-between"
+                  aria-hidden="true"
+                >
                     <span className="font-serif text-sm sm:text-lg text-[#73777f]">{dayNum}</span>
                     <span className="text-[7px] sm:text-[8px] font-caps text-[#73777f]/60 text-right hidden sm:block">
                       {isPrev ? 'anterior' : 'próximo'}
@@ -406,6 +433,10 @@ export default function App() {
                 <div
                   key={`c-${dayNum}`}
                   onClick={() => setSelectedDay(dayNum)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDay(dayNum); } }}
                   className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
                     ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
                     : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
@@ -533,7 +564,7 @@ export default function App() {
                             className="text-[9px] font-caps px-2 py-0.5 rounded-full border uppercase font-semibold whitespace-nowrap"
                             style={{ color: typeColor, borderColor: typeColor + '40', backgroundColor: typeColor + '15' }}
                           >
-                            {event.type}
+                            {typeDef?.label || event.type}
                           </span>
                         </div>
 

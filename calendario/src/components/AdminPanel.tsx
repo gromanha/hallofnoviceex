@@ -147,11 +147,12 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   async function handleEventSave(e: React.FormEvent) {
     e.preventDefault();
     if (!eventForm.title.trim()) return;
+    const clampedDay = Math.max(1, Math.min(31, eventForm.day));
     setSavingEvent(true);
     try {
       const payload = {
         month: eventForm.month,
-        day: eventForm.day,
+        day: clampedDay,
         time: eventForm.time,
         title: eventForm.title,
         description: eventForm.description,
@@ -177,6 +178,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   }
 
   async function handleEventDelete(id: string) {
+    if (!window.confirm('Tem certeza que deseja excluir este evento?')) return;
     setDeletingEventId(id);
     try {
       await apiDel('/api/events', { id });
@@ -238,6 +240,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   }
 
   async function handleTypeDelete(id: string) {
+    if (!window.confirm('Tem certeza que deseja excluir este tipo de atividade?')) return;
     setDeletingTypeId(id);
     try {
       await apiDel('/api/event-types', { id });
@@ -508,7 +511,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
       {/* ═══════ EVENT MODAL ═══════ */}
       {showEventForm && (
-        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
           <div className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl">
             <div className="h-1.5 bg-[#735c00] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
@@ -516,7 +519,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                 <h3 className="text-lg font-serif font-bold text-[#735c00]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer" aria-label="Fechar">
                   <X className="w-5 h-5 text-[#43474e]" />
                 </button>
               </div>
@@ -597,7 +600,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
       {/* ═══════ TYPE MODAL ═══════ */}
       {showTypeForm && (
-        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
           <div className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-md shadow-2xl">
             <div className="h-1.5 bg-[#735c00] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
@@ -605,7 +608,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
                 <h3 className="text-lg font-serif font-bold text-[#735c00]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[#e5e2da] cursor-pointer" aria-label="Fechar">
                   <X className="w-5 h-5 text-[#43474e]" />
                 </button>
               </div>

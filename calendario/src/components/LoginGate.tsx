@@ -47,13 +47,13 @@ export default function LoginGate({ onLogin }: LoginGateProps) {
           </div>
 
           <p className="text-sm text-[#43474e]">
-            Acesse com suas credenciais para gerenciar as atividades academicas publicadas no calendario.
+            Acesse com suas credenciais para gerenciar as atividades acadêmicas publicadas no calendário.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-caps uppercase tracking-wider text-[#735c00] mb-1 font-semibold">
-                Usuario
+                Usuário
               </label>
               <input
                 type="text"
@@ -99,7 +99,7 @@ export default function LoginGate({ onLogin }: LoginGateProps) {
             onClick={() => (window.location.hash = '#/')}
             className="w-full text-xs text-[#735c00] hover:underline flex items-center justify-center gap-1"
           >
-            <X className="w-3 h-3" /> Voltar para o calendario publico
+            <X className="w-3 h-3" /> Voltar para o calendário público
           </button>
         </div>
       </div>

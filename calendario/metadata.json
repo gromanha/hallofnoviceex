@@ -1,8 +1,5 @@
 {
   "name": "Hall of the Novice EX",
   "description": "Calendário acadêmico interativo e diário de atividades da academia.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "requestFramePermissions": []
 }

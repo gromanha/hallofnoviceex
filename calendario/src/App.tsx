@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   motion,
   AnimatePresence
@@ -24,6 +24,7 @@ import {
   Eye,
   Moon,
   Star,
+  Menu,
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventType, EventTypeItem } from './types';
 import { apiGet } from './lib/api';
@@ -42,6 +43,19 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
 
 function resolveIcon(name: string): React.ComponentType<any> {
   return ICON_MAP[name] || Layers;
+}
+
+function safeImageUrl(url?: string): string {
+  if (!url) return '';
+  const t = url.trim();
+  if (!t || t.startsWith('javascript:') || t.startsWith('data:') || t.startsWith('vbscript:')) return '';
+  try {
+    const u = new URL(t);
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return '';
+  } catch {
+    return '';
+  }
+  return t;
 }
 
 const REAL_MONTH_NAMES = [
@@ -131,6 +145,27 @@ export default function App() {
 
   const [prophecy, setProphecy] = useState(PROPHECIES[0]);
   const [showProphecyToast, setShowProphecyToast] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  // Close sidebar on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close sidebar on Escape
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [sidebarOpen]);
 
   const prevMonth = () => {
     setCurrentMonthIdx(prev => (prev === 0 ? DEFAULT_MONTHS.length - 1 : prev - 1));
@@ -216,34 +251,60 @@ export default function App() {
   return (
     <div className="bg-[#fcf9f0] text-[#1c1c17] font-sans min-h-screen flex flex-col selection:bg-[#fed65b] selection:text-[#241a00] overflow-x-hidden antialiased" style={{ overscrollBehavior: 'none' }}>
 
-      <AnimatePresence>
-        {showProphecyToast && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[#1a3a5f] text-[#abc8f5] border-2 border-[#abc8f5] shadow-2xl py-3 px-6 rounded-2xl max-w-lg flex items-center gap-3 crystal-glow"
-          >
-            <Sparkles className="w-6 h-6 text-[#fed65b] shrink-0 animate-pulse" />
-            <div>
-              <p className="text-[10px] font-caps uppercase tracking-widest text-[#fed65b]">Pergaminho de Notificação Mística</p>
-              <p className="text-sm font-medium text-white">{prophecy}</p>
-            </div>
-            <button onClick={() => setShowProphecyToast(false)} className="text-[#abc8f5] hover:text-white ml-2">
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Skip to content */}
+      <a href="#main-content" className="skip-link">
+        Pular para o conteúdo principal
+      </a>
+
+      {/* Prophecy Toast */}
+      <div aria-live="polite" aria-atomic="true" className="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <AnimatePresence>
+          {showProphecyToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              className="bg-[#1a3a5f] text-[#abc8f5] border-2 border-[#abc8f5] shadow-2xl py-3 px-6 rounded-2xl max-w-lg flex items-center gap-3 crystal-glow pointer-events-auto"
+              role="status"
+            >
+              <Sparkles className="w-6 h-6 text-[#fed65b] shrink-0 animate-pulse" aria-hidden="true" />
+              <div>
+                <p className="text-[10px] font-caps uppercase tracking-widest text-[#fed65b]">Pergaminho de Notificação Mística</p>
+                <p className="text-sm font-medium text-white">{prophecy}</p>
+              </div>
+              <button
+                onClick={() => setShowProphecyToast(false)}
+                className="text-[#abc8f5] hover:text-white ml-2 p-1 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Fechar notificação"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      <div
+        className="sidebar-overlay lg:hidden"
+        data-open={sidebarOpen}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
 
       <main className="flex-1 flex flex-col lg:flex-row h-auto lg:h-screen overflow-hidden">
 
         {/* Left Sidebar */}
-        <aside className="w-full lg:w-56 xl:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-4 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto">
+        <aside
+          ref={sidebarRef}
+          className="mobile-sidebar lg:relative lg:transform-none lg:translate-x-0 w-full lg:w-56 xl:w-64 bg-[#f6f3ea] border-b lg:border-b-0 lg:border-r border-[#c3c6cf] py-4 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto"
+          data-open={sidebarOpen}
+          aria-label="Barra lateral de navegação"
+        >
           <div className="px-6">
             <div className="flex items-center gap-3 mb-6 bg-[#fcf9f0] p-3 rounded-2xl border border-[#735c00]/10 parchment-texture">
               <div className="w-10 h-10 rounded-full bg-[#fed65b] flex items-center justify-center border border-[#735c00] shrink-0">
-                <BookOpen className="w-5 h-5 text-[#241a00]" />
+                <BookOpen className="w-5 h-5 text-[#241a00]" aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <p className="text-[10px] font-caps text-[#735c00] uppercase tracking-wider">Archmage Calendar</p>
@@ -254,29 +315,30 @@ export default function App() {
             <a
               href="#/admin"
               className="w-full bg-[#002446] py-3 rounded-xl text-white font-caps text-xs tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#abc8f5]/20 no-underline"
+              onClick={() => setSidebarOpen(false)}
             >
-              <ShieldCheck className="w-4 h-4 text-[#fed65b]" />
+              <ShieldCheck className="w-4 h-4 text-[#fed65b]" aria-hidden="true" />
               Painel Admin
             </a>
           </div>
 
           {/* Filters */}
-          <nav className="flex-1 px-3 space-y-1">
+          <nav className="flex-1 px-3 space-y-1" aria-label="Filtros de disciplina">
             <p className="text-[9px] font-caps uppercase tracking-widest text-[#73777f] px-3 mb-2">Filtros de Disciplina</p>
 
             <button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => { setActiveFilter('all'); setSidebarOpen(false); }}
               aria-pressed={activeFilter === 'all'}
-              className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
+              className={`filter-btn w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
                 ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                : 'text-[#43474e] hover:bg-[#e5e2da]'
                 }`}
             >
               <div className="flex items-center gap-3">
-                <Layers className="w-4 h-4" />
+                <Layers className="w-4 h-4" aria-hidden="true" />
                 <span className="text-sm">Todos Registros</span>
               </div>
-              <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
+              <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]" aria-label={`${filterCounts.all} eventos`}>
                 {filterCounts.all}
               </span>
             </button>
@@ -286,18 +348,18 @@ export default function App() {
               return (
                 <button
                   key={et.key}
-                  onClick={() => setActiveFilter(et.key)}
+                  onClick={() => { setActiveFilter(et.key); setSidebarOpen(false); }}
                   aria-pressed={activeFilter === et.key}
-                  className={`w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
+                  className={`filter-btn w-full text-left rounded-full px-4 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
                     ? 'bg-[#fed65b] text-[#241a00] font-bold shadow-sm'
-                    : 'text-[#43474e] hover:bg-[#e5e2da] hover:translate-x-1'
+                    : 'text-[#43474e] hover:bg-[#e5e2da]'
                     }`}
                 >
                   <div className="flex items-center gap-3">
-                    <IconComp className="w-4 h-4" style={{ color: et.color }} />
+                    <IconComp className="w-4 h-4" style={{ color: et.color }} aria-hidden="true" />
                     <span className="text-sm">{et.label}</span>
                   </div>
-                  <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]">
+                  <span className="text-xs bg-white/50 px-2 py-0.5 rounded-full font-mono text-[10px]" aria-label={`${filterCounts[et.key] || 0} eventos`}>
                     {filterCounts[et.key] || 0}
                   </span>
                 </button>
@@ -306,12 +368,13 @@ export default function App() {
           </nav>
 
           {activeFilter !== 'all' && (
-            <div className="mx-4 p-3 bg-[#f1eee5] rounded-xl border border-[#735c00]/10 text-xs parchment-texture">
+            <div className="mx-4 p-3 bg-[#f1eee5] rounded-xl border border-[#735c00]/10 text-xs parchment-texture" role="status">
               <span className="font-caps text-[10px] text-[#735c00] block uppercase mb-1">Filtro Ativo</span>
               <p className="text-[#43474e]">O calendário agora destaca apenas eventos da disciplina <strong className="capitalize text-[#002446]">{eventTypes.find(e => e.key === activeFilter)?.label || activeFilter}</strong>.</p>
               <button
                 onClick={() => setActiveFilter('all')}
                 className="mt-2 text-[#735c00] hover:underline font-semibold flex items-center gap-1 cursor-pointer text-[11px]"
+                aria-label="Limpar filtro ativo"
               >
                 Limpar filtro ×
               </button>
@@ -323,7 +386,7 @@ export default function App() {
               onClick={triggerProphecy}
               className="w-full text-left text-[#43474e] hover:bg-[#e5e2da] rounded-full px-4 py-2 flex items-center gap-3 cursor-pointer text-xs transition-colors"
             >
-              <Sparkles className="w-4 h-4 text-[#735c00]" />
+              <Sparkles className="w-4 h-4 text-[#735c00]" aria-hidden="true" />
               Profecia do Dia
             </button>
             <button
@@ -331,7 +394,7 @@ export default function App() {
               className="w-full text-left text-[#43474e]/50 rounded-full px-4 py-2 flex items-center gap-3 text-xs cursor-not-allowed"
               title="Em breve"
             >
-              <Settings className="w-4 h-4 text-[#73777f]/50" />
+              <Settings className="w-4 h-4 text-[#73777f]/50" aria-hidden="true" />
               Configurações
             </button>
             <button
@@ -339,7 +402,7 @@ export default function App() {
               className="w-full text-left text-[#43474e]/50 rounded-full px-4 py-2 flex items-center gap-3 text-xs cursor-not-allowed"
               title="Em breve"
             >
-              <HelpCircle className="w-4 h-4 text-[#73777f]/50" />
+              <HelpCircle className="w-4 h-4 text-[#73777f]/50" aria-hidden="true" />
               Ajuda
             </button>
           </div>
@@ -347,7 +410,7 @@ export default function App() {
 
         {/* Calendar Panel */}
         <section
-          id="calendar-section"
+          id="main-content"
           className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 xl:p-8 relative"
           style={{
             backgroundImage: `linear-gradient(rgba(252, 249, 240, 0.82), rgba(252, 249, 240, 0.82)), url(${bgImage})`,
@@ -357,13 +420,30 @@ export default function App() {
             backgroundAttachment: 'scroll'
           }}
         >
+          {/* Mobile header bar */}
+          <div className="lg:hidden flex items-center gap-3 mb-4">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="hamburger"
+              aria-label="Abrir menu de navegação"
+              aria-expanded={sidebarOpen}
+              aria-controls="sidebar-nav"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2 min-w-0">
+              <img src={logoImage} alt="Logo HoN EX" className="h-8 w-auto shrink-0 drop-shadow" loading="lazy" />
+              <h1 className="text-lg font-cinzel text-[#1a3a5f] font-bold tracking-tight truncate">Calendário</h1>
+            </div>
+          </div>
+
           <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <img src={logoImage} alt="Logo HoN EX" className="h-10 sm:h-12 md:h-14 w-auto shrink-0 drop-shadow" />
+                <img src={logoImage} alt="Logo HoN EX" className="h-10 sm:h-12 md:h-14 w-auto shrink-0 drop-shadow hidden lg:block" loading="lazy" />
                 <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-cinzel text-[#1a3a5f] font-bold tracking-tight">Calendario Hall of the Novice EX</h2>
                 {activeFilter !== 'all' && (
-                  <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20">
+                  <span className="bg-[#fed65b] text-[#241a00] text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-[#735c00]/20" role="status">
                     Filtro: {eventTypes.find(e => e.key === activeFilter)?.label || activeFilter}
                   </span>
                 )}
@@ -374,15 +454,15 @@ export default function App() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
-              <button onClick={prevMonth} title="Mês Anterior" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
-                <ChevronLeft className="w-5 h-5" />
+            <div className="flex items-center gap-2 shrink-0" role="group" aria-label="Navegação entre meses">
+              <button onClick={prevMonth} title="Mês Anterior" aria-label="Mês anterior" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
-              <span className="text-sm font-serif text-[#735c00] font-semibold hidden sm:block min-w-[100px] text-center">
+              <span className="text-sm font-serif text-[#735c00] font-semibold hidden sm:block min-w-[100px] text-center" aria-live="polite">
                 {currentMonth.name}
               </span>
-              <button onClick={nextMonth} title="Próximo Mês" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
-                <ChevronRight className="w-5 h-5" />
+              <button onClick={nextMonth} title="Próximo Mês" aria-label="Próximo mês" className="p-2 border border-[#c3c6cf] rounded-lg hover:bg-[#ebe8df] transition-colors cursor-pointer text-[#43474e]">
+                <ChevronRight className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -397,7 +477,7 @@ export default function App() {
           {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none" role="grid" aria-label="Calendário de eventos">
             {['Do', 'Se', 'Te', 'Qa', 'Qi', 'Sa', 'Su'].map((day, i) => (
-              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30" role="columnheader">
+              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#43474e] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[#c3c6cf]/30" role="columnheader" aria-label={['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][i]}>
                 <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
                 <span className="sm:hidden">{day}</span>
               </div>
@@ -433,13 +513,13 @@ export default function App() {
                 <div
                   key={`c-${dayNum}`}
                   onClick={() => setSelectedDay(dayNum)}
-                  role="button"
+                  role="gridcell"
                   tabIndex={0}
-                  aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}`}
+                  aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}${isSelected ? ', selecionado' : ''}`}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDay(dayNum); } }}
-                  className={`h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
+                  className={`calendar-cell h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture transition-all cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
                     ? 'bg-[#fed65b] border-2 border-[#735c00] shadow-inner today-pulse scale-[1.01]'
-                    : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60'
+                    : 'bg-[#fcf9f0] border-[#735c00]/20 hover:-translate-y-1 hover:border-[#735c00]/60 hover:shadow-md'
                     } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
                     }`}
                 >
@@ -487,7 +567,7 @@ export default function App() {
 
                   {firstEventImage && matchesFilter ? (
                     <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[#c3c6cf]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
-                      <img className="w-full h-full object-cover" src={firstEventImage} alt="Miniatura de evento" referrerPolicy="no-referrer" />
+                      <img className="w-full h-full object-cover" src={safeImageUrl(firstEventImage)} alt={`Imagem do evento: ${dayEvents[0]?.title || ''}`} referrerPolicy="no-referrer" loading="lazy" />
                     </div>
                   ) : (
                     <div className="mt-2 sm:mt-4 flex flex-col justify-end text-right">
@@ -507,21 +587,21 @@ export default function App() {
             })}
           </div>
 
-          <div className="mt-8 flex items-center gap-3 p-4 bg-[#f1eee5]/50 rounded-2xl border border-[#735c00]/10 text-xs text-[#43474e] parchment-texture">
-            <AlertCircle className="w-5 h-5 text-[#735c00]" />
+          <div className="mt-8 flex items-center gap-3 p-4 bg-[#f1eee5]/50 rounded-2xl border border-[#735c00]/10 text-xs text-[#43474e] parchment-texture" role="note">
+            <AlertCircle className="w-5 h-5 text-[#735c00] shrink-0" aria-hidden="true" />
             <p><strong>Segredo Rúnico:</strong> Acesse o <a href="#/admin" className="text-[#002446] font-semibold hover:underline">Painel Admin</a> para gerenciar as atividades acadêmicas publicadas no calendário.</p>
           </div>
         </section>
 
         {/* Right Side: Arcane Ledger */}
-        <aside className="w-full lg:w-80 xl:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative">
+        <aside className="w-full lg:w-80 xl:w-96 bg-[#f1eee5] shadow-inner border-t lg:border-t-0 lg:border-l border-[#c3c6cf] p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative" aria-label="Painel de eventos do dia">
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#c3c6cf]/40 pb-4">
               <div>
                 <h3 className="text-2xl font-serif text-[#735c00] font-bold">Arcane Ledger</h3>
                 <p className="text-[10px] font-caps text-[#73777f] uppercase tracking-wider">Diário de Atividades Místicas</p>
               </div>
-              <div className="bg-[#002446] text-white text-xs font-mono font-bold px-3 py-1.5 rounded-lg border border-[#abc8f5]/20 shrink-0">
+              <div className="bg-[#002446] text-white text-xs font-mono font-bold px-3 py-1.5 rounded-lg border border-[#abc8f5]/20 shrink-0" aria-live="polite">
                 Dia {selectedDay < 10 ? `0${selectedDay}` : selectedDay}
               </div>
             </div>
@@ -531,7 +611,7 @@ export default function App() {
             ) : selectedDayEvents.length === 0 ? (
               <div className="text-center py-10 px-4 bg-[#fcf9f0] border border-[#735c00]/10 rounded-2xl parchment-texture space-y-4">
                 <div className="w-12 h-12 bg-[#ebe8df] rounded-full flex items-center justify-center mx-auto text-[#73777f]">
-                  <Compass className="w-6 h-6 animate-spin" style={{ animationDuration: '20s' }} />
+                  <Compass className="w-6 h-6 animate-spin" style={{ animationDuration: '20s' }} aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="font-serif text-[#002446] font-semibold text-lg">Tempo de Estudo Livre</h4>
@@ -539,17 +619,18 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6 relative before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-[2px] before:bg-dotted before:border-l-2 before:border-dotted before:border-[#c3c6cf]">
+              <div className="space-y-6 relative timeline-connector" role="list" aria-label={`Eventos do dia ${selectedDay}`}>
                 {selectedDayEvents.map((event) => {
                   const typeDef = eventTypes.find(t => t.key === event.type);
                   const EventIcon = resolveIcon(typeDef?.icon || 'Wand2');
                   const typeColor = typeDef ? typeDef.color : '#1a3a5f';
 
                   return (
-                    <div key={event.id} className="relative pl-8 group">
+                    <div key={event.id} className="relative pl-8 group" role="listitem">
                       <div
                         className="absolute left-0 top-1 w-7 h-7 rounded-full border-2 border-[#735c00] bg-[#fcf9f0] flex items-center z-10 hover:bg-[#fed65b] transition-colors shadow-sm"
                         style={{ color: typeColor }}
+                        aria-hidden="true"
                       >
                         <EventIcon className="w-3.5 h-3.5" />
                       </div>
@@ -557,7 +638,7 @@ export default function App() {
                       <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center gap-2 pr-6 relative">
                           <span className="text-[10px] font-caps text-[#735c00] font-semibold tracking-widest uppercase flex items-center gap-1 shrink-0">
-                            <Clock className="w-3 h-3" />
+                            <Clock className="w-3 h-3" aria-hidden="true" />
                             {event.time}
                           </span>
                           <span
@@ -578,7 +659,7 @@ export default function App() {
 
                         {event.image && (
                           <div className="rounded-xl overflow-hidden border border-[#c3c6cf] h-32 relative shadow-sm my-1 group-hover:shadow transition-shadow">
-                            <img className="w-full h-full object-cover" src={event.image} alt={event.title} referrerPolicy="no-referrer" />
+                            <img className="w-full h-full object-cover" src={safeImageUrl(event.image)} alt={event.title} referrerPolicy="no-referrer" loading="lazy" />
                             {event.instructor && (
                               <div className="absolute bottom-0 inset-x-0 bg-[#002446]/75 backdrop-blur-sm px-3 py-1.5 text-[9px] text-white font-caps uppercase tracking-widest flex justify-between">
                                 <span>Instrutor: {event.instructor}</span>

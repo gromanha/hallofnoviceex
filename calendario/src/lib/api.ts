@@ -1,27 +1,37 @@
+const REQUEST_TIMEOUT = 15_000;
+
 async function request(path: string, init: RequestInit = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers || {}),
-    },
-    ...init,
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-  let body: any = null;
   try {
-    body = await res.json();
-  } catch {
-    body = null;
-  }
+    const res = await fetch(path, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init.headers || {}),
+      },
+      signal: controller.signal,
+      ...init,
+    });
 
-  if (!res.ok) {
-    const err = new Error(body?.error || `HTTP ${res.status}`);
-    (err as any).status = res.status;
-    (err as any).body = body;
-    throw err;
+    let body: any = null;
+    try {
+      body = await res.json();
+    } catch {
+      body = null;
+    }
+
+    if (!res.ok) {
+      const err = new Error('request_failed');
+      (err as any).status = res.status;
+      (err as any).body = body;
+      throw err;
+    }
+    return body;
+  } finally {
+    clearTimeout(timer);
   }
-  return body;
 }
 
 export const apiGet = <T = any>(path: string) => request(path) as Promise<T>;

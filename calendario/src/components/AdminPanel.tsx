@@ -15,6 +15,7 @@ import {
 import { MagicalEvent, EventTypeItem } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { AdminProfile } from '../hooks/useAuth';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 const MONTHS = [
   'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -259,6 +260,9 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   function getTypeLabel(key: string): string {
     return eventTypes.find(t => t.key === key)?.label || key;
   }
+
+  const eventModalRef = useFocusTrap(showEventForm);
+  const typeModalRef = useFocusTrap(showTypeForm);
 
   return (
     <div className="min-h-screen bg-[#fcf9f0] text-[#1c1c17]">
@@ -512,7 +516,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
       {/* ═══════ EVENT MODAL ═══════ */}
       {showEventForm && (
         <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
-          <div className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl">
+          <div ref={eventModalRef} className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-xl shadow-2xl">
             <div className="h-1.5 bg-[#735c00] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">
@@ -601,7 +605,7 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
       {/* ═══════ TYPE MODAL ═══════ */}
       {showTypeForm && (
         <div className="fixed inset-0 bg-[#002446]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
-          <div className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-md shadow-2xl">
+          <div ref={typeModalRef} className="bg-[#fcf9f0] border-2 border-[#735c00] rounded-2xl w-full max-w-md shadow-2xl">
             <div className="h-1.5 bg-[#735c00] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[#c3c6cf]/40 pb-4">

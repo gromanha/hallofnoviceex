@@ -22,7 +22,7 @@ export interface MagicalEvent {
   crystal?: boolean; // Show floating crystal icon
   stars?: boolean; // Show star over thumbnail
   indicators?: string[]; // Color list e.g. ['primary', 'secondary', 'error']
-  manaProgress?: number; // Mana requirement percentage
+  mana_progress?: number; // Mana requirement percentage (snake_case from API)
   spots?: number; // Available spots
   rank?: string; // Event rank
 }

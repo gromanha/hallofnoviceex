@@ -4,6 +4,16 @@ async function request(path: string, init: RequestInit = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
+  // Allow external signal to also abort
+  const externalSignal = init.signal;
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      clearTimeout(timer);
+      throw new DOMException('Aborted', 'AbortError');
+    }
+    externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
+
   try {
     const res = await fetch(path, {
       credentials: 'include',

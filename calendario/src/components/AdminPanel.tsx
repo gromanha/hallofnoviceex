@@ -80,17 +80,21 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   // ── Event Types ──
   const [eventTypes, setEventTypes] = useState<EventTypeItem[]>([]);
 
-  const fetchEventTypes = useCallback(async () => {
+  const fetchEventTypes = useCallback(async (signal?: AbortSignal) => {
     try {
       const data = await apiGet<EventTypeItem[]>('/api/event-types');
-      setEventTypes(data);
+      if (!signal?.aborted) {
+        setEventTypes(data);
+      }
     } catch {
       // mantem vazio
     }
   }, []);
 
   useEffect(() => {
-    void fetchEventTypes();
+    const controller = new AbortController();
+    void fetchEventTypes(controller.signal);
+    return () => controller.abort();
   }, [fetchEventTypes]);
 
   // ── Events ──
@@ -98,21 +102,29 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setError(null);
     try {
       const data = await apiGet<MagicalEvent[]>('/api/events');
-      setEvents(data);
+      if (!signal?.aborted) {
+        setEvents(data);
+      }
     } catch (err: any) {
-      setError(err?.message || 'Falha ao carregar eventos.');
+      if (!signal?.aborted) {
+        setError(err?.message || 'Falha ao carregar eventos.');
+      }
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    void fetchEvents();
+    const controller = new AbortController();
+    void fetchEvents(controller.signal);
+    return () => controller.abort();
   }, [fetchEvents]);
 
   // ── Event Form ──
@@ -548,12 +560,14 @@ export default function AdminPanel({ user, onLogout }: AdminPanelProps) {
 
               <div>
                 <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Título</label>
-                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" />
+                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} maxLength={200} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30" aria-describedby="title-hint" />
+                <p id="title-hint" className="text-[9px] text-[#6B7A8A] mt-1">Máximo 200 caracteres</p>
               </div>
 
               <div>
                 <label className="block text-[10px] font-caps uppercase tracking-wider text-[#735C00] mb-1 font-semibold">Descrição</label>
-                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30 resize-none" />
+                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} maxLength={2000} className="w-full bg-[#F6F3EA] border border-[rgba(29,106,106,0.15)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#735C00]/30 resize-none" aria-describedby="desc-hint" />
+                <p id="desc-hint" className="text-[9px] text-[#6B7A8A] mt-1">{eventForm.description.length}/2000</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

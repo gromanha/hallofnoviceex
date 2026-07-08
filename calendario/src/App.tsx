@@ -32,6 +32,10 @@ import { useHashRoute } from './hashRouter';
 import { useAuth } from './hooks/useAuth';
 import LoginGate from './components/LoginGate';
 import AdminPanel from './components/AdminPanel';
+import WelcomeBanner from './components/WelcomeBanner';
+import FilterHint from './components/FilterHint';
+import EmptyCalendarState from './components/EmptyCalendarState';
+import { isFirstVisit, isWelcomeDismissed, isFilterHintDismissed } from './lib/onboarding';
 import bgImage from './assets/id.png';
 import logoImage from './assets/logo.png';
 
@@ -106,36 +110,48 @@ export default function App() {
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventsError, setEventsError] = useState<string | null>(null);
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = useCallback(async (signal?: AbortSignal) => {
     setEventsLoading(true);
     setEventsError(null);
     try {
       const data = await apiGet<MagicalEvent[]>('/api/events');
-      setEvents(data);
+      if (!signal?.aborted) {
+        setEvents(data);
+      }
     } catch (err: any) {
-      setEventsError(err?.message || 'Falha ao carregar eventos.');
+      if (!signal?.aborted) {
+        setEventsError(err?.message || 'Falha ao carregar eventos.');
+      }
     } finally {
-      setEventsLoading(false);
+      if (!signal?.aborted) {
+        setEventsLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    void fetchEvents();
+    const controller = new AbortController();
+    void fetchEvents(controller.signal);
+    return () => controller.abort();
   }, [fetchEvents]);
 
   const [eventTypes, setEventTypes] = useState<EventTypeItem[]>([]);
 
-  const fetchEventTypes = useCallback(async () => {
+  const fetchEventTypes = useCallback(async (signal?: AbortSignal) => {
     try {
       const data = await apiGet<EventTypeItem[]>('/api/event-types');
-      setEventTypes(data);
+      if (!signal?.aborted) {
+        setEventTypes(data);
+      }
     } catch {
       // mantem vazio se falhar
     }
   }, []);
 
   useEffect(() => {
-    void fetchEventTypes();
+    const controller = new AbortController();
+    void fetchEventTypes(controller.signal);
+    return () => controller.abort();
   }, [fetchEventTypes]);
 
   const [currentMonthIdx, setCurrentMonthIdx] = useState(0);
@@ -147,6 +163,10 @@ export default function App() {
   const [showProphecyToast, setShowProphecyToast] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
+
+  // Onboarding state
+  const [showWelcome, setShowWelcome] = useState(() => !isWelcomeDismissed());
+  const [showFilterHint, setShowFilterHint] = useState(() => !isFilterHintDismissed());
 
   // Close sidebar on resize to desktop
   useEffect(() => {
@@ -181,8 +201,14 @@ export default function App() {
     const random = PROPHECIES[Math.floor(Math.random() * PROPHECIES.length)];
     setProphecy(random);
     setShowProphecyToast(true);
-    setTimeout(() => setShowProphecyToast(false), 6000);
   };
+
+  // Auto-dismiss prophecy toast
+  useEffect(() => {
+    if (!showProphecyToast) return;
+    const timer = setTimeout(() => setShowProphecyToast(false), 6000);
+    return () => clearTimeout(timer);
+  }, [showProphecyToast]);
 
   const getDayEvents = (dayNum: number, monthName: string) => {
     return events.filter(e => {
@@ -312,6 +338,12 @@ export default function App() {
               </div>
             </div>
 
+            {showWelcome && (
+              <div className="lg:hidden mb-4">
+                <WelcomeBanner onDismiss={() => setShowWelcome(false)} />
+              </div>
+            )}
+
             <a
               href="#/admin"
               className="w-full bg-[#1D6A6A] py-3 rounded-xl text-white font-caps text-xs tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#E8F4F4]/20 no-underline"
@@ -323,7 +355,7 @@ export default function App() {
           </div>
 
           {/* Filters */}
-          <nav className="flex-1 px-3 space-y-1" aria-label="Filtros de disciplina">
+          <nav className="flex-1 px-3 space-y-1 overflow-y-auto min-h-0" aria-label="Filtros de disciplina">
             <p className="text-[9px] font-caps uppercase tracking-widest text-[#6B7A8A] px-3 mb-2">Filtros de Disciplina</p>
 
             <button
@@ -366,6 +398,12 @@ export default function App() {
               );
             })}
           </nav>
+
+          {showFilterHint && activeFilter === 'all' && (
+            <div className="px-3">
+              <FilterHint onDismiss={() => setShowFilterHint(false)} />
+            </div>
+          )}
 
           {activeFilter !== 'all' && (
             <div className="mx-4 p-3 bg-[#E8F4F4] rounded-xl border border-[#1D6A6A]/10 text-xs parchment-texture" role="status">
@@ -458,7 +496,7 @@ export default function App() {
               <button onClick={prevMonth} title="Mês Anterior" aria-label="Mês anterior" className="p-2 border border-[rgba(29,106,106,0.15)] rounded-lg hover:bg-[#E8F4F4] transition-colors cursor-pointer text-[#6B7A8A]">
                 <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
-              <span className="text-sm font-serif text-[#735C00] font-semibold hidden sm:block min-w-[100px] text-center" aria-live="polite">
+              <span className="text-sm font-serif text-[#735C00] font-semibold hidden sm:block min-w-[100px] text-center" aria-live="polite" aria-atomic="true">
                 {currentMonth.name}
               </span>
               <button onClick={nextMonth} title="Próximo Mês" aria-label="Próximo mês" className="p-2 border border-[rgba(29,106,106,0.15)] rounded-lg hover:bg-[#E8F4F4] transition-colors cursor-pointer text-[#6B7A8A]">
@@ -466,6 +504,12 @@ export default function App() {
               </button>
             </div>
           </div>
+
+          {showWelcome && (
+            <div className="hidden lg:block">
+              <WelcomeBanner onDismiss={() => setShowWelcome(false)} />
+            </div>
+          )}
 
           {eventsError && (
             <div className="mb-4 text-xs text-[#ba1a1a] bg-[#ffdad6] border border-[#ba1a1a]/30 rounded-lg px-4 py-3">
@@ -475,117 +519,121 @@ export default function App() {
           )}
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none" role="grid" aria-label="Calendário de eventos">
-            {['Do', 'Se', 'Te', 'Qa', 'Qi', 'Sa', 'Su'].map((day, i) => (
-              <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#6B7A8A] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[rgba(29,106,106,0.1)]/30" role="columnheader" aria-label={['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][i]}>
-                <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
-                <span className="sm:hidden">{day}</span>
-              </div>
-            ))}
+          {!eventsLoading && events.length === 0 ? (
+            <EmptyCalendarState />
+          ) : (
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 xl:gap-4 select-none" role="grid" aria-label="Calendário de eventos">
+              {['Do', 'Se', 'Te', 'Qa', 'Qi', 'Sa', 'Su'].map((day, i) => (
+                <div key={i} className="text-center font-caps text-[9px] sm:text-[11px] md:text-xs text-[#6B7A8A] pb-1 md:pb-2 uppercase tracking-widest font-semibold border-b border-[rgba(29,106,106,0.1)]/30" role="columnheader" aria-label={['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][i]}>
+                  <span className="hidden sm:inline">{['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][i]}</span>
+                  <span className="sm:hidden">{day}</span>
+                </div>
+              ))}
 
-            {daysInGrid.map((cell, idx) => {
-              const { dayNum, isCurrent, isPrev, isNext } = cell;
-              const dayEvents = getDayEvents(dayNum, currentMonth.name);
-              const hasEvents = dayEvents.length > 0;
-              const hasCrystal = dayEvents.some(e => e.crystal);
-              const firstEventImage = dayEvents.find(e => e.image)?.image;
-              const isSelected = isCurrent && selectedDay === dayNum;
+              {daysInGrid.map((cell, idx) => {
+                const { dayNum, isCurrent, isPrev, isNext } = cell;
+                const dayEvents = getDayEvents(dayNum, currentMonth.name);
+                const hasEvents = dayEvents.length > 0;
+                const hasCrystal = dayEvents.some(e => e.crystal);
+                const firstEventImage = dayEvents.find(e => e.image)?.image;
+                const isSelected = isCurrent && selectedDay === dayNum;
 
-              if (!isCurrent) {
+                if (!isCurrent) {
+                  return (
+                    <div
+                    key={`p-${idx}`}
+                    className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#F6F3EA]/40 opacity-40 border border-[rgba(29,106,106,0.1)]/30 p-1 sm:p-2 relative flex flex-col justify-between"
+                    aria-hidden="true"
+                  >
+                      <span className="font-serif text-sm sm:text-lg text-[#6B7A8A]">{dayNum}</span>
+                      <span className="text-[7px] sm:text-[8px] font-caps text-[#6B7A8A]/60 text-right hidden sm:block">
+                        {isPrev ? 'anterior' : 'próximo'}
+                      </span>
+                    </div>
+                  );
+                }
+
+                const allDayEventsForIndicators = getAllDayEvents(dayNum, currentMonth.name);
+                const matchesFilter = isDayHighlightedByFilter(dayNum, currentMonth.name);
+
                 return (
                   <div
-                  key={`p-${idx}`}
-                  className="h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl bg-[#F6F3EA]/40 opacity-40 border border-[rgba(29,106,106,0.1)]/30 p-1 sm:p-2 relative flex flex-col justify-between"
-                  aria-hidden="true"
-                >
-                    <span className="font-serif text-sm sm:text-lg text-[#6B7A8A]">{dayNum}</span>
-                    <span className="text-[7px] sm:text-[8px] font-caps text-[#6B7A8A]/60 text-right hidden sm:block">
-                      {isPrev ? 'anterior' : 'próximo'}
-                    </span>
-                  </div>
-                );
-              }
+                    key={`c-${dayNum}`}
+                    onClick={() => setSelectedDay(dayNum)}
+                    role="gridcell"
+                    tabIndex={0}
+                    aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}${isSelected ? ', selecionado' : ''}`}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDay(dayNum); } }}
+                    className={`calendar-cell h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture transition-all cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
+                      ? 'bg-[#D4AF37] border-2 border-[#124949] shadow-inner today-pulse scale-[1.01]'
+                      : 'bg-[#FAF6ED] border-[#1D6A6A]/20 hover:-translate-y-1 hover:border-[#1D6A6A]/60 hover:shadow-md'
+                      } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
+                      }`}
+                  >
+                    <div className="absolute inset-0 bg-transparent pointer-events-none rounded-xl" />
 
-              const allDayEventsForIndicators = getAllDayEvents(dayNum, currentMonth.name);
-              const matchesFilter = isDayHighlightedByFilter(dayNum, currentMonth.name);
-
-              return (
-                <div
-                  key={`c-${dayNum}`}
-                  onClick={() => setSelectedDay(dayNum)}
-                  role="gridcell"
-                  tabIndex={0}
-                  aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}${isSelected ? ', selecionado' : ''}`}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDay(dayNum); } }}
-                  className={`calendar-cell h-20 sm:h-28 md:h-32 xl:h-36 rounded-lg md:rounded-xl relative filigree-corner parchment-texture transition-all cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-3 overflow-hidden group border ${isSelected
-                    ? 'bg-[#D4AF37] border-2 border-[#124949] shadow-inner today-pulse scale-[1.01]'
-                    : 'bg-[#FAF6ED] border-[#1D6A6A]/20 hover:-translate-y-1 hover:border-[#1D6A6A]/60 hover:shadow-md'
-                    } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-30' : 'opacity-100'
-                    }`}
-                >
-                  <div className="absolute inset-0 bg-transparent pointer-events-none rounded-xl" />
-
-                  <div className="flex justify-between items-start z-10">
-                    <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-[#124949]' : 'text-[#735C00]'}`}>
-                      {dayNum < 10 ? `0${dayNum}` : dayNum}
-                    </span>
-
-                    {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
-                      <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
-                        ? 'bg-[#124949] text-[#D4AF37] border-[#D4AF37]/20'
-                        : 'bg-[#735C00] text-white border-transparent'
-                        }`}>
-                        Hoje
+                    <div className="flex justify-between items-start z-10">
+                      <span className={`font-serif text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-[#124949]' : 'text-[#735C00]'}`}>
+                        {dayNum < 10 ? `0${dayNum}` : dayNum}
                       </span>
+
+                      {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
+                        <span className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
+                          ? 'bg-[#124949] text-[#D4AF37] border-[#D4AF37]/20'
+                          : 'bg-[#735C00] text-white border-transparent'
+                          }`}>
+                          Hoje
+                        </span>
+                      )}
+
+                      {hasCrystal && matchesFilter && (
+                        <div className="floating-crystal transform scale-90 md:scale-100">
+                          <svg fill="none" height="20" viewBox="0 0 16 24" width="14" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 0L16 12L8 24L0 12L8 0Z" fill="#abc8f5" fillOpacity="0.8"></path>
+                            <path d="M8 4L12 12L8 20L4 12L8 4Z" fill="white" fillOpacity="0.4"></path>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {allDayEventsForIndicators.length > 0 && (
+                      <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
+                        {allDayEventsForIndicators.map((e, index) => {
+                          const typeDef = eventTypes.find(t => t.key === e.type);
+                          const dotBg = typeDef ? typeDef.color : '#1a3a5f';
+                          return (
+                            <div
+                              key={e.id || index}
+                              className="w-1.5 h-1.5 rounded-full crystal-glow animate-pulse"
+                              style={{ backgroundColor: dotBg }}
+                            />
+                          );
+                        })}
+                      </div>
                     )}
 
-                    {hasCrystal && matchesFilter && (
-                      <div className="floating-crystal transform scale-90 md:scale-100">
-                        <svg fill="none" height="20" viewBox="0 0 16 24" width="14" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M8 0L16 12L8 24L0 12L8 0Z" fill="#abc8f5" fillOpacity="0.8"></path>
-                          <path d="M8 4L12 12L8 20L4 12L8 4Z" fill="white" fillOpacity="0.4"></path>
-                        </svg>
+                    {firstEventImage && matchesFilter ? (
+                      <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[rgba(29,106,106,0.15)]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
+                        <img className="w-full h-full object-cover" src={safeImageUrl(firstEventImage)} alt={`Imagem do evento: ${dayEvents[0]?.title || ''}`} referrerPolicy="no-referrer" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      </div>
+                    ) : (
+                      <div className="mt-2 sm:mt-4 flex flex-col justify-end text-right">
+                        {hasEvents ? (
+                          <span className="text-[8px] sm:text-[9px] font-semibold font-sans italic text-[#735C00] opacity-80 truncate">
+                            {dayEvents.length} {dayEvents.length === 1 ? 'Ativ.' : 'Ativ.'}
+                          </span>
+                        ) : (
+                          <span className="text-[7px] sm:text-[8px] font-caps text-[#6B7A8A]/40 uppercase tracking-widest group-hover:text-[#735C00]/50 transition-colors hidden sm:block">
+                            Livre
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  {allDayEventsForIndicators.length > 0 && (
-                    <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
-                      {allDayEventsForIndicators.map((e, index) => {
-                        const typeDef = eventTypes.find(t => t.key === e.type);
-                        const dotBg = typeDef ? typeDef.color : '#1a3a5f';
-                        return (
-                          <div
-                            key={e.id || index}
-                            className="w-1.5 h-1.5 rounded-full crystal-glow animate-pulse"
-                            style={{ backgroundColor: dotBg }}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {firstEventImage && matchesFilter ? (
-                    <div className="mt-1 sm:mt-2 w-full h-10 sm:h-14 md:h-16 rounded-md md:rounded-lg overflow-hidden border border-[rgba(29,106,106,0.15)]/50 relative z-10 group-hover:scale-[1.03] transition-transform">
-                      <img className="w-full h-full object-cover" src={safeImageUrl(firstEventImage)} alt={`Imagem do evento: ${dayEvents[0]?.title || ''}`} referrerPolicy="no-referrer" loading="lazy" />
-                    </div>
-                  ) : (
-                    <div className="mt-2 sm:mt-4 flex flex-col justify-end text-right">
-                      {hasEvents ? (
-                        <span className="text-[8px] sm:text-[9px] font-semibold font-sans italic text-[#735C00] opacity-80 truncate">
-                          {dayEvents.length} {dayEvents.length === 1 ? 'Ativ.' : 'Ativ.'}
-                        </span>
-                      ) : (
-                        <span className="text-[7px] sm:text-[8px] font-caps text-[#6B7A8A]/40 uppercase tracking-widest group-hover:text-[#735C00]/50 transition-colors hidden sm:block">
-                          Livre
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="mt-8 flex items-center gap-3 p-4 bg-[#E8F4F4]/50 rounded-2xl border border-[#1D6A6A]/10 text-xs text-[#3E4A56] parchment-texture" role="note">
             <AlertCircle className="w-5 h-5 text-[#735C00] shrink-0" aria-hidden="true" />
@@ -649,17 +697,17 @@ export default function App() {
                           </span>
                         </div>
 
-                        <h4 className="text-lg font-serif text-[#124949] leading-snug font-bold">
+                        <h4 className="text-lg font-serif text-[#124949] leading-snug font-bold line-clamp-2" title={event.title}>
                           {event.title}
                         </h4>
 
-                        <p className="text-xs text-[#3E4A56] leading-relaxed">
+                        <p className="text-xs text-[#3E4A56] leading-relaxed line-clamp-3">
                           {event.description}
                         </p>
 
                         {event.image && (
                           <div className="rounded-xl overflow-hidden border border-[rgba(29,106,106,0.15)] h-32 relative shadow-sm my-1 group-hover:shadow transition-shadow">
-                            <img className="w-full h-full object-cover" src={safeImageUrl(event.image)} alt={event.title} referrerPolicy="no-referrer" loading="lazy" />
+                            <img className="w-full h-full object-cover" src={safeImageUrl(event.image)} alt={event.title} referrerPolicy="no-referrer" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             {event.instructor && (
                               <div className="absolute bottom-0 inset-x-0 bg-[#124949]/75 backdrop-blur-sm px-3 py-1.5 text-[9px] text-white font-caps uppercase tracking-widest flex justify-between">
                                 <span>Instrutor: {event.instructor}</span>
@@ -675,16 +723,16 @@ export default function App() {
                           </div>
                         )}
 
-                        {event.manaProgress && event.manaProgress > 0 && (
+                        {event.mana_progress != null && event.mana_progress > 0 && (
                           <div className="mt-1 space-y-1">
                             <div className="flex justify-between text-[9px] font-caps text-[#6B7A8A]">
                               <span>Requisitos de Mana do Estudante</span>
-                              <span className="font-mono">{event.manaProgress}% Média</span>
+                              <span className="font-mono">{event.mana_progress}% Média</span>
                             </div>
                             <div className="h-2 w-full bg-[#E8F4F4] rounded-full overflow-hidden relative border border-[rgba(29,106,106,0.15)]/30">
                               <div
                                 className="h-full bg-[#1D6A6A] rounded-full transition-all duration-1000"
-                                style={{ width: `${event.manaProgress}%`, boxShadow: '0 0 8px #1D6A6A' }}
+                                style={{ width: `${event.mana_progress}%`, boxShadow: '0 0 8px #1D6A6A' }}
                               />
                             </div>
                           </div>

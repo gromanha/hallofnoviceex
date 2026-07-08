@@ -197,6 +197,74 @@ a:focus-visible,
   --color-sage-light: #E3EDE5;
 }
 
+/* ── Eorzean Nightfall — Dark Mode ── */
+:root[data-theme="dark"] {
+  --color-primary: #4ECDC4;
+  --color-primary-deep: #38A89D;
+  --color-primary-light: rgba(78, 205, 196, 0.1);
+  --color-on-primary: #121921;
+
+  --color-secondary: #E8C547;
+  --color-secondary-light: rgba(232, 197, 71, 0.12);
+  --color-secondary-accent: #F0D060;
+  --color-on-secondary: #121921;
+
+  --color-tertiary: #B8A9D4;
+  --color-tertiary-light: rgba(184, 169, 212, 0.1);
+  --color-on-tertiary: #121921;
+
+  --color-background: #121921;
+  --color-surface: #18222C;
+  --color-surface-alt: #1E2B37;
+  --color-on-background: #E2E8F0;
+  --color-on-surface: #E2E8F0;
+  --color-on-surface-variant: #94A3B8;
+  --color-outline: #94A3B8;
+  --color-outline-variant: rgba(229, 193, 88, 0.1);
+
+  --color-error: #FFB4AB;
+  --color-error-container: #93000A;
+  --color-on-error: #690005;
+  --color-on-error-container: #FFDAD6;
+
+  --color-crystal: #7EEEE5;
+  --color-crystal-light: rgba(126, 238, 229, 0.1);
+
+  --color-rose: #E88B9A;
+  --color-rose-light: rgba(232, 139, 154, 0.1);
+  --color-sage: #7FB888;
+  --color-sage-light: rgba(127, 184, 136, 0.1);
+}
+
+:root[data-theme="dark"] body {
+  background-color: #121921;
+  color: #E2E8F0;
+}
+
+:root[data-theme="dark"] .hamburger {
+  background: #18222C;
+  border-color: rgba(229, 193, 88, 0.2);
+  color: #E2E8F0;
+}
+
+:root[data-theme="dark"] .hamburger:hover {
+  background: rgba(78, 205, 196, 0.1);
+  border-color: #4ECDC4;
+}
+
+:root[data-theme="dark"] .skip-link {
+  background: #38A89D;
+  color: #121921;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(78, 205, 196, 0.3);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(78, 205, 196, 0.5);
+}
+
 /* ── Watercolor Gradients (from DESIGN.md) ── */
 .wash-teal {
   background: linear-gradient(135deg, var(--color-primary-light) 0%, transparent 100%);
@@ -293,23 +361,6 @@ a:focus-visible,
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Card Hover Enhancement ── */
-.card-hover {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(29, 106, 106, 0.08);
-}
-
-.card-hover:active {
-  transform: translateY(0);
-  transition-duration: 0.1s;
-}
-
 /* ── Transition Variants ── */
 .transition-bounce {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -350,6 +401,8 @@ a:focus-visible,
 
 .filter-btn[aria-pressed="true"] {
   transform: translateX(0);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 1px var(--color-secondary);
 }
 
 .filter-btn[aria-pressed="true"]::after {
@@ -375,6 +428,48 @@ a:focus-visible,
 .calendar-cell:active {
   transform: translateY(0);
   transition-duration: 0.1s;
+}
+
+/* ── Card Hover Enhancement ── */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(29, 106, 106, 0.08);
+}
+
+.card-hover:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+/* ── Watercolor Gradient Headers ── */
+.watercolor-header {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-tertiary-light) 100%);
+  position: relative;
+}
+
+.watercolor-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ── Gold Border Shift ── */
+.gold-border-shift {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gold-border-shift:hover {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 1px var(--color-secondary);
 }
 
 /* ── Timeline Connector ── */

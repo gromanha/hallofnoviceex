@@ -421,19 +421,19 @@ export default function App() {
         <aside
           ref={sidebarRef}
           id="sidebar-nav"
-          className="mobile-sidebar lg:relative lg:transform-none lg:translate-x-0 w-full lg:w-56 xl:w-64 bg-surface-alt border-b lg:border-b-0 lg:border-r border-outline-variant/30 py-4 lg:py-5 flex flex-col gap-3 lg:gap-5 shrink-0 overflow-y-auto"
+          className="mobile-sidebar lg:relative lg:transform-none lg:translate-x-0 w-full lg:w-60 xl:w-72 bg-surface-alt border-b lg:border-b-0 lg:border-r border-outline-variant/30 py-5 lg:py-6 flex flex-col gap-4 lg:gap-6 shrink-0 overflow-y-auto"
           data-open={sidebarOpen}
           aria-label="Barra lateral de navegação"
           tabIndex={-1}
         >
           <div className="px-5">
-            <div className="flex items-center gap-3 mb-5 bg-background p-3 rounded-xl border border-outline-variant/30 parchment-texture shadow-sm">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center border-2 border-primary-deep shrink-0 shadow-sm">
-                <BookOpen className="w-5 h-5 text-primary-deep" aria-hidden="true" />
+            <div className="flex items-center gap-3 mb-6 bg-background p-4 rounded-xl border border-outline-variant/30 parchment-texture shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border-2 border-primary-deep shrink-0 shadow-sm">
+                <BookOpen className="w-6 h-6 text-primary-deep" aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] font-caps text-focus-ring uppercase tracking-widest">Archmage Calendar</p>
-                <p className="text-sm font-bold text-primary-deep truncate">Novice Ledger</p>
+                <p className="text-[10px] font-caps text-focus-ring uppercase tracking-widest">Archmage Calendar</p>
+                <p className="text-base font-bold text-primary-deep truncate">Novice Ledger</p>
               </div>
             </div>
 
@@ -454,15 +454,15 @@ export default function App() {
           </div>
 
           {/* Filters */}
-          <nav className="flex-1 px-2.5 space-y-0.5 overflow-y-auto min-h-0" aria-label="Filtros de disciplina">
-            <p className="text-[9px] font-caps uppercase tracking-widest text-on-surface-variant px-3 mb-1.5">Filtros de Disciplina</p>
+          <nav className="flex-1 px-2.5 space-y-1 overflow-y-auto min-h-0" aria-label="Filtros de disciplina">
+            <p className="text-[10px] font-caps uppercase tracking-widest text-on-surface-variant px-3 mb-2">Filtros de Disciplina</p>
 
             <button
               onClick={() => { setActiveFilter('all'); setSidebarOpen(false); }}
               aria-pressed={activeFilter === 'all'}
-              className={`filter-btn w-full text-left rounded-xl px-3.5 py-2 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
-                ? 'bg-secondary text-on-secondary font-bold shadow-sm'
-                : 'text-on-surface-variant hover:bg-primary-light/50'
+              className={`filter-btn w-full text-left rounded-xl px-3.5 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === 'all'
+                ? 'bg-secondary text-on-secondary font-bold shadow-sm border border-secondary/30'
+                : 'text-on-surface-variant hover:bg-primary-light/50 border border-transparent'
                 }`}
             >
               <div className="flex items-center gap-2.5">
@@ -482,9 +482,9 @@ export default function App() {
                   key={et.key}
                   onClick={() => { setActiveFilter(et.key); setSidebarOpen(false); }}
                   aria-pressed={activeFilter === et.key}
-                  className={`filter-btn w-full text-left rounded-xl px-3.5 py-2 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
-                    ? 'bg-secondary text-on-secondary font-bold shadow-sm'
-                    : 'text-on-surface-variant hover:bg-primary-light/50'
+                  className={`filter-btn w-full text-left rounded-xl px-3.5 py-2.5 flex items-center justify-between transition-all cursor-pointer ${activeFilter === et.key
+                    ? 'bg-secondary text-on-secondary font-bold shadow-sm border border-secondary/30'
+                    : 'text-on-surface-variant hover:bg-primary-light/50 border border-transparent'
                     }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -524,17 +524,17 @@ export default function App() {
             </div>
           )}
 
-          <div className="mt-auto px-2.5 space-y-0.5 pt-3 border-t border-outline-variant/20">
+          <div className="mt-auto px-2.5 space-y-1 pt-4 border-t border-outline-variant/20">
             <button
               onClick={triggerProphecy}
-              className="w-full text-left text-on-surface-variant hover:bg-primary-light/50 rounded-xl px-3.5 py-2 flex items-center gap-2.5 cursor-pointer text-xs transition-all hover:text-focus-ring"
+              className="w-full text-left text-on-surface-variant hover:bg-primary-light/50 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 cursor-pointer text-sm transition-all hover:text-focus-ring"
             >
               <Sparkles className="w-4 h-4 text-focus-ring" aria-hidden="true" />
               Profecia do Dia
             </button>
             <button
               disabled
-              className="w-full text-left text-on-surface-variant/40 rounded-xl px-3.5 py-2 flex items-center gap-2.5 text-xs cursor-not-allowed"
+              className="w-full text-left text-on-surface-variant/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 text-sm cursor-not-allowed"
               title="Em breve"
               aria-disabled="true"
             >
@@ -543,7 +543,7 @@ export default function App() {
             </button>
             <button
               disabled
-              className="w-full text-left text-on-surface-variant/40 rounded-xl px-3.5 py-2 flex items-center gap-2.5 text-xs cursor-not-allowed"
+              className="w-full text-left text-on-surface-variant/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 text-sm cursor-not-allowed"
               title="Em breve"
               aria-disabled="true"
             >
@@ -557,10 +557,10 @@ export default function App() {
         <section
           ref={calendarSectionRef}
           id="main-content"
-          className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 xl:p-8 relative"
+          className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 xl:p-8 relative"
           tabIndex={-1}
           style={{
-            backgroundImage: `linear-gradient(rgba(252, 249, 240, 0.82), rgba(252, 249, 240, 0.82)), url(${bgImage})`,
+            backgroundImage: `linear-gradient(rgba(252, 249, 240, 0.85), rgba(252, 249, 240, 0.85)), url(${bgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
@@ -568,7 +568,7 @@ export default function App() {
           }}
         >
           {/* Mobile header bar */}
-          <div className="lg:hidden flex items-center gap-3 mb-4">
+          <div className="lg:hidden flex items-center gap-3 mb-5">
             <button
               onClick={() => setSidebarOpen(true)}
               className="hamburger transition-bounce"
@@ -579,37 +579,37 @@ export default function App() {
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 min-w-0">
-              <img src={logoImage} alt="Logo HoN EX" className="h-8 w-auto shrink-0 drop-shadow" loading="lazy" />
-              <h1 className="text-lg font-cinzel text-primary font-bold tracking-tight truncate">Calendário</h1>
+              <img src={logoImage} alt="Logo HoN EX" className="h-9 w-auto shrink-0 drop-shadow" loading="lazy" />
+              <h1 className="text-xl font-cinzel text-primary font-bold tracking-tight truncate">Calendário</h1>
             </div>
           </div>
 
-          <div className="mb-4 md:mb-6 flex flex-wrap gap-3 justify-between items-end">
+          <div className="mb-6 md:mb-8 flex flex-wrap gap-4 justify-between items-end">
             <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <img src={logoImage} alt="Logo HoN EX" className="h-10 sm:h-12 md:h-14 w-auto shrink-0 drop-shadow hidden lg:block" loading="lazy" />
+              <div className="flex items-center gap-3 flex-wrap">
+                <img src={logoImage} alt="Logo HoN EX" className="h-12 sm:h-14 md:h-16 w-auto shrink-0 drop-shadow hidden lg:block" loading="lazy" />
                 <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-cinzel text-primary font-bold tracking-tight">Calendario Hall of the Novice EX</h2>
                 {activeFilter !== 'all' && (
-                  <span className="bg-secondary text-on-secondary text-[10px] font-caps px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-focus-ring/20" role="status">
+                  <span className="bg-secondary text-on-secondary text-[10px] font-caps px-3 py-1 rounded-full font-semibold uppercase tracking-wider animate-pulse border border-focus-ring/20" role="status">
                     Filtro: {eventTypes.find(e => e.key === activeFilter)?.label || activeFilter}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-on-surface-variant font-sans mt-1.5">
+              <p className="text-sm text-on-surface-variant font-sans mt-2">
                 <span className="font-semibold text-focus-ring">{currentMonth.name} {currentMonth.cycle}</span>
-                <span className="mx-1.5 text-outline-variant">·</span>
+                <span className="mx-2 text-outline-variant">·</span>
                 <span>Selecione um dia para ver os eventos.</span>
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 shrink-0" role="group" aria-label="Navegação entre meses">
-              <button onClick={prevMonth} title="Mês Anterior" aria-label="Mês anterior" className="p-2 border border-outline-variant/50 rounded-lg hover:bg-primary-light hover:border-primary/30 transition-all cursor-pointer text-on-surface-variant active:scale-95">
+            <div className="flex items-center gap-2 shrink-0" role="group" aria-label="Navegação entre meses">
+              <button onClick={prevMonth} title="Mês Anterior" aria-label="Mês anterior" className="p-2.5 border border-outline-variant/50 rounded-xl hover:bg-primary-light hover:border-primary/30 transition-all cursor-pointer text-on-surface-variant active:scale-95">
                 <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
-              <span className="text-sm font-cinzel text-focus-ring font-semibold min-w-[100px] text-center px-2" aria-live="polite" aria-atomic="true">
+              <span className="text-sm font-cinzel text-focus-ring font-semibold min-w-[100px] text-center px-3" aria-live="polite" aria-atomic="true">
                 {currentMonth.name}
               </span>
-              <button onClick={nextMonth} title="Próximo Mês" aria-label="Próximo mês" className="p-2 border border-outline-variant/50 rounded-lg hover:bg-primary-light hover:border-primary/30 transition-all cursor-pointer text-on-surface-variant active:scale-95">
+              <button onClick={nextMonth} title="Próximo Mês" aria-label="Próximo mês" className="p-2.5 border border-outline-variant/50 rounded-xl hover:bg-primary-light hover:border-primary/30 transition-all cursor-pointer text-on-surface-variant active:scale-95">
                 <ChevronRight className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
@@ -632,10 +632,10 @@ export default function App() {
           {!eventsLoading && events.length === 0 ? (
             <EmptyCalendarState />
           ) : (
-            <div className="grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-2 xl:gap-3 select-none" role="grid" aria-label="Calendário de eventos">
+            <div className="grid grid-cols-7 gap-2 sm:gap-3 md:gap-4 select-none" role="grid" aria-label="Calendário de eventos">
               {/* Day of week headers */}
               {DAY_NAMES_MOBILE.map((day, i) => (
-                <div key={i} className="text-center font-caps text-[9px] sm:text-[10px] md:text-[11px] text-on-surface-variant pb-2 md:pb-3 uppercase tracking-widest font-semibold border-b-2 border-outline-variant/20" role="columnheader" aria-label={DAY_NAMES_FULL[i]}>
+                <div key={i} className="text-center font-caps text-[10px] sm:text-[11px] md:text-xs text-on-surface-variant pb-3 md:pb-4 uppercase tracking-widest font-semibold border-b-2 border-secondary/30" role="columnheader" aria-label={DAY_NAMES_FULL[i]}>
                   <span className="hidden sm:inline">{DAY_NAMES_SHORT[i]}</span>
                   <span className="sm:hidden">{day}</span>
                 </div>
@@ -656,11 +656,11 @@ export default function App() {
                       return (
                         <div
                           key={`p-${weekIdx}-${dayIdx}`}
-                          className="h-16 sm:h-20 md:h-24 xl:h-28 rounded-xl bg-surface-alt/30 opacity-30 border border-outline-variant/20 p-1.5 sm:p-2 relative flex flex-col justify-between"
+                          className="h-24 sm:h-28 md:h-32 xl:h-36 rounded-xl bg-surface-alt/20 opacity-25 border border-outline-variant/10 p-2 sm:p-3 relative flex flex-col justify-between"
                           aria-hidden="true"
                         >
-                          <span className="font-cinzel text-xs sm:text-sm md:text-base text-on-surface-variant/60">{dayNum}</span>
-                          <span className="text-[6px] sm:text-[7px] font-caps text-on-surface-variant/40 text-right hidden sm:block uppercase tracking-wider">
+                          <span className="font-cinzel text-xs sm:text-sm md:text-base text-on-surface-variant/40">{dayNum}</span>
+                          <span className="text-[7px] sm:text-[8px] font-caps text-on-surface-variant/30 text-right hidden sm:block uppercase tracking-wider">
                             {isPrev ? 'anterior' : 'próximo'}
                           </span>
                         </div>
@@ -681,9 +681,9 @@ export default function App() {
                         aria-selected={isSelected}
                         aria-label={`${dayNum} de ${currentMonth.name}${hasEvents ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}${isSelected ? ', selecionado' : ''}`}
                         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDay(dayNum); } }}
-                        className={`calendar-cell h-16 sm:h-20 md:h-24 xl:h-28 rounded-xl relative filigree-corner parchment-texture transition-all cursor-pointer flex flex-col justify-between p-1.5 sm:p-2 md:p-2.5 overflow-hidden group border ${isSelected
+                        className={`calendar-cell h-24 sm:h-28 md:h-32 xl:h-36 rounded-xl relative filigree-corner parchment-texture transition-all cursor-pointer flex flex-col justify-between p-2 sm:p-3 md:p-3.5 overflow-hidden group border ${isSelected
                           ? 'bg-secondary border-2 border-primary-deep shadow-lg today-pulse scale-[1.02]'
-                          : 'bg-background border-outline-variant/30 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md'
+                          : 'bg-background border-outline-variant/30 hover:-translate-y-1 hover:border-secondary/50 hover:shadow-md'
                           } ${!matchesFilter && activeFilter !== 'all' ? 'opacity-25 grayscale' : 'opacity-100'
                           }`}
                         style={!isSelected && primaryColors ? { 
@@ -694,14 +694,14 @@ export default function App() {
                         <div className="absolute inset-0 bg-transparent pointer-events-none rounded-xl" />
 
                         <div className="flex justify-between items-start z-10">
-                          <span className={`font-cinzel text-base sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-on-secondary' : 'text-focus-ring'}`}>
+                          <span className={`font-cinzel text-lg sm:text-xl md:text-2xl font-bold ${isSelected ? 'text-on-secondary' : 'text-focus-ring'}`}>
                             {dayNum < 10 ? `0${dayNum}` : dayNum}
                           </span>
 
                           {dayNum === TODAY.getDate() && currentMonthIdx === 0 && (
                             <time
                               dateTime={`${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`}
-                              className={`text-[7px] sm:text-[8px] font-caps px-1 sm:px-1.5 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
+                              className={`text-[8px] sm:text-[9px] font-caps px-1.5 sm:px-2 py-0.5 rounded border leading-none uppercase font-bold tracking-widest ${isSelected
                                 ? 'bg-on-secondary text-secondary border-secondary/20'
                                 : 'bg-focus-ring text-white border-transparent'
                                 }`}
@@ -722,7 +722,7 @@ export default function App() {
                         </div>
 
                         {allDayEventsForIndicators.length > 0 && (
-                          <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 flex gap-1 z-10">
+                          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex gap-1.5 z-10">
                             {allDayEventsForIndicators.map((e, index) => {
                               const typeDef = eventTypeMap.get(e.type);
                               const colors = getEventTypeColors(e.type);
@@ -730,7 +730,7 @@ export default function App() {
                               return (
                                 <div
                                   key={e.id || index}
-                                  className="w-1.5 h-1.5 rounded-full crystal-glow animate-pulse"
+                                  className="w-2 h-2 rounded-full crystal-glow animate-pulse"
                                   style={{ backgroundColor: dotBg }}
                                   aria-hidden="true"
                                 />
@@ -740,26 +740,26 @@ export default function App() {
                         )}
 
                         {firstEventImage && matchesFilter ? (
-                          <div className="mt-1 sm:mt-2 w-full h-8 sm:h-12 md:h-14 rounded-md md:rounded-lg overflow-hidden border border-outline-variant/50 relative z-10 group-hover:scale-[1.03] transition-transform">
+                          <div className="mt-2 w-full h-10 sm:h-14 md:h-16 rounded-lg overflow-hidden border border-outline-variant/50 relative z-10 group-hover:scale-[1.03] transition-transform">
                             <img className="w-full h-full object-cover" src={safeImageUrl(firstEventImage)} alt={`Imagem do evento: ${dayEvents[0]?.title || ''}`} referrerPolicy="no-referrer" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                           </div>
                         ) : (
-                          <div className="mt-1 sm:mt-3 flex flex-col justify-end text-right">
+                          <div className="mt-2 flex flex-col justify-end text-right">
                             {hasEvents ? (
-                              <div className="flex items-center justify-end gap-1">
+                              <div className="flex items-center justify-end gap-1.5">
                                 {primaryColors && (
                                   <div 
-                                    className="w-1.5 h-1.5 rounded-full"
+                                    className="w-2 h-2 rounded-full"
                                     style={{ backgroundColor: primaryColors.dot }}
                                     aria-hidden="true"
                                   />
                                 )}
-                                <span className="text-[8px] sm:text-[9px] font-semibold font-sans italic text-focus-ring opacity-80 truncate">
-                                  {dayEvents.length} {dayEvents.length === 1 ? 'Ativ.' : 'Ativ.'}
+                                <span className="text-[9px] sm:text-[10px] font-semibold font-sans italic text-focus-ring opacity-80 truncate">
+                                  {dayEvents.length} {dayEvents.length === 1 ? 'Atividade' : 'Atividades'}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-[7px] sm:text-[8px] font-caps text-on-surface-variant/40 uppercase tracking-widest group-hover:text-focus-ring/50 transition-colors hidden sm:block">
+                              <span className="text-[8px] sm:text-[9px] font-caps text-on-surface-variant/40 uppercase tracking-widest group-hover:text-focus-ring/50 transition-colors hidden sm:block">
                                 Livre
                               </span>
                             )}
@@ -773,7 +773,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="mt-8 flex items-center gap-3 p-4 bg-primary-light/50 rounded-2xl border border-primary/10 text-xs text-on-background parchment-texture" role="note">
+          <div className="mt-10 flex items-center gap-3 p-5 bg-primary-light/50 rounded-2xl border border-primary/10 text-sm text-on-background parchment-texture" role="note">
             <AlertCircle className="w-5 h-5 text-focus-ring shrink-0" aria-hidden="true" />
             <p><strong>Segredo Rúnico:</strong> Acesse o <a href="#/admin" className="text-primary font-semibold hover:underline">Painel Admin</a> para gerenciar as atividades acadêmicas publicadas no calendário.</p>
           </div>
@@ -781,31 +781,31 @@ export default function App() {
 
         {/* Right Side: Arcane Ledger */}
         <aside className="w-full lg:w-80 xl:w-96 bg-surface-alt shadow-inner border-t lg:border-t-0 lg:border-l border-outline-variant p-4 lg:p-6 overflow-y-auto parchment-texture flex flex-col justify-between relative" aria-label="Painel de eventos do dia">
-          <div className="space-y-5">
-            <div className="flex items-center justify-between border-b-2 border-outline-variant/20 pb-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between border-b-2 border-secondary/30 pb-4">
               <div>
                 <h3 className="text-xl sm:text-2xl font-cinzel text-focus-ring font-bold">Arcane Ledger</h3>
-                <p className="text-[10px] font-caps text-on-surface-variant uppercase tracking-wider mt-0.5">Diário de Atividades Místicas</p>
+                <p className="text-[10px] font-caps text-on-surface-variant uppercase tracking-wider mt-1">Diário de Atividades Místicas</p>
               </div>
-              <div className="bg-primary text-white text-xs font-mono font-bold px-3 py-1.5 rounded-lg border border-primary-light/20 shrink-0 shadow-sm" aria-live="polite">
+              <div className="bg-primary text-white text-xs font-mono font-bold px-4 py-2 rounded-xl border border-primary-light/20 shrink-0 shadow-sm" aria-live="polite">
                 Dia {selectedDay < 10 ? `0${selectedDay}` : selectedDay}
               </div>
             </div>
 
             {eventsLoading ? (
-              <div className="text-center py-10 text-on-surface-variant text-xs">Carregando eventos…</div>
+              <div className="text-center py-12 text-on-surface-variant text-xs">Carregando eventos…</div>
             ) : selectedDayEvents.length === 0 ? (
-              <div className="text-center py-10 px-4 bg-background border border-outline-variant/30 rounded-2xl parchment-texture space-y-4">
-                <div className="w-14 h-14 bg-primary-light rounded-full flex items-center justify-center mx-auto text-on-surface-variant shadow-sm">
-                  <Compass className="w-7 h-7 animate-spin" style={{ animationDuration: '20s' }} aria-hidden="true" />
+              <div className="text-center py-12 px-4 bg-background border border-outline-variant/30 rounded-2xl parchment-texture space-y-5">
+                <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto text-on-surface-variant shadow-sm">
+                  <Compass className="w-8 h-8 animate-spin" style={{ animationDuration: '20s' }} aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="font-cinzel text-primary-deep font-semibold text-lg">Tempo de Estudo Livre</h4>
-                  <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Sem rituais oficiais agendados para este dia. Aproveite para praticar na Ala de Duelos ou estudar na Biblioteca.</p>
+                  <h4 className="font-cinzel text-primary-deep font-semibold text-xl">Tempo de Estudo Livre</h4>
+                  <p className="text-sm text-on-surface-variant mt-2 leading-relaxed">Sem rituais oficiais agendados para este dia. Aproveite para praticar na Ala de Duelos ou estudar na Biblioteca.</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-5 relative timeline-connector" role="list" aria-label={`Eventos do dia ${selectedDay}`}>
+              <div className="space-y-6 relative timeline-connector" role="list" aria-label={`Eventos do dia ${selectedDay}`}>
                 {selectedDayEvents.map((event) => {
                   const typeDef = eventTypeMap.get(event.type);
                   const EventIcon = resolveIcon(typeDef?.icon || 'Wand2');
@@ -813,18 +813,18 @@ export default function App() {
                   const typeColor = typeDef ? typeDef.color : colors.dot;
 
                   return (
-                    <div key={event.id} className="relative pl-8 group" role="listitem">
+                    <div key={event.id} className="relative pl-9 group" role="listitem">
                       <div
-                        className="absolute left-0 top-1 w-7 h-7 rounded-full border-2 bg-background flex items-center z-10 hover:bg-secondary transition-all duration-200 shadow-sm hover:shadow-md hover:scale-110"
+                        className="absolute left-0 top-1 w-8 h-8 rounded-full border-2 bg-background flex items-center z-10 hover:bg-secondary transition-all duration-200 shadow-sm hover:shadow-md hover:scale-110"
                         style={{ color: typeColor, borderColor: colors.border }}
                         aria-hidden="true"
                       >
-                        <EventIcon className="w-3.5 h-3.5" />
+                        <EventIcon className="w-4 h-4" />
                       </div>
 
-                      <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-center gap-2 pr-6 relative">
-                          <span className="text-[10px] font-caps text-focus-ring font-semibold tracking-widest uppercase flex items-center gap-1 shrink-0">
+                      <div className="flex flex-col gap-2.5">
+                        <div className="flex justify-between items-center gap-3 pr-6 relative">
+                          <span className="text-[10px] font-caps text-focus-ring font-semibold tracking-widest uppercase flex items-center gap-1.5 shrink-0">
                             <Clock className="w-3 h-3" aria-hidden="true" />
                             {event.time}
                           </span>
@@ -844,15 +844,15 @@ export default function App() {
                           {event.title}
                         </h4>
 
-                        <p className="text-xs text-on-background leading-relaxed line-clamp-3">
+                        <p className="text-sm text-on-background leading-relaxed line-clamp-3">
                           {event.description}
                         </p>
 
                         {event.image && (
-                          <div className="rounded-xl overflow-hidden border border-outline-variant h-32 relative shadow-sm my-1 group-hover:shadow transition-shadow">
+                          <div className="rounded-xl overflow-hidden border border-outline-variant h-36 relative shadow-sm my-1 group-hover:shadow transition-shadow">
                             <img className="w-full h-full object-cover" src={safeImageUrl(event.image)} alt={event.title} referrerPolicy="no-referrer" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             {event.instructor && (
-                              <div className="absolute bottom-0 inset-x-0 bg-primary-deep/75 backdrop-blur-sm px-3 py-1.5 text-[9px] text-white font-caps uppercase tracking-widest flex justify-between">
+                              <div className="absolute bottom-0 inset-x-0 bg-primary-deep/75 backdrop-blur-sm px-3 py-2 text-[10px] text-white font-caps uppercase tracking-widest flex justify-between">
                                 <span>Instrutor: {event.instructor}</span>
                                 <span className="text-secondary">M MBA</span>
                               </div>
@@ -861,19 +861,19 @@ export default function App() {
                         )}
 
                         {!event.image && event.instructor && (
-                          <div className="text-[10px] font-caps text-on-surface-variant uppercase bg-primary-light/40 p-2 rounded-lg border border-outline-variant/20">
+                          <div className="text-[11px] font-caps text-on-surface-variant uppercase bg-primary-light/40 p-2.5 rounded-lg border border-outline-variant/20">
                             <strong>Orientador:</strong> {event.instructor}
                           </div>
                         )}
 
                         {event.mana_progress != null && event.mana_progress > 0 && (
-                          <div className="mt-1 space-y-1">
-                            <div className="flex justify-between text-[9px] font-caps text-on-surface-variant">
+                          <div className="mt-1 space-y-1.5">
+                            <div className="flex justify-between text-[10px] font-caps text-on-surface-variant">
                               <span>Requisitos de Mana do Estudante</span>
                               <span className="font-mono">{event.mana_progress}% Média</span>
                             </div>
                             <div 
-                              className="h-2 w-full bg-primary-light rounded-full overflow-hidden relative border border-outline-variant/30"
+                              className="h-2.5 w-full bg-primary-light rounded-full overflow-hidden relative border border-outline-variant/30"
                               role="progressbar"
                               aria-valuenow={event.mana_progress}
                               aria-valuemin={0}

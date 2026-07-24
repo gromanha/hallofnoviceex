@@ -113,6 +113,11 @@ ALTER TABLE event_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 
 -- 6. Politicas RLS para Leitura Publica
+DROP POLICY IF EXISTS "Allow public read events" ON events;
 CREATE POLICY "Allow public read events" ON events FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read event_types" ON event_types;
 CREATE POLICY "Allow public read event_types" ON event_types FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read published posts" ON posts;
 CREATE POLICY "Allow public read published posts" ON posts FOR SELECT USING (status = 'published');

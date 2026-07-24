@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
 
-interface HomePageProps {
-  onNavigate: (path: string) => void;
-}
-
-export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +60,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </a>
 
             <button
-              onClick={() => onNavigate('/calendario')}
+              onClick={() => navigate('/calendario')}
               className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all backdrop-blur-md"
             >
               <Calendar className="w-4 h-4 text-[#D4AF37]" />
@@ -86,7 +84,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
 
           <button
-            onClick={() => onNavigate('/academia')}
+            onClick={() => navigate('/academia')}
             className="text-xs font-bold uppercase tracking-wider text-[#1D6A6A] dark:text-[#4ECDC4] hover:underline flex items-center gap-1"
           >
             Ver todos os guias <ArrowRight className="w-4 h-4" />
@@ -111,14 +109,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <PostCard
                 key={post.id}
                 post={post}
-                onClick={() => onNavigate(`/post/${post.slug}`)}
+                onClick={() => navigate(`/post/${post.slug}`)}
               />
             ))}
             {recentPosts.map(post => (
               <PostCard
                 key={post.id}
                 post={post}
-                onClick={() => onNavigate(`/post/${post.slug}`)}
+                onClick={() => navigate(`/post/${post.slug}`)}
               />
             ))}
           </div>

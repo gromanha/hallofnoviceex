@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Tag, BookOpen, Share2, Check } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
+import { renderMarkdown } from '../lib/sanitize';
 
-interface PostDetailPageProps {
-  slug: string;
-  onNavigate: (path: string) => void;
-}
-
-export const PostDetailPage: React.FC<PostDetailPageProps> = ({ slug, onNavigate }) => {
+export const PostDetailPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -57,7 +56,7 @@ export const PostDetailPage: React.FC<PostDetailPageProps> = ({ slug, onNavigate
         <h2 className="font-serif font-bold text-2xl text-[var(--color-on-surface)]">Postagem não encontrada</h2>
         <p className="text-sm text-[var(--color-on-surface-variant)]">A publicação solicitada não existe ou foi removida pelo autor.</p>
         <button
-          onClick={() => onNavigate('/academia')}
+          onClick={() => navigate('/academia')}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D6A6A] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#2A8A8A] transition-all shadow-md"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar para o Códice
@@ -80,7 +79,7 @@ export const PostDetailPage: React.FC<PostDetailPageProps> = ({ slug, onNavigate
       {/* Botão de Voltar & Compartilhar */}
       <div className="flex items-center justify-between">
         <button
-          onClick={() => onNavigate('/academia')}
+          onClick={() => navigate('/academia')}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[#1D6A6A] transition-all shadow-xs"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao Códice
@@ -138,13 +137,7 @@ export const PostDetailPage: React.FC<PostDetailPageProps> = ({ slug, onNavigate
       <div className="bg-[var(--color-surface)] p-6 sm:p-10 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm leading-relaxed text-sm sm:text-base text-[var(--color-on-surface)] space-y-4">
         <div
           className="prose dark:prose-invert max-w-none space-y-4"
-          dangerouslySetInnerHTML={{
-            __html: post.content
-              .replace(/\n\n/g, '</p><p>')
-              .replace(/\n/g, '<br/>')
-              .replace(/## (.*)/g, '<h2 className="font-serif text-xl font-bold text-[#1D6A6A] dark:text-[#4ECDC4] mt-6 mb-2">$1</h2>')
-              .replace(/### (.*)/g, '<h3 className="font-serif text-lg font-bold text-[var(--color-on-surface)] mt-4 mb-2">$1</h3>')
-          }}
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
         />
       </div>
 

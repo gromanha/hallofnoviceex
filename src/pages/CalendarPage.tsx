@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock, ShieldCheck,
@@ -47,11 +48,8 @@ function buildRealMonths(startYear: number, startMonth: number, count = 12): Mon
 
 const TODAY = new Date();
 
-interface CalendarPageProps {
-  onOpenAdmin?: () => void;
-}
-
-export const CalendarPage: React.FC<CalendarPageProps> = ({ onOpenAdmin }) => {
+export const CalendarPage: React.FC = () => {
+  const navigate = useNavigate();
   const months = useMemo(() => buildRealMonths(TODAY.getFullYear(), 0, 12), []);
   const [monthIndex, setMonthIndex] = useState(() => TODAY.getMonth());
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -197,7 +195,7 @@ export const CalendarPage: React.FC<CalendarPageProps> = ({ onOpenAdmin }) => {
       {loading ? (
         <div className="h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse" />
       ) : monthEvents.length === 0 ? (
-        <EmptyCalendarState onOpenAdmin={onOpenAdmin} />
+        <EmptyCalendarState />
       ) : (
         <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-3xl p-4 sm:p-6 shadow-sm">
           

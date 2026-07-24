@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Search, Sparkles, Filter, ShieldCheck, Tag } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
 
-interface AcademiaPageProps {
-  onNavigate: (path: string) => void;
-}
-
-export const AcademiaPage: React.FC<AcademiaPageProps> = ({ onNavigate }) => {
+export const AcademiaPage: React.FC = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -132,7 +130,7 @@ export const AcademiaPage: React.FC<AcademiaPageProps> = ({ onNavigate }) => {
             <PostCard
               key={post.id}
               post={post}
-              onClick={() => onNavigate(`/post/${post.slug}`)}
+              onClick={() => navigate(`/post/${post.slug}`)}
             />
           ))}
         </div>

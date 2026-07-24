@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Trash2, Eye, Edit3, Pin, Sparkles, Image, Tag as TagIcon } from 'lucide-react';
 import { Post } from '../types';
+import { renderMarkdown } from '../lib/sanitize';
 
 interface PostModalProps {
   post: Partial<Post> | null;
@@ -299,7 +300,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                 />
               ) : (
                 <div className="min-h-[300px] p-6 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] prose dark:prose-invert max-w-none">
-                  <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br/>') }} />
+                  <div dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
                 </div>
               )}
             </div>

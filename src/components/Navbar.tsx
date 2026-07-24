@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut, Sparkles } from 'lucide-react';
-import { AdminUser } from '../types';
+import { useAuth } from '../lib/AuthContext';
 
 interface NavbarProps {
-  currentPath: string;
-  onNavigate: (path: string) => void;
-  admin: AdminUser | null;
-  onOpenLogin: () => void;
-  onLogout: () => void;
+  onOpenLogin?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  currentPath,
-  onNavigate,
-  admin,
-  onOpenLogin,
-  onLogout,
-}) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
+  const { admin, onLogout } = useAuth();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -38,14 +30,24 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+      isActive
+        ? 'bg-[var(--color-primary)] text-white shadow-sm'
+        : 'text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]'
+    }`;
+
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex flex-col items-center gap-1 ${isActive ? 'text-[#1D6A6A] font-bold' : 'text-slate-500'}`;
+
   return (
     <header className="sticky top-0 z-40 bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-secondary)]/30 shadow-sm transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* Logo / Brand */}
-          <button
-            onClick={() => onNavigate('/')}
+          <NavLink
+            to="/"
             className="flex items-center gap-3 text-left group focus:outline-none"
           >
             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1D6A6A] to-[#124949] border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-md group-hover:scale-105 transition-transform">
@@ -59,58 +61,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Majestic Battle Academy
               </span>
             </div>
-          </button>
+          </NavLink>
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-1">
-            <button
-              onClick={() => onNavigate('/')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                currentPath === '/'
-                  ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                  : 'text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]'
-              }`}
-            >
+            <NavLink to="/" end className={linkClass}>
               <Home className="w-4 h-4" />
               Início
-            </button>
+            </NavLink>
 
-            <button
-              onClick={() => onNavigate('/academia')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                currentPath === '/academia' || currentPath.startsWith('/post')
-                  ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                  : 'text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]'
-              }`}
-            >
+            <NavLink to="/academia" className={linkClass}>
               <BookOpen className="w-4 h-4" />
               Códice & Guias
-            </button>
+            </NavLink>
 
-            <button
-              onClick={() => onNavigate('/calendario')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                currentPath === '/calendario'
-                  ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                  : 'text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]'
-              }`}
-            >
+            <NavLink to="/calendario" className={linkClass}>
               <Calendar className="w-4 h-4" />
               Calendário
-            </button>
+            </NavLink>
 
             {admin && (
-              <button
-                onClick={() => onNavigate('/admin')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all border border-[#D4AF37]/50 ${
-                  currentPath === '/admin'
+              <NavLink to="/admin" className={({ isActive }) =>
+                `flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all border border-[#D4AF37]/50 ${
+                  isActive
                     ? 'bg-[#D4AF37] text-slate-900 font-bold shadow-md'
                     : 'bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-[#D4AF37]/20'
-                }`}
-              >
+                }`
+              }>
                 <Shield className="w-4 h-4 text-[#D4AF37]" />
                 Painel Admin
-              </button>
+              </NavLink>
             )}
           </nav>
 
@@ -152,35 +132,25 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Navigation bar */}
         <div className="md:hidden flex items-center justify-around py-2.5 border-t border-[var(--color-outline-variant)] text-xs font-medium">
-          <button
-            onClick={() => onNavigate('/')}
-            className={`flex flex-col items-center gap-1 ${currentPath === '/' ? 'text-[#1D6A6A] font-bold' : 'text-slate-500'}`}
-          >
+          <NavLink to="/" end className={mobileLinkClass}>
             <Home className="w-4 h-4" />
             Início
-          </button>
-          <button
-            onClick={() => onNavigate('/academia')}
-            className={`flex flex-col items-center gap-1 ${currentPath === '/academia' || currentPath.startsWith('/post') ? 'text-[#1D6A6A] font-bold' : 'text-slate-500'}`}
-          >
+          </NavLink>
+          <NavLink to="/academia" className={mobileLinkClass}>
             <BookOpen className="w-4 h-4" />
             Códice
-          </button>
-          <button
-            onClick={() => onNavigate('/calendario')}
-            className={`flex flex-col items-center gap-1 ${currentPath === '/calendario' ? 'text-[#1D6A6A] font-bold' : 'text-slate-500'}`}
-          >
+          </NavLink>
+          <NavLink to="/calendario" className={mobileLinkClass}>
             <Calendar className="w-4 h-4" />
             Calendário
-          </button>
+          </NavLink>
           {admin && (
-            <button
-              onClick={() => onNavigate('/admin')}
-              className={`flex flex-col items-center gap-1 ${currentPath === '/admin' ? 'text-[#D4AF37] font-bold' : 'text-slate-500'}`}
-            >
+            <NavLink to="/admin" className={({ isActive }) =>
+              `flex flex-col items-center gap-1 ${isActive ? 'text-[#D4AF37] font-bold' : 'text-slate-500'}`
+            }>
               <Shield className="w-4 h-4" />
               Admin
-            </button>
+            </NavLink>
           )}
         </div>
 

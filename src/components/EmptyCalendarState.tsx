@@ -1,12 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { CalendarPlus, Sparkles, ShieldCheck, BookOpen } from 'lucide-react';
 
-interface EmptyCalendarStateProps {
-  onOpenAdmin?: () => void;
-}
-
-export const EmptyCalendarState: React.FC<EmptyCalendarStateProps> = ({ onOpenAdmin }) => {
+export const EmptyCalendarState: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
@@ -43,15 +41,13 @@ export const EmptyCalendarState: React.FC<EmptyCalendarStateProps> = ({ onOpenAd
           </div>
         </div>
 
-        {onOpenAdmin && (
-          <button
-            onClick={onOpenAdmin}
-            className="inline-flex items-center gap-2 bg-[#1D6A6A] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl hover:bg-[#2A8A8A] transition-colors shadow-md cursor-pointer"
-          >
-            <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
-            Abrir Painel Admin
-          </button>
-        )}
+        <button
+          onClick={() => navigate('/admin')}
+          className="inline-flex items-center gap-2 bg-[#1D6A6A] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl hover:bg-[#2A8A8A] transition-colors shadow-md cursor-pointer"
+        >
+          <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+          Abrir Painel Admin
+        </button>
       </div>
     </motion.div>
   );

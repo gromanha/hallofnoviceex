@@ -1,246 +1,363 @@
-# PLAN: Implement New DESIGN.md Across the Project
+# PLAN: Hall of the Novice EX — Plano de Implementação
 
-## Goal
+## Resumo
 
-Apply the updated root `DESIGN.md` (image-grounded design system derived from "imagens academia" illustrations) consistently across both the main site and the calendario sub-project.
+11 fases, ~26h (~4 dias) de trabalho. Foco em: XSS, React Router, remoção de duplicatas, refatoração do calendario, limpeza de cores hardcoded, remoção de legado, e infraestrutura (ESLint + testes básicos).
 
 ---
 
-## Scope
+## Fase 1: XSS — Sanitização de `dangerouslySetInnerHTML`
 
-| Target | Tech Stack | Current State |
+**Risco se não fizer:** Qualquer admin (ou atacante via mass assignment) pode injetar `<script>` nos posts.
+
+**Arquivos afetados:**
+- `src/pages/PostDetailPage.tsx:141-148`
+- `src/components/PostModal.tsx:302`
+
+**Ações:**
+1. Instalar `marked` + `dompurify` + `@types/dompurify`
+2. Criar `src/lib/sanitize.ts` — função `renderMarkdown(content: string): string` que:
+   - Converte markdown via `marked.parse()`
+   - Sanitiza via `DOMPurify.sanitize()` com policy restritiva
+3. Substituir o regex `.replace(/## (.*)/g, ...)` em `PostDetailPage.tsx:142-146` por `renderMarkdown(post.content)`
+4. Substituir `PostModal.tsx:302` por `renderMarkdown(content)` no preview
+5. Adicionar Content-Security-Policy header em `server.js:130-140` (bloquear inline scripts)
+
+**Verificação:** Testar com post contendo `<img onerror="alert(1)" src=x>` — deve ser removido.
+
+---
+
+## Fase 2: React Router — Substituir hand-rolled router
+
+**Risco se não fizer:** Sem lazy loading, sem 404, sem route params reais, sem loading states.
+
+**Arquivo principal:** `src/App.tsx:16-124`
+
+**Ações:**
+1. Instalar `react-router-dom`
+2. Refatorar `App.tsx`:
+   - Criar `<BrowserRouter>` com `<Routes>`
+   - Mapear rotas: `/`, `/academia`, `/post/:slug`, `/calendario`, `/admin`
+   - Mover auth check para `<ProtectedRoute>` wrapper
+   - Adicionar fallback 404 (`NotFoundPage`)
+3. Criar `src/pages/NotFoundPage.tsx` — página 404 com tema do design system
+4. Atualizar `Navbar.tsx` para usar `<NavLink>` do React Router (substituir `window.history.pushState`)
+5. Adicionar `lazy()` imports nas pages para code splitting:
+   ```tsx
+   const HomePage = lazy(() => import('./pages/HomePage'))
+   const AcademiaPage = lazy(() => import('./pages/AcademiaPage'))
+   // etc.
+   ```
+6. Envolver routes em `<Suspense fallback={<PageLoader />}>`
+
+**Verificação:** `npm run build` deve gerar chunks separados por rota.
+
+---
+
+## Fase 3: Cores Hardcoded → CSS Custom Properties
+
+**Arquivos afetados (com contagem de ocorrências):**
+- `src/components/Navbar.tsx` — ~11 ocorrências (`#1D6A6A`, `#D4AF37`)
+- `src/components/Footer.tsx` — ~7 ocorrências
+- `src/components/LoginGate.tsx` — ~8 ocorrências
+- `src/components/ErrorBoundary.tsx` — ~3 ocorrências
+- `src/pages/HomePage.tsx` — ~16 ocorrências
+- `src/pages/AcademiaPage.tsx` — ~10 ocorrências
+- `src/pages/PostDetailPage.tsx` — ~6 ocorrências
+- `src/pages/AdminPage.tsx` — ~15 ocorrências
+
+**Ações:**
+1. Adicionar tokens faltantes em `src/index.css` `@theme`:
+   ```css
+   --color-primary-hover: #2A8A8A;
+   --color-on-secondary-deep: #735C00;
+   --color-error: #BA1A1A;
+   --color-error-light: #FFDAD6;
+   ```
+2. Substituir systematicamente em cada arquivo:
+   - `#1D6A6A` → `var(--color-primary)` ou `bg-primary` / `text-primary`
+   - `#124949` → `var(--color-primary-deep)` ou `bg-primary-deep`
+   - `#D4AF37` → `var(--color-secondary)` ou `bg-secondary` / `text-secondary`
+   - `#F5E6B8` → `var(--color-secondary-light)` ou `bg-secondary-light`
+   - `#E8F4F4` → `var(--color-primary-light)` ou `bg-primary-light`
+   - `#E5C158` → `var(--color-secondary-accent)`
+   - `#4ECDC4` → `var(--color-crystal)` (dark mode teal)
+   - `#2A8A8A` → `var(--color-primary-hover)`
+
+**Verificação:** `grep -r "#1D6A6A\|#D4AF37\|#124949\|#F5E6B8" src/` deve retornar 0 resultados.
+
+---
+
+## Fase 4: Limpeza de duplicatas — Calendario
+
+**Arquivos a deletar (do calendario):**
+- `calendario/server.js` — 697 linhas, 99.7% idêntico ao root
+- `calendario/supabase-schema.sql` — subset do root
+- `calendario/src/lib/api.ts` — 1 linha diferente (error message)
+- `calendario/src/types.ts` — subset do root
+
+**Ações:**
+1. Criar `calendario/src/lib/api.ts` como re-export:
+   ```ts
+   export { apiGet, apiPost, apiPatch, apiDel } from '../../src/lib/api'
+   ```
+2. Criar `calendario/src/types.ts` como re-export:
+   ```ts
+   export type { EventType, EventTypeItem, MagicalEvent, MonthData } from '../../src/types'
+   ```
+3. Atualizar `calendario/vite.config.ts` para resolver imports cross-project:
+   ```ts
+   resolve: { alias: { '@shared': path.resolve(__dirname, '../src') } }
+   ```
+4. Deletar `calendario/server.js` — calendario usa o mesmo server via Vercel serverless
+5. Deletar `calendario/supabase-schema.sql` — usar apenas o root
+6. Atualizar `calendario/package.json` scripts se necessário
+7. Verificar que `calendario/src/App.tsx` imports funcionam com os novos paths
+
+**Verificação:** `cd calendario && npm run build` deve funcionar sem erros.
+
+---
+
+## Fase 5: Refatoração do Calendario — Componentizar App.tsx
+
+**Arquivo:** `calendario/src/App.tsx` (901 linhas → ~12-15 componentes)
+
+**Novos arquivos a criar em `calendario/src/components/`:**
+
+| Componente | Linhas originais | Responsabilidade |
 |---|---|---|
-| Main site (`index.html`) | Vanilla HTML/CSS/JS | CSS vars already match most tokens; needs 3 new color families |
-| Calendario (`calendario/`) | React + Tailwind CSS v4 | Has own `DESIGN.md` (275 lines) that diverges from root; CSS vars in `index.css` |
-| Calendario build (`dist-calendario/`) | Static output | Rebuilt after calendario changes |
+| `CalendarGrid.tsx` | 635-773 | Grid 7 colunas, células, cristal SVG, badge "hoje" |
+| `CalendarDayHeaders.tsx` | 637-642 | Row de headers (Dom, Seg, Ter...) |
+| `EventDetailPanel.tsx` | 783-897 | Painel lateral "Arcane Ledger" |
+| `EventCard.tsx` | 816-892 | Card individual de evento no painel |
+| `EmptyDayState.tsx` | 798-806 | "Tempo de Estudo Livre" |
+| `CalendarSidebar.tsx` | 421-554 | Sidebar mobile com filtros |
+| `CalendarPageHeader.tsx` | 587-616 | Título, mês, navegação |
+| `MobileCalendarHeader.tsx` | 571-585 | Hamburger + logo |
+| `ProphecyToast.tsx` | 179-180, 263-274 | Toast com profecia |
+| `AdminInfoBanner.tsx` | 776-779 | Banner "Segredo Runico" |
 
----
+**Novos hooks em `calendario/src/hooks/`:**
 
-## Phase 1: Main Site (`index.html`)
-
-### Step 1 — Add new color tokens to `:root`
-
-Add after existing CSS variables (around line 73), before the closing `}`:
-
-```css
-/* Crystal — Magical Accent */
---crystal: #5ECFCF;
---crystal-light: #D4F5F5;
-
-/* Flora & Rose — Supporting */
---rose: #C46B7D;
---rose-light: #F4E3E7;
---sage: #6B8F71;
---sage-light: #E3EDE5;
-```
-
-### Step 2 — Add dark mode equivalents
-
-Add inside the `[data-theme="dark"]` block (around line 111), before the closing `}`:
-
-```css
---crystal: #7EEEE5;
---crystal-light: rgba(126, 238, 229, 0.1);
---rose: #E88B9A;
---rose-light: rgba(232, 139, 154, 0.1);
---sage: #7FB888;
---sage-light: rgba(127, 184, 136, 0.1);
-```
-
-### Step 3 — Add watercolor gradient + crystal glow utility classes
-
-Add before the closing `</style>` tag (around line 1498):
-
-```css
-/* ── Watercolor Gradients (from DESIGN.md) ── */
-.wash-teal {
-  background: linear-gradient(135deg, var(--teal-light) 0%, transparent 100%);
-}
-.wash-gold {
-  background: linear-gradient(135deg, var(--gold-light) 0%, transparent 100%);
-}
-.wash-sunset {
-  background: linear-gradient(135deg, var(--teal-light) 0%, var(--lavender-light) 100%);
-}
-
-/* ── Crystal Glow (from DESIGN.md) ── */
-.crystal-glow {
-  box-shadow: 0 0 12px rgba(94, 207, 207, 0.15);
-}
-```
-
-### Notes for Phase 1
-- No structural HTML changes needed
-- No JavaScript changes needed
-- All changes are additive — existing behavior is preserved
-- The existing component styles (buttons, cards, nav, modal) already align with the root DESIGN.md
-
----
-
-## Phase 2: Calendario DESIGN.md
-
-### Step 4 — Replace `calendario/DESIGN.md`
-
-Replace the entire 275-line file with a new version (~320 lines) derived from the root DESIGN.md, adapted for the calendar context.
-
-**Preserve from existing calendario DESIGN.md:**
-- "The Schedule Board" creative north star
-- Hanken Grotesk as body font (not Inter)
-- Space Grotesk as label/mono font
-- Calendar-specific components: Calendar Cells, Event Ledger, Timeline, Event Form Modal
-- Event type color-coding (spells, tactics, alchemy, ritual)
-- Linen (#F6F3EA) as sidebar background
-
-**Add from root DESIGN.md:**
-- Architecture & Motifs section (Gothic arches, domes, gold trim, winged crest)
-- Flora & Nature Symbolism section (lilies, lavender, sage, cherry blossoms)
-- Iconography section (crest, role icons, crystal, floating books)
-- Dark Mode — "Eorzean Nightfall" section with transformation table
-- Crystal Cyan color token and Crystal Glow Rule
-- Rose and Sage supporting color tokens
-- Watercolor gradient families
-- Enhanced Do's and Don'ts with image-grounded rules
-
-**New color tokens to add to YAML frontmatter:**
-```yaml
-crystal: "#5ECFCF"
-crystal-light: "#D4F5F5"
-rose: "#C46B7D"
-rose-light: "#F4E3E7"
-sage: "#6B8F71"
-sage-light: "#E3EDE5"
-```
-
----
-
-## Phase 3: Calendario CSS (`calendario/src/index.css`)
-
-### Step 5 — Add new Tailwind theme tokens
-
-Add inside the `@theme` block (around line 188), after existing color tokens:
-
-```css
-/* Crystal — Magical Accent */
---color-crystal: #5ECFCF;
---color-crystal-light: #D4F5F5;
-
-/* Flora & Rose — Supporting */
---color-rose: #C46B7D;
---color-rose-light: #F4E3E7;
---color-sage: #6B8F71;
---color-sage-light: #E3EDE5;
-```
-
-### Step 6 — Add watercolor gradient utility classes
-
-Add after the `@theme` block (after line 188), before the base custom definitions:
-
-```css
-/* ── Watercolor Gradients (from DESIGN.md) ── */
-.wash-teal {
-  background: linear-gradient(135deg, var(--color-primary-light) 0%, transparent 100%);
-}
-.wash-gold {
-  background: linear-gradient(135deg, var(--color-secondary-light) 0%, transparent 100%);
-}
-.wash-sunset {
-  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-tertiary-light) 100%);
-}
-```
-
-### Step 7 — Update `.crystal-glow` effect
-
-Change line 212-214 from:
-
-```css
-.crystal-glow {
-  box-shadow: 0 0 15px rgba(29, 106, 106, 0.4);
-}
-```
-
-To:
-
-```css
-.crystal-glow {
-  box-shadow: 0 0 12px rgba(94, 207, 207, 0.15);
-}
-```
-
-This aligns with the root DESIGN.md's Crystal Glow Rule — using the new crystal cyan (`#5ECFCF`) instead of heavy teal.
-
----
-
-## Phase 4: Calendario Component Audit
-
-### Step 8 — Audit components for hardcoded colors
-
-Review the following 6 component files for any hardcoded color values that should reference the new design system tokens:
-
-| File | What to check |
+| Hook | Responsabilidade |
 |---|---|
-| `App.tsx` | `EVENT_TYPE_COLORS` map (line 110-116) — already aligned, verify no changes needed |
-| `AdminPanel.tsx` | Form inputs, buttons, status indicators |
-| `LoginGate.tsx` | Background, card, button colors |
-| `WelcomeBanner.tsx` | Background gradient, text colors |
-| `FilterHint.tsx` | Background, accent colors |
-| `EmptyCalendarState.tsx` | Illustration colors, text |
+| `useCalendarData.ts` | Fetch events + eventTypes, loading/error state |
+| `useCalendarGrid.ts` | currentMonthIdx, selectedDay, activeFilter, daysInGrid, eventsByDay |
+| `useMediaQuery.ts` | Auto-close sidebar on desktop |
 
-**Expected outcome:** Most components use Tailwind classes referencing `@theme` tokens (e.g., `bg-primary`, `text-secondary`), so they will automatically pick up new tokens. Only hardcoded hex values need updating.
+**Mover para `calendario/src/utils/constants.ts`:**
+- `ICON_MAP`, `safeImageUrl`, `REAL_MONTH_NAMES`, `buildRealMonths`, `PROPHECIES`, `DAY_NAMES_*`, `EVENT_TYPE_COLORS`, `getEventTypeColors`
+
+**Resultado esperado:** `App.tsx` fica com ~150-200 linhas (orchestration apenas).
 
 ---
 
-## Phase 5: Build & Verify
+## Fase 6: Cores hardcoded no Calendario
 
-### Step 9 — Build and lint
+**Arquivo principal:** `calendario/src/App.tsx`
 
-```bash
-# TypeScript check
-cd calendario && npm run lint
+**Ações:**
+1. Substituir ~20 ocorrências de hex hardcoded:
+   - `#E8F4F4`, `#1D6A6A` → `var(--color-primary-light)`, `var(--color-primary)`
+   - `#F5E6B8`, `#D4AF37` → `var(--color-secondary-light)`, `var(--color-secondary)`
+   - `#EDE8F3`, `#9B8BB4` → `var(--color-tertiary-light)`, `var(--color-tertiary)`
+   - `#FFDAD6`, `#BA1A1A` → `var(--color-error-light)`, `var(--color-error)`
+   - `#abc8f5` → `var(--color-crystal-light)`
+2. Verificar também `calendario/src/components/AdminPanel.tsx`, `LoginGate.tsx`, `WelcomeBanner.tsx`, `FilterHint.tsx`
 
-# Production build
-cd calendario && npm run build
+**Verificação:** `grep -r "#[0-9A-Fa-f]\{6\}" calendario/src/` deve retornar apenas `EVENT_TYPE_COLORS` (mapa de cores por tipo de evento, que é intencional).
+
+---
+
+## Fase 7: Remoção de legado — `a academia.html`
+
+**Arquivo:** `a academia.html` (539 linhas, HTML standalone com inline styles)
+
+**Ações:**
+1. Verificar se há links para `a academia.html` em:
+   - `README.md`
+   - `src/pages/HomePage.tsx`
+   - Qualquer outro arquivo
+2. Se o conteúdo já existe no React (AcademiaPage), deletar `a academia.html`
+3. Se houver conteúdo exclusivo no HTML, migrar para `AcademiaPage.tsx` antes de deletar
+4. Deletar `a academia.html`
+
+**Verificação:** `grep -r "academia.html" .` deve retornar 0 resultados.
+
+---
+
+## Fase 8: Infraestrutura — ESLint + Prettier
+
+**Ações:**
+1. Instalar `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `prettier`, `eslint-config-prettier`
+2. Criar `eslint.config.js` (flat config):
+   ```js
+   import js from '@eslint/js'
+   import tseslint from 'typescript-eslint'
+   import reactHooks from 'eslint-plugin-react-hooks'
+
+   export default [
+     js.configs.recommended,
+     ...tseslint.configs.recommended,
+     { plugins: { 'react-hooks': reactHooks }, rules: reactHooks.configs.recommended.rules },
+     { ignores: ['dist/', 'calendario/dist/', 'dist-calendario/'] }
+   ]
+   ```
+3. Criar `.prettierrc`:
+   ```json
+   { "semi": false, "singleQuote": true, "trailingComma": "es5", "printWidth": 100 }
+   ```
+4. Atualizar `package.json` scripts:
+   ```json
+   "lint": "eslint src/ --fix",
+   "lint:check": "eslint src/",
+   "format": "prettier --write src/",
+   "format:check": "prettier --check src/",
+   "typecheck": "tsc --noEmit"
+   ```
+5. Rodar `npm run lint` e corrigir erros encontrados
+6. Rodar `npm run format` para formatar todo o codebase
+
+**Verificação:** `npm run lint:check && npm run format:check && npm run typecheck` — todos passam.
+
+---
+
+## Fase 9: Testes básicos com Vitest
+
+**Ações:**
+1. Instalar `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`
+2. Criar `vitest.config.ts`:
+   ```ts
+   import { defineConfig } from 'vitest/config'
+   import react from '@vitejs/plugin-react'
+
+   export default defineConfig({
+     plugins: [react()],
+     test: { environment: 'jsdom', globals: true, setupFiles: './src/test/setup.ts' }
+   })
+   ```
+3. Criar `src/test/setup.ts` com `@testing-library/jest-dom` matchers
+4. Escrever testes para:
+   - `src/lib/sanitize.ts` — renderMarkdown sanitiza XSS
+   - `src/lib/api.ts` — timeout, error handling
+   - `src/components/PostCard.tsx` — renderiza título, tags
+   - `src/components/Navbar.tsx` — navegação, theme toggle
+5. Atualizar `package.json`:
+   ```json
+   "test": "vitest run",
+   "test:watch": "vitest",
+   "test:coverage": "vitest run --coverage"
+   ```
+
+**Verificação:** `npm run test` — todos os testes passam.
+
+---
+
+## Fase 10: Mass Assignment Fix
+
+**Arquivo:** `server.js:642-657` (`PATCH /api/posts`)
+
+**Ações:**
+1. Adicionar whitelist de campos editáveis (como já existe em `PATCH /api/events`):
+   ```js
+   const POST_FIELDS = ['title', 'subtitle', 'content', 'category', 'author_name', 'cover_image', 'tags', 'is_pinned', 'status', 'published_at']
+   ```
+2. Filtrar `req.body` contra o whitelist antes do update
+3. Adicionar limite de tamanho para `content` (ex: 50.000 caracteres)
+4. Escapar caracteres especiais no parâmetro `search` de `GET /api/posts` (linha 590)
+
+---
+
+## Fase 11: Limpeza final e build
+
+**Ações:**
+1. Deletar diretório `guias/` (vazio)
+2. Deletar `dist-calendario/` (build output não deve ficar no repo)
+3. Deletar `calendario/dist/` (build output não deve ficar no repo)
+4. Atualizar `.gitignore`:
+   ```
+   dist/
+   dist-calendario/
+   calendario/dist/
+   ```
+5. Remover `calendario/.env.example` do tracking:
+   ```bash
+   git rm --cached calendario/.env.example
+   ```
+6. Rodar `npm run build` na raiz e no calendario
+7. Verificar que tudo compila sem erros
+
+---
+
+## Ordem de Execução
+
+```
+Fase 1 (XSS) ──┐
+               ├──→ Fase 3 (Cores) ──→ Fase 6 (Cores Calendario)
+Fase 2 (Router)┘         │
+                          ├──→ Fase 4 (Duplicatas) ──→ Fase 5 (Componentizar Calendario)
+                          │
+Fase 8 (ESLint) ──────────┤
+Fase 9 (Testes) ─────────┤
+Fase 10 (Mass Assign) ───┤
+Fase 7 (Legado) ──────────┤
+Fase 11 (Limpeza) ────────┘
 ```
 
-### Verification Checklist
-
-- [ ] Root `DESIGN.md` exists and contains 10 sections (~393 lines)
-- [ ] `calendario/DESIGN.md` exists and contains 8 sections (~320 lines)
-- [ ] Main site `index.html` has crystal/rose/sage CSS variables in both light and dark mode
-- [ ] Main site `index.html` has watercolor gradient and crystal glow utility classes
-- [ ] Calendario `index.css` has crystal/rose/sage tokens in `@theme` block
-- [ ] Calendario `index.css` has watercolor gradient utilities
-- [ ] Calendario `index.css` `.crystal-glow` uses `rgba(94, 207, 207, 0.15)`
-- [ ] No TypeScript errors (`npm run lint` passes)
-- [ ] Build succeeds (`npm run build` completes)
-- [ ] No hardcoded hex colors in components that should reference tokens
+**Dependências críticas:**
+- Fase 1 (XSS) **antes** de qualquer coisa — é vulnerabilidade de segurança
+- Fase 2 (Router) **antes** da Fase 3 (Cores) — muda a estrutura de imports
+- Fase 4 (Duplicatas) **antes** da Fase 5 (Componentizar Calendario) — calendario precisa importar types/api do root primeiro
+- Fase 8 (ESLint) **antes** da Fase 9 (Testes) — padroniza o código antes de testar
 
 ---
 
-## File Change Summary
+## Resumo de Mudanças por Arquivo
 
-| File | Action | Est. Lines Changed |
+| Arquivo | Ação | Fase |
 |---|---|---|
-| `DESIGN.md` | Already replaced (done) | 230 → 393 |
-| `index.html` | Edit (3 additions) | +20 lines |
-| `calendario/DESIGN.md` | Full rewrite | 275 → ~320 |
-| `calendario/src/index.css` | Edit (3 additions) | +25 lines |
-| `calendario/src/App.tsx` | Audit only | ~0 lines |
-| `calendario/src/components/*.tsx` | Audit only | ~0 lines |
-
-**Total net new lines:** ~170
-**Deleted lines:** 0 (all changes are additive or full rewrites)
-**Risk level:** Low — no behavioral changes, only token additions and documentation updates
+| `package.json` | +5 deps (marked, dompurify, react-router-dom, vitest, eslint) | 1,2,8,9 |
+| `src/lib/sanitize.ts` | **Novo** — markdown + sanitização | 1 |
+| `src/App.tsx` | Refatorar para React Router | 2 |
+| `src/pages/NotFoundPage.tsx` | **Novo** — página 404 | 2 |
+| `src/components/Navbar.tsx` | NavLink + substituir cores | 2,3 |
+| `src/pages/*.tsx` (5 arquivos) | Substituir cores hardcoded | 3 |
+| `src/components/*.tsx` (4 arquivos) | Substituir cores hardcoded | 3 |
+| `src/index.css` | +4 tokens CSS | 3 |
+| `calendario/src/lib/api.ts` | Re-export do root | 4 |
+| `calendario/src/types.ts` | Re-export do root | 4 |
+| `calendario/server.js` | **Deletar** | 4 |
+| `calendario/supabase-schema.sql` | **Deletar** | 4 |
+| `calendario/src/App.tsx` | Decompor em ~12 componentes | 5 |
+| `calendario/src/components/*.tsx` | **~10 novos** componentes | 5 |
+| `calendario/src/hooks/*.ts` | **~3 novos** hooks | 5 |
+| `calendario/src/utils/constants.ts` | **Novo** — constantes extraídas | 5 |
+| `calendario/src/App.tsx` + components | Substituir cores hardcoded | 6 |
+| `a academia.html` | **Deletar** | 7 |
+| `eslint.config.js` | **Novo** | 8 |
+| `.prettierrc` | **Novo** | 8 |
+| `vitest.config.ts` | **Novo** | 9 |
+| `src/test/setup.ts` | **Novo** | 9 |
+| `src/**/*.test.ts` | **~5 novos** arquivos de teste | 9 |
+| `server.js` | +whitelist posts, +limit content, +escape search | 10 |
+| `.gitignore` | Atualizar patterns | 11 |
+| `calendario/.env.example` | `git rm --cached` | 11 |
 
 ---
 
-## Execution Order
+## Estimativa de Esforço
 
-1. `index.html` — Add CSS variables to `:root`
-2. `index.html` — Add dark mode CSS variables
-3. `index.html` — Add utility classes
-4. `calendario/DESIGN.md` — Full rewrite
-5. `calendario/src/index.css` — Add `@theme` tokens
-6. `calendario/src/index.css` — Add gradient utilities
-7. `calendario/src/index.css` — Update `.crystal-glow`
-8. Calendario components — Audit for hardcoded colors
-9. Calendario — Run `npm run lint` + `npm run build`
+| Fase | Esforço | Prioridade |
+|---|---|---|
+| Fase 1: XSS | ~3h | Crítica |
+| Fase 2: React Router | ~4h | Alta |
+| Fase 3: Cores (main) | ~3h | Média |
+| Fase 4: Duplicatas | ~2h | Média |
+| Fase 5: Componentizar Calendario | ~6h | Média |
+| Fase 6: Cores (calendario) | ~2h | Média |
+| Fase 7: Legado | ~30min | Baixa |
+| Fase 8: ESLint + Prettier | ~1h | Média |
+| Fase 9: Testes | ~3h | Média |
+| Fase 10: Mass Assignment | ~1h | Alta |
+| Fase 11: Limpeza | ~30min | Baixa |
+| **Total** | **~26h (~4 dias)** | |

@@ -313,13 +313,13 @@ export const AdminPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
       {/* Header do Painel Admin */}
-      <div className="bg-gradient-to-r from-[#1D6A6A] via-[#124949] to-[#121921] rounded-3xl p-8 text-white border-2 border-[#D4AF37] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] rounded-3xl p-8 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#F5E6B8] text-xs font-bold uppercase">
-            <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase">
+            <ShieldCheck className="w-4 h-4 text-[var(--color-secondary)]" />
             Área de Administração Reitoral
           </div>
-          <h1 className="font-serif font-black text-2xl sm:text-4xl text-[#F5E6B8]">
+          <h1 className="font-serif font-black text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
             Painel Administrativo Unificado
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100/90">
@@ -341,11 +341,11 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('posts')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'posts'
-              ? 'bg-[#1D6A6A] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-white shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
-          <BookOpen className="w-4 h-4 text-[#D4AF37]" />
+          <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
           Postagens & Códices ({posts.length})
         </button>
 
@@ -353,11 +353,11 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('events')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'events'
-              ? 'bg-[#1D6A6A] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-white shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
-          <Calendar className="w-4 h-4 text-[#D4AF37]" />
+          <Calendar className="w-4 h-4 text-[var(--color-secondary)]" />
           Eventos do Calendário ({events.length})
         </button>
 
@@ -365,11 +365,11 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('types')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'types'
-              ? 'bg-[#1D6A6A] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-white shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
-          <Tag className="w-4 h-4 text-[#D4AF37]" />
+          <Tag className="w-4 h-4 text-[var(--color-secondary)]" />
           Tipos de Atividade ({eventTypes.length})
         </button>
       </div>
@@ -394,9 +394,9 @@ export const AdminPage: React.FC = () => {
                 setSelectedPost(null);
                 setIsPostModalOpen(true);
               }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[#1D6A6A] hover:bg-[#2A8A8A] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
-              <Plus className="w-4 h-4 text-[#D4AF37]" /> Nova Postagem / Guia
+              <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Postagem / Guia
             </button>
 
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
@@ -406,7 +406,7 @@ export const AdminPage: React.FC = () => {
                 <button
                   onClick={() => setStatusFilter('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'all' ? 'bg-[#1D6A6A] text-white' : 'text-slate-500'
+                    statusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-slate-500'
                   }`}
                 >
                   Todas
@@ -437,7 +437,7 @@ export const AdminPage: React.FC = () => {
                   value={postsSearch}
                   onChange={e => setPostsSearch(e.target.value)}
                   placeholder="Buscar postagem..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[#1D6A6A] focus:outline-none"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                 />
               </div>
 
@@ -476,7 +476,7 @@ export const AdminPage: React.FC = () => {
                           {post.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[#1D6A6A]/10 text-[#1D6A6A] dark:text-[#4ECDC4] font-bold uppercase text-[10px]">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
                             {post.category}
                           </span>
                         </td>
@@ -497,8 +497,8 @@ export const AdminPage: React.FC = () => {
                             onClick={() => handleTogglePin(post)}
                             className={`p-1.5 rounded-lg border transition-all ${
                               post.is_pinned
-                                ? 'bg-[#D4AF37] text-slate-950 border-[#D4AF37]'
-                                : 'text-slate-400 border-slate-300 dark:border-slate-700 hover:text-[#D4AF37]'
+                                ? 'bg-[var(--color-secondary)] text-slate-950 border-[var(--color-secondary)]'
+                                : 'text-slate-400 border-slate-300 dark:border-slate-700 hover:text-[var(--color-secondary)]'
                             }`}
                             title={post.is_pinned ? 'Remover dos Destaques' : 'Fixar em Destaque'}
                           >
@@ -522,7 +522,7 @@ export const AdminPage: React.FC = () => {
                               setSelectedPost(post);
                               setIsPostModalOpen(true);
                             }}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[#1D6A6A] dark:text-[#4ECDC4]"
+                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                             title="Editar Postagem"
                           >
                             <Edit3 className="w-4 h-4" />
@@ -555,9 +555,9 @@ export const AdminPage: React.FC = () => {
 
             <button
               onClick={openEventCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[#1D6A6A] hover:bg-[#2A8A8A] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
-              <PlusCircle className="w-4 h-4 text-[#D4AF37]" /> Novo Evento
+              <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Evento
             </button>
 
             <button
@@ -596,18 +596,18 @@ export const AdminPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
                     {events.map(evt => (
                       <tr key={evt.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
-                        <td className="p-4 font-serif font-bold text-[#124949]">
+                        <td className="p-4 font-serif font-bold text-[var(--color-primary-deep)]">
                           {evt.day < 10 ? `0${evt.day}` : evt.day}
                         </td>
                         <td className="p-4">{evt.month}</td>
-                        <td className="p-4 text-[#735C00] flex items-center gap-1">
+                        <td className="p-4 text-[var(--color-on-secondary-deep)] flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {evt.time}
                         </td>
                         <td className="p-4 font-semibold max-w-[200px] truncate">
                           {evt.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[#1D6A6A]/10 text-[#1D6A6A] dark:text-[#4ECDC4] font-bold uppercase text-[10px]">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
                             {getTypeLabel(evt.type)}
                           </span>
                         </td>
@@ -616,7 +616,7 @@ export const AdminPage: React.FC = () => {
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => openEventEdit(evt)}
-                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[#1D6A6A] dark:text-[#4ECDC4]"
+                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                               title="Editar"
                             >
                               <Edit3 className="w-4 h-4" />
@@ -651,9 +651,9 @@ export const AdminPage: React.FC = () => {
 
             <button
               onClick={openTypeCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[#1D6A6A] hover:bg-[#2A8A8A] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
-              <PlusCircle className="w-4 h-4 text-[#D4AF37]" /> Novo Tipo
+              <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Tipo
             </button>
 
             <button
@@ -694,7 +694,7 @@ export const AdminPage: React.FC = () => {
                         <td className="p-4 text-slate-400">
                           <GripVertical className="w-4 h-4" />
                         </td>
-                        <td className="p-4 font-mono text-xs text-[#735C00]">{et.key}</td>
+                        <td className="p-4 font-mono text-xs text-[var(--color-on-secondary-deep)]">{et.key}</td>
                         <td className="p-4 font-semibold">{et.label}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
@@ -707,7 +707,7 @@ export const AdminPage: React.FC = () => {
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => openTypeEdit(et)}
-                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[#1D6A6A] dark:text-[#4ECDC4]"
+                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                               title="Editar"
                             >
                               <Edit3 className="w-4 h-4" />
@@ -736,11 +736,11 @@ export const AdminPage: React.FC = () => {
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
       {showEventForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
-          <div className="bg-[var(--color-surface)] border-2 border-[#D4AF37] rounded-2xl w-full max-w-xl shadow-2xl">
-            <div className="h-1.5 bg-[#D4AF37] w-full" />
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl">
+            <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
-                <h3 className="text-lg font-serif font-bold text-[#1D6A6A]">
+                <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
                 <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar">
@@ -750,42 +750,42 @@ export const AdminPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Mês</label>
-                  <select value={eventForm.month} onChange={e => setEventField('month', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Mês</label>
+                  <select value={eventForm.month} onChange={e => setEventField('month', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30">
                     {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Dia</label>
-                  <input type="number" min={1} max={31} value={eventForm.day} onChange={e => setEventField('day', Number(e.target.value))} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30" />
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Dia</label>
+                  <input type="number" min={1} max={31} value={eventForm.day} onChange={e => setEventField('day', Number(e.target.value))} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Horário</label>
-                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="09:00 — 11:30" className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30" />
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Horário</label>
+                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="09:00 — 11:30" className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Título *</label>
-                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} maxLength={200} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30" />
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Título *</label>
+                <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} maxLength={200} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
                 <p className="text-[9px] text-slate-400 mt-1">Máximo 200 caracteres</p>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Descrição</label>
-                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} maxLength={2000} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30 resize-none" />
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Descrição</label>
+                <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} maxLength={2000} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 resize-none" />
                 <p className="text-[9px] text-slate-400 mt-1">{eventForm.description.length}/2000</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Instrutor</label>
-                  <input type="text" value={eventForm.instructor} onChange={e => setEventField('instructor', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30" />
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Instrutor</label>
+                  <input type="text" value={eventForm.instructor} onChange={e => setEventField('instructor', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Tipo</label>
-                  <select value={eventForm.type} onChange={e => setEventField('type', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Tipo</label>
+                  <select value={eventForm.type} onChange={e => setEventField('type', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30">
                     <option value="">Selecione…</option>
                     {eventTypes.map(et => (
                       <option key={et.id} value={et.key}>{et.label}</option>
@@ -795,17 +795,17 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">URL da Imagem</label>
-                <input type="text" value={eventForm.image} onChange={e => setEventField('image', e.target.value)} placeholder="https://..." className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30" />
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">URL da Imagem</label>
+                <input type="text" value={eventForm.image} onChange={e => setEventField('image', e.target.value)} placeholder="https://..." className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
               </div>
 
               <div className="flex gap-6 items-center">
                 <label className="flex items-center gap-2 text-xs cursor-pointer">
-                  <input type="checkbox" checked={eventForm.crystal} onChange={e => setEventField('crystal', e.target.checked)} className="accent-[#1D6A6A] rounded" />
+                  <input type="checkbox" checked={eventForm.crystal} onChange={e => setEventField('crystal', e.target.checked)} className="accent-[var(--color-primary)] rounded" />
                   Cristal
                 </label>
                 <label className="flex items-center gap-2 text-xs cursor-pointer">
-                  <input type="checkbox" checked={eventForm.stars} onChange={e => setEventField('stars', e.target.checked)} className="accent-[#1D6A6A] rounded" />
+                  <input type="checkbox" checked={eventForm.stars} onChange={e => setEventField('stars', e.target.checked)} className="accent-[var(--color-primary)] rounded" />
                   Estrelas
                 </label>
               </div>
@@ -814,8 +814,8 @@ export const AdminPage: React.FC = () => {
                 <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingEvent} className="bg-[#1D6A6A] hover:bg-[#2A8A8A] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
-                  <Check className="w-4 h-4 text-[#D4AF37]" />
+                <button type="submit" disabled={savingEvent} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                  <Check className="w-4 h-4 text-[var(--color-secondary)]" />
                   {savingEvent ? 'Salvando…' : editingEventId ? 'Salvar' : 'Criar'}
                 </button>
               </div>
@@ -827,11 +827,11 @@ export const AdminPage: React.FC = () => {
       {/* ═══════════════════ MODAL: TIPO DE ATIVIDADE ═══════════════════ */}
       {showTypeForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
-          <div className="bg-[var(--color-surface)] border-2 border-[#D4AF37] rounded-2xl w-full max-w-md shadow-2xl">
-            <div className="h-1.5 bg-[#D4AF37] w-full" />
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
-                <h3 className="text-lg font-serif font-bold text-[#1D6A6A]">
+                <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
                 <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar">
@@ -840,33 +840,33 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Chave (key) *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Chave (key) *</label>
                 <input
                   type="text"
                   required
                   value={typeForm.key}
                   onChange={e => setTypeField('key', e.target.value)}
                   placeholder="ex: spells, alchemy"
-                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30"
+                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                 />
                 <p className="text-[9px] text-slate-400 mt-1">Slug lowercase, sem espaços (ex: my-type)</p>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Nome de exibição *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Nome de exibição *</label>
                 <input
                   type="text"
                   required
                   value={typeForm.label}
                   onChange={e => setTypeField('label', e.target.value)}
                   placeholder="ex: Spells (Magias)"
-                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30"
+                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Cor</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Cor</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -878,16 +878,16 @@ export const AdminPage: React.FC = () => {
                       type="text"
                       value={typeForm.color}
                       onChange={e => setTypeField('color', e.target.value)}
-                      className="flex-1 bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30"
+                      className="flex-1 bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Ícone</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Ícone</label>
                   <select
                     value={typeForm.icon}
                     onChange={e => setTypeField('icon', e.target.value)}
-                    className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30"
+                    className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                   >
                     {ICON_OPTIONS.map(name => (
                       <option key={name} value={name}>{name}</option>
@@ -897,13 +897,13 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1D6A6A] mb-1">Ordem</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Ordem</label>
                 <input
                   type="number"
                   min={0}
                   value={typeForm.sort_order}
                   onChange={e => setTypeField('sort_order', Number(e.target.value))}
-                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]/30"
+                  className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                 />
               </div>
 
@@ -911,8 +911,8 @@ export const AdminPage: React.FC = () => {
                 <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingType} className="bg-[#1D6A6A] hover:bg-[#2A8A8A] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
-                  <Check className="w-4 h-4 text-[#D4AF37]" />
+                <button type="submit" disabled={savingType} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                  <Check className="w-4 h-4 text-[var(--color-secondary)]" />
                   {savingType ? 'Salvando…' : editingTypeId ? 'Salvar' : 'Criar'}
                 </button>
               </div>

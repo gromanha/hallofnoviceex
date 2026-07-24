@@ -57,7 +57,7 @@ export const PostDetailPage: React.FC = () => {
         <p className="text-sm text-[var(--color-on-surface-variant)]">A publicação solicitada não existe ou foi removida pelo autor.</p>
         <button
           onClick={() => navigate('/academia')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D6A6A] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#2A8A8A] transition-all shadow-md"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-bold text-xs uppercase tracking-wider hover:bg-[var(--color-primary-hover)] transition-all shadow-md"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar para o Códice
         </button>
@@ -80,14 +80,14 @@ export const PostDetailPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate('/academia')}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[#1D6A6A] transition-all shadow-xs"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)] transition-all shadow-xs"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao Códice
         </button>
 
         <button
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[#1D6A6A] transition-all"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
         >
           {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
           {copied ? 'Link Copiado!' : 'Compartilhar'}
@@ -96,7 +96,7 @@ export const PostDetailPage: React.FC = () => {
 
       {/* Header do Post */}
       <header className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#1D6A6A] text-white text-xs font-bold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[var(--color-primary)] text-white text-xs font-bold uppercase tracking-wider">
           {post.category}
         </div>
 
@@ -112,11 +112,11 @@ export const PostDetailPage: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--color-on-surface-variant)] pt-2 border-t border-[var(--color-outline-variant)]">
           <span className="flex items-center gap-1.5 font-medium">
-            <User className="w-4 h-4 text-[#D4AF37]" />
+            <User className="w-4 h-4 text-[var(--color-secondary)]" />
             {post.author_name}
           </span>
           <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-[#1D6A6A] dark:text-[#4ECDC4]" />
+            <Calendar className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-crystal)]" />
             {formattedDate}
           </span>
         </div>
@@ -145,7 +145,7 @@ export const PostDetailPage: React.FC = () => {
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-[var(--color-outline-variant)]">
           <span className="text-xs font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider flex items-center gap-1">
-            <Tag className="w-3.5 h-3.5 text-[#D4AF37]" /> Tags:
+            <Tag className="w-3.5 h-3.5 text-[var(--color-secondary)]" /> Tags:
           </span>
           {post.tags.map((tag, i) => (
             <span

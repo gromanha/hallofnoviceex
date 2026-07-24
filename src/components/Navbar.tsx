@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 ${isActive ? 'text-[#1D6A6A] font-bold' : 'text-slate-500'}`;
+    `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-slate-500'}`;
 
   return (
     <header className="sticky top-0 z-40 bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-secondary)]/30 shadow-sm transition-colors">
@@ -50,12 +50,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
             to="/"
             className="flex items-center gap-3 text-left group focus:outline-none"
           >
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1D6A6A] to-[#124949] border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-deep)] border border-[var(--color-secondary)] flex items-center justify-center text-[var(--color-secondary)] shadow-md group-hover:scale-105 transition-transform">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[#1D6A6A] dark:text-[#4ECDC4] block leading-none">
-                HALL OF THE NOVICE <span className="text-[#D4AF37]">EX</span>
+              <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[var(--color-primary)] dark:text-[var(--color-crystal)] block leading-none">
+                HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>
               </span>
               <span className="font-sans text-xs tracking-wider text-[var(--color-on-surface-variant)] uppercase block mt-1">
                 Majestic Battle Academy
@@ -82,13 +82,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
 
             {admin && (
               <NavLink to="/admin" className={({ isActive }) =>
-                `flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all border border-[#D4AF37]/50 ${
+                `flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all border border-[var(--color-secondary)]/50 ${
                   isActive
-                    ? 'bg-[#D4AF37] text-slate-900 font-bold shadow-md'
-                    : 'bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-[#D4AF37]/20'
+                    ? 'bg-[var(--color-secondary)] text-slate-900 font-bold shadow-md'
+                    : 'bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/20'
                 }`
               }>
-                <Shield className="w-4 h-4 text-[#D4AF37]" />
+                <Shield className="w-4 h-4 text-[var(--color-secondary)]" />
                 Painel Admin
               </NavLink>
             )}
@@ -146,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
           </NavLink>
           {admin && (
             <NavLink to="/admin" className={({ isActive }) =>
-              `flex flex-col items-center gap-1 ${isActive ? 'text-[#D4AF37] font-bold' : 'text-slate-500'}`
+              `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-secondary)] font-bold' : 'text-slate-500'}`
             }>
               <Shield className="w-4 h-4" />
               Admin

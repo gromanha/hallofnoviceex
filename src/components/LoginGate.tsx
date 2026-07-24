@@ -32,8 +32,8 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-[var(--color-surface)] border-2 border-[#D4AF37] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative">
-        <div className="h-1.5 bg-[#D4AF37] w-full" />
+      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative">
+        <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
 
         {onClose && (
           <button
@@ -46,14 +46,14 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
 
         <div className="p-8 space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[#1D6A6A] flex items-center justify-center border border-[#D4AF37] text-[#D4AF37]">
+            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center border border-[var(--color-secondary)] text-[var(--color-secondary)]">
               <Shield className="w-6 h-6" />
             </div>
             <div>
               <h1 className="text-xl font-serif font-bold text-[var(--color-on-surface)]">
                 Reitoria – HoN EX
               </h1>
-              <p className="text-xs font-sans uppercase tracking-widest text-[#D4AF37] font-bold">
+              <p className="text-xs font-sans uppercase tracking-widest text-[var(--color-secondary)] font-bold">
                 Painel do Administrador
               </p>
             </div>
@@ -75,7 +75,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="ex: admin"
-                className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]"
+                className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
               />
             </div>
 
@@ -89,7 +89,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D6A6A]"
+                className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
               />
             </div>
 
@@ -102,9 +102,9 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
             <button
               type="submit"
               disabled={busy}
-              className="w-full bg-[#1D6A6A] hover:bg-[#2A8A8A] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+              <Sparkles className="w-4 h-4 text-[var(--color-secondary)]" />
               {busy ? 'Autenticando...' : 'Entrar no Painel'}
             </button>
           </form>

@@ -116,12 +116,12 @@ export const CalendarPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header do Calendário */}
-      <div className="bg-gradient-to-r from-[#1D6A6A] via-[#124949] to-[#121921] rounded-3xl p-8 sm:p-10 text-white border-2 border-[#D4AF37] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] rounded-3xl p-8 sm:p-10 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 text-center md:text-left">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5 justify-center md:justify-start">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5 justify-center md:justify-start">
             <Sparkles className="w-4 h-4" /> Cronograma de Aulas e Batalhas
           </span>
-          <h1 className="font-serif font-black text-3xl sm:text-4xl text-[#F5E6B8]">
+          <h1 className="font-serif font-black text-3xl sm:text-4xl text-[var(--color-secondary-light)]">
             Calendário de Atividades — {currentMonth.name} {currentMonth.cycle}
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100/90">
@@ -139,7 +139,7 @@ export const CalendarPage: React.FC = () => {
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          <span className="font-serif font-bold text-sm px-4 min-w-[120px] text-center text-[#F5E6B8]">
+          <span className="font-serif font-bold text-sm px-4 min-w-[120px] text-center text-[var(--color-secondary-light)]">
             {currentMonth.name}
           </span>
 
@@ -163,7 +163,7 @@ export const CalendarPage: React.FC = () => {
           onClick={() => setSelectedType('all')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
             selectedType === 'all'
-              ? 'bg-[#1D6A6A] text-white shadow-xs'
+              ? 'bg-[var(--color-primary)] text-white shadow-xs'
               : 'bg-[var(--color-background)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)]'
           }`}
         >
@@ -179,7 +179,7 @@ export const CalendarPage: React.FC = () => {
               onClick={() => setSelectedType(t.key)}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 selectedType === t.key
-                  ? 'bg-[#1D6A6A] text-white shadow-xs'
+                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
                   : 'bg-[var(--color-background)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)]'
               }`}
             >
@@ -234,16 +234,16 @@ export const CalendarPage: React.FC = () => {
                   key={day}
                   className={`min-h-[110px] p-2.5 rounded-2xl border transition-all flex flex-col justify-between ${
                     isToday
-                      ? 'border-[#D4AF37] bg-[#D4AF37]/10 shadow-md ring-2 ring-[#D4AF37]/40'
-                      : 'border-[var(--color-outline-variant)] bg-[var(--color-background)] hover:border-[#1D6A6A]/50'
+                      ? 'border-[var(--color-secondary)] bg-[var(--color-secondary)]/10 shadow-md ring-2 ring-[var(--color-secondary)]/40'
+                      : 'border-[var(--color-outline-variant)] bg-[var(--color-background)] hover:border-[var(--color-primary)]/50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-bold ${isToday ? 'text-[#D4AF37] font-black scale-110' : 'text-[var(--color-on-surface)]'}`}>
+                    <span className={`text-xs font-bold ${isToday ? 'text-[var(--color-secondary)] font-black scale-110' : 'text-[var(--color-on-surface)]'}`}>
                       {day}
                     </span>
                     {isToday && (
-                      <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-[#D4AF37] text-slate-950">
+                      <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-[var(--color-secondary)] text-slate-950">
                         Hoje
                       </span>
                     )}
@@ -258,7 +258,7 @@ export const CalendarPage: React.FC = () => {
                           key={ev.id}
                           onClick={() => setSelectedEvent(ev)}
                           className="w-full text-left p-1.5 rounded-lg text-white font-medium text-[11px] truncate flex items-center gap-1.5 transition-transform hover:scale-[1.02]"
-                          style={{ backgroundColor: tInfo?.color || '#1D6A6A' }}
+                          style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
                         >
                           <span className="truncate flex-1">{ev.title}</span>
                         </button>
@@ -282,7 +282,7 @@ export const CalendarPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[var(--color-surface)] border-2 border-[#D4AF37] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4"
+              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4"
             >
               {/* Cover Image */}
               {selectedEvent.image && (
@@ -298,7 +298,7 @@ export const CalendarPage: React.FC = () => {
 
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#D4AF37] bg-[#D4AF37]/10 px-3 py-1 rounded-full border border-[#D4AF37]/30">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
                     {selectedEvent.month} • Dia {selectedEvent.day}
                   </span>
                   <button
@@ -315,7 +315,7 @@ export const CalendarPage: React.FC = () => {
 
                 <div className="flex items-center gap-3 text-xs text-[var(--color-on-surface-variant)]">
                   <span className="flex items-center gap-1 font-semibold">
-                    <Clock className="w-3.5 h-3.5 text-[#1D6A6A]" />
+                    <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
                     {selectedEvent.time}
                   </span>
                   {selectedEvent.instructor && (
@@ -332,7 +332,7 @@ export const CalendarPage: React.FC = () => {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="px-5 py-2 rounded-xl bg-[#1D6A6A] text-white text-xs font-bold hover:bg-[#2A8A8A] transition-all"
+                    className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
                   >
                     Fechar Detalhes
                   </button>

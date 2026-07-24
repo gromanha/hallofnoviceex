@@ -31,16 +31,16 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-16">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#1D6A6A] via-[#124949] to-[#121921] text-white pt-16 pb-24 border-b-4 border-[#D4AF37]">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
         <div className="absolute inset-0 opacity-10 parchment-texture pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#F5E6B8] text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
             Free Company Final Fantasy XIV • Behemoth
           </div>
 
-          <h1 className="font-serif font-black text-3xl sm:text-5xl lg:text-6xl text-[#F5E6B8] tracking-wider leading-tight max-w-4xl mx-auto">
+          <h1 className="font-serif font-black text-3xl sm:text-5xl lg:text-6xl text-[var(--color-secondary-light)] tracking-wider leading-tight max-w-4xl mx-auto">
             Onde o conhecimento se torna a sua maior magia
           </h1>
 
@@ -53,7 +53,7 @@ export const HomePage: React.FC = () => {
               href="https://discord.gg/3XJgrsVUbP"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105"
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               Matricule-se no Discord
@@ -63,7 +63,7 @@ export const HomePage: React.FC = () => {
               onClick={() => navigate('/calendario')}
               className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all backdrop-blur-md"
             >
-              <Calendar className="w-4 h-4 text-[#D4AF37]" />
+              <Calendar className="w-4 h-4 text-[var(--color-secondary)]" />
               Ver Calendário de Aulas
             </button>
           </div>
@@ -75,7 +75,7 @@ export const HomePage: React.FC = () => {
         <div className="flex items-center justify-between mb-8 border-b border-[var(--color-outline-variant)] pb-4">
           <div>
             <h2 className="font-serif font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)] flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-[#1D6A6A] dark:text-[#4ECDC4]" />
+              <BookOpen className="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-crystal)]" />
               Últimas Postagens & Códices
             </h2>
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
@@ -85,7 +85,7 @@ export const HomePage: React.FC = () => {
 
           <button
             onClick={() => navigate('/academia')}
-            className="text-xs font-bold uppercase tracking-wider text-[#1D6A6A] dark:text-[#4ECDC4] hover:underline flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-crystal)] hover:underline flex items-center gap-1"
           >
             Ver todos os guias <ArrowRight className="w-4 h-4" />
           </button>
@@ -191,11 +191,11 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[#1D6A6A] text-[#D4AF37] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[#D4AF37]">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-primary)] text-[var(--color-secondary)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-secondary)]">
                 AR
               </div>
               <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Aquilles Romanha</h3>
-              <p className="text-xs font-bold text-[#1D6A6A] dark:text-[#4ECDC4] uppercase">Reitor & Sábio (Sage)</p>
+              <p className="text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-crystal)] uppercase">Reitor & Sábio (Sage)</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Estratégia de Combate e Planejamento Tático</p>
             </div>
 
@@ -222,12 +222,12 @@ export const HomePage: React.FC = () => {
 
       {/* ── CAMPUS HOUSE ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-[#1D6A6A] to-[#124949] rounded-3xl p-8 sm:p-12 text-white border-2 border-[#D4AF37] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+        <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
           <div className="space-y-4 max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5">
               <MapPin className="w-4 h-4" /> Campus da Guia (FC House)
             </span>
-            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[#F5E6B8]">
+            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
               Visite Nosso Campus Físico em Mist
             </h2>
             <p className="text-sm text-emerald-100/90 leading-relaxed">
@@ -242,7 +242,7 @@ export const HomePage: React.FC = () => {
             href="https://discord.gg/3XJgrsVUbP"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 rounded-2xl bg-[#D4AF37] hover:bg-[#E5C158] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
+            className="px-8 py-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
           >
             Quero Me Matricular
           </a>

@@ -299,8 +299,6 @@ app.post('/api/auth', async (req, res) => {
 
 // ── Events CRUD ────────────────────────────────────────────────
 
-const EVENT_FIELDS = ['month','day','time','title','description','instructor','type','image','crystal','stars','mana_progress','spots','rank','indicators'];
-
 app.get('/api/events', async (_req, res) => {
   try {
     const { data, error } = await supabaseAnon
@@ -371,7 +369,6 @@ app.patch('/api/events', async (req, res) => {
     const { id, ...raw } = req.body;
     if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
 
-    // Whitelist and validate fields
     const fields = {};
     if (raw.month !== undefined) {
       if (!isValidMonth(clampStr(raw.month, 20))) return res.status(400).json({ error: 'invalid_month' });
@@ -435,8 +432,6 @@ app.delete('/api/events', async (req, res) => {
 });
 
 // ── Event Types CRUD ───────────────────────────────────────────
-
-const TYPE_FIELDS = ['key','label','color','icon','sort_order'];
 
 app.get('/api/event-types', async (_req, res) => {
   try {

@@ -118,6 +118,8 @@ export const CalendarPage: React.FC = () => {
   const nextMonth = () => setMonthIndex(i => Math.min(months.length - 1, i + 1));
   const prevMonth = () => setMonthIndex(i => Math.max(0, i - 1));
 
+  useEscapeKey(() => setSelectedEvent(null), !!selectedEvent);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
@@ -265,9 +267,7 @@ export const CalendarPage: React.FC = () => {
                   <div className="space-y-1 mt-2">
                     {dayEvs.map(ev => {
                       const tInfo = typeMap.get(ev.type);
-  useEscapeKey(() => setSelectedEvent(null), !!selectedEvent);
-
-  return (
+                      return (
                         <button
                           key={ev.id}
                           onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}

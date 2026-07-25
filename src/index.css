@@ -58,12 +58,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(29, 106, 106, 0.4);
+  background: var(--color-outline-variant);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(29, 106, 106, 0.7);
+  background: color-mix(in srgb, var(--color-primary) 70%, transparent);
 }
 
 @theme {
@@ -106,6 +106,15 @@ body {
   --color-rose-light: #F4E3E7;
   --color-sage: #6B8F71;
   --color-sage-light: #E3EDE5;
+
+  --color-indigo: #2D3A6E;
+  --color-indigo-light: #E8EAF6;
+  --color-amber: #B8650E;
+  --color-amber-light: #FFF3E0;
+  --color-copper: #8B5E3C;
+  --color-copper-light: #F5E6D3;
+  --color-crimson: #9B1B30;
+  --color-crimson-light: #FCE4EC;
 }
 
 /* ── Eorzean Nightfall — Dark Mode ── */
@@ -144,12 +153,18 @@ body {
   --color-rose-light: rgba(232, 139, 154, 0.1);
   --color-sage: #7FB888;
   --color-sage-light: rgba(127, 184, 136, 0.1);
+
+  --color-indigo: #7986CB;
+  --color-indigo-light: rgba(121, 134, 203, 0.1);
+  --color-amber: #FFB74D;
+  --color-amber-light: rgba(255, 183, 77, 0.1);
+  --color-copper: #BC8F6F;
+  --color-copper-light: rgba(188, 143, 111, 0.1);
+  --color-crimson: #EF5350;
+  --color-crimson-light: rgba(239, 83, 80, 0.1);
 }
 
-:root[data-theme="dark"] body {
-  background-color: #121921;
-  color: #E2E8F0;
-}
+
 
 /* Texture & Effects */
 .parchment-texture {

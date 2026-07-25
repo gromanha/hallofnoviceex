@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LoginGate } from './components/LoginGate';
@@ -18,6 +19,7 @@ const AdminPage = React.lazy(() => import('./pages/AdminPage').then(m => ({ defa
 function AppRoutes() {
   const { admin, onLogin, onLogout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleLogin = async (username: string, password: string) => {
@@ -38,32 +40,45 @@ function AppRoutes() {
 
       <main id="main-content" className="flex-1" tabIndex={-1}>
         <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/academia" element={<AcademiaPage />} />
-            <Route path="/post/:slug" element={<PostDetailPage />} />
-            <Route path="/calendario" element={<CalendarPage />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute admin={admin}>
-                  <AdminPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Routes location={location}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/academia" element={<AcademiaPage />} />
+                <Route path="/post/:slug" element={<PostDetailPage />} />
+                <Route path="/calendario" element={<CalendarPage />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute admin={admin}>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </motion.div>
+          </AnimatePresence>
         </Suspense>
       </main>
 
       <Footer />
 
-      {isLoginOpen && !admin && (
-        <LoginGate
-          onLogin={handleLogin}
-          onClose={() => setIsLoginOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isLoginOpen && !admin && (
+          <LoginGate
+            key="login-gate"
+            onLogin={handleLogin}
+            onClose={() => setIsLoginOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

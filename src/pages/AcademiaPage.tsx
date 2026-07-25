@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { BookOpen, Search, Sparkles, Filter, ShieldCheck, Tag, X } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
@@ -13,6 +14,21 @@ export const AcademiaPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
+  };
 
   const handleNavigatePost = useCallback((slug: string) => {
     navigate(`/post/${slug}`);
@@ -45,7 +61,7 @@ export const AcademiaPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       
       {/* Cabeçalho Majestoso */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#0e3838] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] relative overflow-hidden shadow-xl text-center space-y-4">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] relative overflow-hidden shadow-xl text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase tracking-widest">
           <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
           Códice & Biblioteca Sharlayan
@@ -142,15 +158,21 @@ export const AcademiaPage: React.FC = () => {
           <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Tente ajustar o termo de busca ou o filtro de categoria.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {posts.map(post => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onClick={() => handleNavigatePost(post.slug)}
-            />
+            <motion.div key={post.id} variants={itemVariants}>
+              <PostCard
+                post={post}
+                onClick={() => handleNavigatePost(post.slug)}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
     </div>

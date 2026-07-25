@@ -1,7 +1,8 @@
 import React, { useEffect, useState, memo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut, Sparkles } from 'lucide-react';
+import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
+import logoUrl from '@/assets/logo.png';
 
 interface NavbarProps {
   onOpenLogin?: () => void;
@@ -50,8 +51,8 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
             to="/"
             className="flex items-center gap-3 text-left group focus:outline-none"
           >
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-deep)] border border-[var(--color-secondary)] flex items-center justify-center text-[var(--color-secondary)] shadow-md group-hover:scale-105 transition-transform">
-              <Sparkles className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-xl overflow-hidden border border-[var(--color-secondary)] shadow-md group-hover:scale-105 transition-transform">
+              <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[var(--color-primary)] dark:text-[var(--color-crystal)] block leading-none">
@@ -107,12 +108,12 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
 
             {admin ? (
               <div className="flex items-center gap-2">
-                <span className="hidden lg:inline text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                <span className="hidden lg:inline text-xs font-semibold px-3 py-1.5 rounded-lg bg-[var(--color-sage)]/10 text-[var(--color-sage)] border border-[var(--color-sage)]/30">
                   {admin.display_name}
                 </span>
                 <button
                   onClick={onLogout}
-                  className="p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                  className="p-2.5 rounded-xl border border-[var(--color-crimson)]/30 text-[var(--color-crimson)] hover:bg-[var(--color-crimson)]/10 transition-colors"
                   title="Sair do Painel Admin"
                   aria-label="Sair do painel administrativo"
                 >

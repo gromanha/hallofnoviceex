@@ -16,6 +16,14 @@ colors:
   rose-light: "#F4E3E7"
   sage: "#6B8F71"
   sage-light: "#E3EDE5"
+  indigo: "#2D3A6E"
+  indigo-light: "#E8EAF6"
+  amber: "#B8650E"
+  amber-light: "#FFF3E0"
+  copper: "#8B5E3C"
+  copper-light: "#F5E6D3"
+  crimson: "#9B1B30"
+  crimson-light: "#FCE4EC"
   neutral-bg: "#FAF6ED"
   neutral-surface: "#FFFFFF"
   neutral-surface-alt: "#FFFFFF"
@@ -161,6 +169,19 @@ From the botanical elements in the illustrations — white lilies, green garden 
 - **Sage Green** `#6B8F71` — Garden foliage accent, nature-related content. Growth and vitality.
 - **Sage Mist** `#E3EDE5` — Sage-tinted backgrounds.
 
+### Extended — Battle, Magic, Craft & Earth
+
+From the wider world of Eorzea — the intensity of high-difficulty encounters, the depth of arcane knowledge, the warmth of the forge, and the groundedness of the land. These families encode content meaning, not decoration.
+
+- **Indigo Deep** `#2D3A6E` — Premium content, night-themed sections, arcane knowledge markers. The color of starlit study and deep magic.
+- **Indigo Mist** `#E8EAF6` — Indigo-tinted backgrounds for premium or special content.
+- **Amber Ember** `#B8650E` — Fire, crafting, warnings, seasonal events. Evokes hearth warmth and forge energy.
+- **Amber Mist** `#FFF3E0` — Amber-tinted backgrounds for crafting and seasonal content.
+- **Copper Forged** `#8B5E3C` — Gathering, housing, earthy content. Distinct from the scholarly gold — warmer, more grounded.
+- **Copper Mist** `#F5E6D3` — Copper-tinted backgrounds for gathering and housing content.
+- **Crimson Blade** `#9B1B30` — Combat warnings, boss mechanics, high-difficulty content. The color of intensity and danger.
+- **Crimson Mist** `#FCE4EC` — Crimson-tinted backgrounds for combat and warning content.
+
 ### Neutral
 
 The stone and shadow of the architecture, translated into UI foundation tones.
@@ -178,6 +199,8 @@ The stone and shadow of the architecture, translated into UI foundation tones.
 **The Parchment Foundation Rule.** The warm ivory background is non-negotiable. Never replace it with pure white (`#FFF`) or cool gray. The warmth of the canvas is what makes the entire system feel inviting rather than clinical.
 
 **The Crystal Glow Rule.** Crystal Cyan is reserved for magical and interactive highlights — tooltips, interactive accents, subtle glow effects. It represents active magic in the world. Never use it for large surfaces or as a primary color.
+
+**The Extended Families Rule.** Indigo, Amber, Copper, and Crimson encode content meaning — difficulty, category, domain. They appear on ≤15% of any screen individually. Never use them as general-purpose accents or decoration; each hue must correspond to a specific content type (indigo = premium/arcane, amber = fire/crafting/seasonal, copper = gathering/housing/earth, crimson = combat/warning).
 
 ## 3. Typography
 
@@ -325,13 +348,13 @@ Three gradient families:
 ### Chips / Tags
 
 - **Style:** Small pill badges (15px radius, 11px uppercase text).
-- **Category variants:** Teal background for general, gold background for premium/special, lavender for secondary, crystal for magical/interactive.
+- **Category variants:** Teal background for general, gold background for premium/special, lavender for secondary, crystal for magical/interactive, indigo for premium/arcane content, amber for fire/crafting/seasonal, copper for gathering/housing, crimson for combat/warning.
 - **State:** Always displayed; no toggle behavior. Purely informational.
 
 ### Stats Cards
 
 - **Style:** Compact stat blocks in a 2x2 grid. Rounded corners (8px).
-- **Background:** Color-tinted variants (teal, gold, lavender) to add visual rhythm — echoing the watercolor washes in the illustrations.
+- **Background:** Color-tinted variants (teal, gold, lavender, indigo, amber, copper, crimson) to add visual rhythm — echoing the watercolor washes in the illustrations.
 - **Content:** Large Cinzel numeral + small uppercase label. The number is the hero.
 
 ### Modal (Reading Overlay)
@@ -356,6 +379,10 @@ Dark mode transforms the campus from sunlit afternoon to magical twilight. Deepe
 | Scholar's Gold `#D4AF37` | Bright Gold `#E8C547` | Gold warms in torchlight |
 | Campus Lavender `#9B8BB4` | Soft Lavender `#B8A9D4` | Lavender lightens against dark surfaces |
 | Crystal Cyan `#5ECFCF` | Vivid Crystal `#7EEEE5` | Crystals become more prominent in darkness |
+| Indigo Deep `#2D3A6E` | Soft Indigo `#7986CB` | Indigo lightens for readability on dark surfaces |
+| Amber Ember `#B8650E` | Warm Amber `#FFB74D` | Amber brightens like torchlight |
+| Copper Forged `#8B5E3C` | Soft Copper `#BC8F6F` | Copper lightens against dark stone |
+| Crimson Blade `#9B1B30` | Vivid Crimson `#EF5350` | Crimson intensifies in the dark |
 
 ### Dark Mode Principles
 
@@ -378,6 +405,7 @@ Dark mode transforms the campus from sunlit afternoon to magical twilight. Deepe
 - **Do** use watercolor-inspired gradients (teal-to-lavender washes) for card headers and section transitions.
 - **Do** reference the architectural motifs — Gothic arches in card shapes, ornamental gold in borders, the crest as a brand mark.
 - **Do** use crystal glow effects for interactive and magical highlights with restraint.
+- **Do** use extended families (indigo, amber, copper, crimson) to encode content meaning — each hue maps to a domain. Let them carry hierarchy through tinted backgrounds and status indicators, never as decoration.
 
 ### Don't
 
@@ -391,3 +419,4 @@ Dark mode transforms the campus from sunlit afternoon to magical twilight. Deepe
 - **Don't** use hard-stop gradients, neon transitions, or high-saturation color shifts. Gradients should feel like watercolor bleeding across wet paper.
 - **Don't** use Crystal Cyan for large surfaces or as a primary color. It is reserved for magical and interactive highlights only.
 - **Don't** create iconography outside the established visual language. Use the crest, role icons, crystal, and floating book motifs already defined.
+- **Don't** scatter extended families (indigo, amber, copper, crimson) as generic color accents. If a color doesn't map to a content domain, it doesn't belong on that element.

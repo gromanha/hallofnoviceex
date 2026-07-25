@@ -1,5 +1,6 @@
 import React from 'react';
-import { MessageSquare, Sparkles, BookOpen, MapPin } from 'lucide-react';
+import { MessageSquare, BookOpen, MapPin } from 'lucide-react';
+import logoUrl from '@/assets/logo.png';
 
 export const Footer: React.FC = () => {
   return (
@@ -10,8 +11,8 @@ export const Footer: React.FC = () => {
           {/* Coluna 1: Sobre */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[var(--color-primary)] border border-[var(--color-secondary)] flex items-center justify-center text-[var(--color-secondary)]">
-                <Sparkles className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-lg overflow-hidden border border-[var(--color-secondary)]">
+                <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
               </div>
               <span className="font-serif font-bold text-lg text-white tracking-wider">
                 HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>

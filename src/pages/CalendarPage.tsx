@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock, ShieldCheck,
   Flame, Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar
@@ -121,7 +122,7 @@ export const CalendarPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header do Calendário */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] rounded-3xl p-8 sm:p-10 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-10 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 text-center md:text-left">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5 justify-center md:justify-start">
             <Sparkles className="w-4 h-4" /> Cronograma de Aulas e Batalhas
@@ -288,68 +289,88 @@ export const CalendarPage: React.FC = () => {
       )}
 
       {/* Modal de Detalhes do Evento */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in" role="dialog" aria-modal="true" aria-label="Detalhes do evento" onClick={() => setSelectedEvent(null)}>
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            {/* Cover Image */}
-            {selectedEvent.image && !eventImgError && (
-              <div className="h-44 relative bg-slate-950">
-                <img
-                  src={selectedEvent.image}
-                  alt={selectedEvent.title}
-                  className="w-full h-full object-cover"
-                  onError={() => setEventImgError(true)}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
-              </div>
-            )}
-
-            <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
-                  {selectedEvent.month} • Dia {selectedEvent.day}
-                </span>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
-                  aria-label="Fechar detalhes do evento"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <h2 className="font-serif font-bold text-xl text-[var(--color-on-surface)]">
-                {selectedEvent.title}
-              </h2>
-
-              <div className="flex items-center gap-3 text-xs text-[var(--color-on-surface-variant)]">
-                <span className="flex items-center gap-1 font-semibold">
-                  <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-                  {selectedEvent.time}
-                </span>
-                {selectedEvent.instructor && (
-                  <span>• Professor: <strong>{selectedEvent.instructor}</strong></span>
-                )}
-              </div>
-
-              {selectedEvent.description && (
-                <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-outline-variant)]">
-                  {selectedEvent.description}
-                </p>
+      <AnimatePresence>
+        {selectedEvent && (
+          <motion.div
+            key="event-modal"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Detalhes do evento"
+            onClick={() => setSelectedEvent(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4"
+              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {/* Cover Image */}
+              {selectedEvent.image && !eventImgError && (
+                <div className="h-44 relative bg-slate-950">
+                  <img
+                    src={selectedEvent.image}
+                    alt={selectedEvent.title}
+                    className="w-full h-full object-cover"
+                    onError={() => setEventImgError(true)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+                </div>
               )}
 
-              <div className="pt-2 flex justify-end">
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
-                >
-                  Fechar Detalhes
-                </button>
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
+                    {selectedEvent.month} • Dia {selectedEvent.day}
+                  </span>
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
+                    aria-label="Fechar detalhes do evento"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <h2 className="font-serif font-bold text-xl text-[var(--color-on-surface)]">
+                  {selectedEvent.title}
+                </h2>
+
+                <div className="flex items-center gap-3 text-xs text-[var(--color-on-surface-variant)]">
+                  <span className="flex items-center gap-1 font-semibold">
+                    <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                    {selectedEvent.time}
+                  </span>
+                  {selectedEvent.instructor && (
+                    <span>• Professor: <strong>{selectedEvent.instructor}</strong></span>
+                  )}
+                </div>
+
+                {selectedEvent.description && (
+                  <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-outline-variant)]">
+                    {selectedEvent.description}
+                  </p>
+                )}
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
+                  >
+                    Fechar Detalhes
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

@@ -59,7 +59,7 @@ type TypeFormState = {
 const EMPTY_TYPE_FORM: TypeFormState = {
   key: '',
   label: '',
-  color: '#1a3a5f',
+  color: '#1D6A6A',
   icon: 'Wand2',
   sort_order: 0,
 };
@@ -350,7 +350,7 @@ export const AdminPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
       {/* Header do Painel Admin */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] rounded-3xl p-8 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase">
             <ShieldCheck className="w-4 h-4 text-[var(--color-secondary)]" />
@@ -366,7 +366,7 @@ export const AdminPage: React.FC = () => {
 
         <button
           onClick={onLogout}
-          className="px-5 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shrink-0"
+          className="px-5 py-2.5 rounded-xl bg-[var(--color-crimson)]/20 hover:bg-[var(--color-crimson)]/30 text-[var(--color-crimson)] border border-[var(--color-crimson)]/40 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shrink-0"
         >
           <LogOut className="w-4 h-4" /> Sair do Painel
         </button>
@@ -413,7 +413,7 @@ export const AdminPage: React.FC = () => {
 
       {/* Error Banner */}
       {eventError && (
-        <div className="text-xs text-rose-700 bg-rose-50 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-800 rounded-xl px-4 py-3 flex items-center justify-between">
+        <div className="text-xs text-[var(--color-crimson)] bg-[var(--color-crimson)]/10 border border-[var(--color-crimson)]/30 rounded-xl px-4 py-3 flex items-center justify-between">
           <span>{eventError}</span>
           <button onClick={() => setEventError(null)} className="underline font-bold ml-2">Dispensar</button>
         </div>
@@ -451,7 +451,7 @@ export const AdminPage: React.FC = () => {
                 <button
                   onClick={() => setStatusFilter('published')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'published' ? 'bg-emerald-600 text-white' : 'text-slate-500'
+                    statusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-slate-500'
                   }`}
                 >
                   Publicadas
@@ -459,7 +459,7 @@ export const AdminPage: React.FC = () => {
                 <button
                   onClick={() => setStatusFilter('draft')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'draft' ? 'bg-amber-600 text-white' : 'text-slate-500'
+                    statusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-slate-500'
                   }`}
                 >
                   Rascunhos
@@ -531,8 +531,8 @@ export const AdminPage: React.FC = () => {
                             onClick={() => handleToggleStatus(post)}
                             className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${
                               post.status === 'published'
-                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                                ? 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border border-[var(--color-sage)]/30'
+                                : 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border border-[var(--color-amber)]/30'
                             }`}
                           >
                             {post.status === 'published' ? 'Publicado' : 'Rascunho'}
@@ -577,7 +577,7 @@ export const AdminPage: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400"
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-crimson)]/10 text-[var(--color-crimson)]"
                             title="Excluir Postagem"
                             aria-label={`Excluir postagem: ${post.title}`}
                           >
@@ -674,7 +674,7 @@ export const AdminPage: React.FC = () => {
                             <button
                               onClick={() => void handleEventDelete(evt.id)}
                               disabled={deletingEventId === evt.id}
-                              className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 disabled:opacity-50"
+                              className="p-1.5 rounded-lg hover:bg-[var(--color-crimson)]/10 text-[var(--color-crimson)] disabled:opacity-50"
                               title="Deletar"
                               aria-label={`Deletar evento: ${evt.title}`}
                             >
@@ -767,7 +767,7 @@ export const AdminPage: React.FC = () => {
                             <button
                               onClick={() => void handleTypeDelete(et.id)}
                               disabled={deletingTypeId === et.id}
-                              className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 disabled:opacity-50"
+                              className="p-1.5 rounded-lg hover:bg-[var(--color-crimson)]/10 text-[var(--color-crimson)] disabled:opacity-50"
                               title="Deletar"
                               aria-label={`Deletar tipo: ${et.label}`}
                             >

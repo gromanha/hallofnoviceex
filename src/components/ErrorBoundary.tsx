@@ -33,8 +33,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center p-4">
           <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl max-w-md w-full p-8 text-center space-y-4 shadow-2xl">
-            <div className="w-14 h-14 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto">
-              <AlertTriangle className="w-7 h-7 text-rose-600 dark:text-rose-400" />
+            <div className="w-14 h-14 bg-[var(--color-crimson)]/10 rounded-full flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7 text-[var(--color-crimson)]" />
             </div>
             <h2 className="text-xl font-serif font-bold text-[var(--color-on-surface)]">
               Algo deu errado

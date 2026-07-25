@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Sparkles, BookOpen, X, Shield } from 'lucide-react';
+import { motion } from 'motion/react';
+import { X } from 'lucide-react';
 import { useEscapeKey } from '../lib/useEscapeKey';
+import logoUrl from '@/assets/logo.png';
 
 interface LoginGateProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -34,8 +36,25 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
   useEscapeKey(() => onClose?.(), !!onClose);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Login do administrador" onClick={onClose}>
-      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative" onClick={e => e.stopPropagation()}>
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Login do administrador"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative"
+        onClick={e => e.stopPropagation()}
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
 
         {onClose && (
@@ -50,8 +69,8 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
 
         <div className="p-8 space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center border border-[var(--color-secondary)] text-[var(--color-secondary)]">
-              <Shield className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-[var(--color-secondary)]">
+              <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="text-xl font-serif font-bold text-[var(--color-on-surface)]">
@@ -98,7 +117,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
             </div>
 
             {error && (
-              <div className="text-xs text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2 font-semibold">
+              <div className="text-xs text-[var(--color-crimson)] bg-[var(--color-crimson)]/10 border border-[var(--color-crimson)]/30 rounded-lg px-3 py-2 font-semibold">
                 {error}
               </div>
             )}
@@ -108,7 +127,6 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
               disabled={busy}
               className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-[var(--color-secondary)]" />
               {busy ? 'Autenticando...' : 'Entrar no Painel'}
             </button>
           </form>
@@ -123,7 +141,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
             </button>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

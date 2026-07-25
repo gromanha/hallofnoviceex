@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
@@ -9,6 +10,21 @@ export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
+  };
 
   const handleNavigateCalendar = useCallback(() => {
     navigate('/calendario');
@@ -45,10 +61,15 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-16">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#0e3838] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
         <div className="absolute inset-0 opacity-10 parchment-texture pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
+        <motion.div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
             Free Company Final Fantasy XIV • Behemoth
@@ -81,7 +102,7 @@ export const HomePage: React.FC = () => {
               Ver Calendário de Aulas
             </button>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── POSTAGENS EM DESTAQUE & NOTÍCIAS (DO SUPABASE) ── */}
@@ -118,22 +139,29 @@ export const HomePage: React.FC = () => {
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Use o Painel Admin para criar a primeira publicação.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
             {pinnedPosts.map(post => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onClick={() => handleNavigatePost(post.slug)}
-              />
+              <motion.div key={post.id} variants={itemVariants}>
+                <PostCard
+                  post={post}
+                  onClick={() => handleNavigatePost(post.slug)}
+                />
+              </motion.div>
             ))}
             {recentPosts.map(post => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onClick={() => handleNavigatePost(post.slug)}
-              />
+              <motion.div key={post.id} variants={itemVariants}>
+                <PostCard
+                  post={post}
+                  onClick={() => handleNavigatePost(post.slug)}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </section>
 
@@ -150,7 +178,7 @@ export const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-sage)]/10 text-[var(--color-sage)] flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Ensino Sem Toxicidade</h3>
@@ -160,7 +188,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-indigo)]/10 text-[var(--color-indigo)] flex items-center justify-center font-bold">
               <Sparkles className="w-5 h-5" />
             </div>
             <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Imersão Temática</h3>
@@ -170,7 +198,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center font-bold">
               <BookOpen className="w-5 h-5" />
             </div>
             <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Polo de Informação PT-BR</h3>
@@ -180,7 +208,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-amber)]/10 text-[var(--color-amber)] flex items-center justify-center font-bold">
               <HeartHandshake className="w-5 h-5" />
             </div>
             <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Vivência Acadêmica</h3>
@@ -214,20 +242,20 @@ export const HomePage: React.FC = () => {
             </div>
 
             <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[#059669] text-[#F5E6B8] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-emerald-400">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-sage)] text-[var(--color-secondary-light)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-sage)]">
                 LO
               </div>
               <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Leafa Oakfall</h3>
-              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">Conselheiro & Druida</p>
+              <p className="text-xs font-bold text-[var(--color-sage)] uppercase">Conselheiro & Druida</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Cura Avançada e Alquimia de Campo</p>
             </div>
 
             <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[#7E22CE] text-[#F5E6B8] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-purple-400">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-indigo)] text-[var(--color-secondary-light)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-indigo)]">
                 NT
               </div>
               <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Nick Trentini</h3>
-              <p className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase">Conselheiro & Artista</p>
+              <p className="text-xs font-bold text-[var(--color-indigo)] uppercase">Conselheiro & Artista</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Ritmo de Combate (Dancer/Pictomancer)</p>
             </div>
           </div>

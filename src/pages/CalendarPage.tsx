@@ -2,11 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock, ShieldCheck,
-  Flame, Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star
+  Flame, Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventTypeItem } from '../types';
 import { apiGet } from '../lib/api';
 import { EmptyCalendarState } from '../components/EmptyCalendarState';
+import { useEscapeKey } from '../lib/useEscapeKey';
 
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
   Wand2, Swords, FlaskConical, BookOpen, Sparkles, Flame, Eye, Moon, Star, Layers,
@@ -197,9 +198,15 @@ export const CalendarPage: React.FC = () => {
 
       {/* Grade do Calendário */}
       {loading ? (
-        <div className="h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse" />
+        <div className="h-96 bg-[var(--color-surface-alt)] rounded-3xl animate-pulse" />
       ) : monthEvents.length === 0 ? (
         <EmptyCalendarState />
+      ) : filteredEvents.length === 0 ? (
+        <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
+          <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+          <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Nenhum evento nesta disciplina</h3>
+          <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Selecione "Todas" ou outro tipo para ver mais eventos.</p>
+        </div>
       ) : (
         <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-3xl p-4 sm:p-6 shadow-sm">
           
@@ -257,7 +264,9 @@ export const CalendarPage: React.FC = () => {
                   <div className="space-y-1 mt-2">
                     {dayEvs.map(ev => {
                       const tInfo = typeMap.get(ev.type);
-                      return (
+  useEscapeKey(() => setSelectedEvent(null), !!selectedEvent);
+
+  return (
                         <button
                           key={ev.id}
                           onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}
@@ -280,8 +289,8 @@ export const CalendarPage: React.FC = () => {
 
       {/* Modal de Detalhes do Evento */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in" role="dialog" aria-modal="true" aria-label="Detalhes do evento">
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in" role="dialog" aria-modal="true" aria-label="Detalhes do evento" onClick={() => setSelectedEvent(null)}>
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             {/* Cover Image */}
             {selectedEvent.image && !eventImgError && (
               <div className="h-44 relative bg-slate-950">

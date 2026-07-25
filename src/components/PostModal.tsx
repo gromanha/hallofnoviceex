@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Trash2, Eye, Edit3, Pin, Sparkles, Image, Tag as TagIcon } from 'lucide-react';
 import { Post } from '../types';
 import { renderMarkdown } from '../lib/sanitize';
+import { useEscapeKey } from '../lib/useEscapeKey';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface PostModalProps {
   post: Partial<Post> | null;
@@ -31,6 +33,7 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -64,6 +67,8 @@ export const PostModal: React.FC<PostModalProps> = ({
       setTimeout(() => titleInputRef.current?.focus(), 100);
     }
   }, [isOpen]);
+
+  useEscapeKey(onClose, isOpen);
 
   if (!isOpen) return null;
 
@@ -104,8 +109,12 @@ export const PostModal: React.FC<PostModalProps> = ({
 
   const handleDelete = async () => {
     if (!post?.id || !onDelete) return;
-    if (!confirm(`Excluir a postagem "${title}"? Esta ação não pode ser desfeita.`)) return;
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!post?.id || !onDelete) return;
+    setShowDeleteConfirm(false);
     setDeleting(true);
     try {
       await onDelete(post.id);
@@ -118,8 +127,8 @@ export const PostModal: React.FC<PostModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-label={post?.id ? 'Editar postagem' : 'Nova postagem'}>
-      <div className="bg-[var(--color-surface)] border border-[var(--color-secondary)]/50 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-label={post?.id ? 'Editar postagem' : 'Nova postagem'} onClick={onClose}>
+      <div className="bg-[var(--color-surface)] border border-[var(--color-secondary)]/50 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         
         {/* Header */}
         <div className="px-6 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-deep)] text-white flex items-center justify-between border-b border-[var(--color-secondary)]/40">
@@ -356,6 +365,14 @@ export const PostModal: React.FC<PostModalProps> = ({
         </form>
 
       </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Excluir postagem"
+        message={`Excluir a postagem "${title}"? Esta ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 };

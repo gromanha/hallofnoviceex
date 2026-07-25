@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, BookOpen, X, Shield } from 'lucide-react';
+import { useEscapeKey } from '../lib/useEscapeKey';
 
 interface LoginGateProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -30,9 +31,11 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
     }
   }
 
+  useEscapeKey(() => onClose?.(), !!onClose);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Login do administrador">
-      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Login do administrador" onClick={onClose}>
+      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative" onClick={e => e.stopPropagation()}>
         <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
 
         {onClose && (

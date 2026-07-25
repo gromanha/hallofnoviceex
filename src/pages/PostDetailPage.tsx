@@ -61,11 +61,11 @@ export const PostDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 animate-pulse space-y-6">
-        <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-xl w-3/4" />
-        <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
+        <div className="h-8 bg-[var(--color-surface-alt)] rounded-xl w-3/4 animate-pulse" />
+        <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
         <div className="space-y-3">
-          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full" />
-          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6" />
+          <div className="h-4 bg-[var(--color-surface-alt)] rounded w-full animate-pulse" />
+          <div className="h-4 bg-[var(--color-surface-alt)] rounded w-5/6 animate-pulse" />
         </div>
       </div>
     );

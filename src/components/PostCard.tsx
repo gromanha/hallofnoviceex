@@ -28,7 +28,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
           <img
             src={post.cover_image}
             alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover"
             loading="lazy"
             onError={() => setImgError(true)}
           />

@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-slate-500'}`;
+    `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`;
 
   return (
     <header className="sticky top-0 z-40 bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-secondary)]/30 shadow-sm transition-colors">
@@ -148,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
           </NavLink>
           {admin && (
             <NavLink to="/admin" className={({ isActive }) =>
-              `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-secondary)] font-bold' : 'text-slate-500'}`
+              `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-secondary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`
             }>
               <Shield className="w-4 h-4" />
               Painel

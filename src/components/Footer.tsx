@@ -3,7 +3,7 @@ import { MessageSquare, Sparkles, BookOpen, MapPin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#121921] text-slate-300 border-t-4 border-[var(--color-secondary)] pt-12 pb-8">
+    <footer className="bg-[#121921] text-[var(--color-on-surface-variant)] border-t-4 border-[var(--color-secondary)] pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           

@@ -9,6 +9,8 @@ import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { PostModal } from '../components/PostModal';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounce } from '../lib/useDebounce';
+import { useEscapeKey } from '../lib/useEscapeKey';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 
 const MONTHS = [
   'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -99,6 +101,14 @@ export const AdminPage: React.FC = () => {
   const [typeForm, setTypeForm] = useState<TypeFormState>({ ...EMPTY_TYPE_FORM });
   const [savingType, setSavingType] = useState(false);
   const [deletingTypeId, setDeletingTypeId] = useState<string | null>(null);
+
+  // ── Confirm Dialog ──
+  const [confirmState, setConfirmState] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({ open: false, title: '', message: '', onConfirm: () => {} });
 
   // ── Load Posts ──
   const loadPosts = async (signal?: AbortSignal) => {
@@ -238,16 +248,23 @@ export const AdminPage: React.FC = () => {
   }
 
   async function handleEventDelete(id: string) {
-    if (!window.confirm('Excluir este evento? Esta ação não pode ser desfeita.')) return;
-    setDeletingEventId(id);
-    try {
-      await apiDel('/api/events', { id });
-      await loadEvents();
-    } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Não foi possível excluir o evento. Tente novamente.');
-    } finally {
-      setDeletingEventId(null);
-    }
+    setConfirmState({
+      open: true,
+      title: 'Excluir evento',
+      message: 'Excluir este evento? Esta ação não pode ser desfeita.',
+      onConfirm: async () => {
+        setConfirmState(prev => ({ ...prev, open: false }));
+        setDeletingEventId(id);
+        try {
+          await apiDel('/api/events', { id });
+          await loadEvents();
+        } catch (err: any) {
+          setEventError(err?.detail || err?.message || 'Não foi possível excluir o evento. Tente novamente.');
+        } finally {
+          setDeletingEventId(null);
+        }
+      },
+    });
   }
 
   function setEventField<K extends keyof EventFormState>(key: K, val: EventFormState[K]) {
@@ -294,16 +311,23 @@ export const AdminPage: React.FC = () => {
   }
 
   async function handleTypeDelete(id: string) {
-    if (!window.confirm('Excluir este tipo de atividade? Esta ação não pode ser desfeita.')) return;
-    setDeletingTypeId(id);
-    try {
-      await apiDel('/api/event-types', { id });
-      await loadEvents();
-    } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Não foi possível excluir o tipo. Tente novamente.');
-    } finally {
-      setDeletingTypeId(null);
-    }
+    setConfirmState({
+      open: true,
+      title: 'Excluir tipo de atividade',
+      message: 'Excluir este tipo de atividade? Esta ação não pode ser desfeita.',
+      onConfirm: async () => {
+        setConfirmState(prev => ({ ...prev, open: false }));
+        setDeletingTypeId(id);
+        try {
+          await apiDel('/api/event-types', { id });
+          await loadEvents();
+        } catch (err: any) {
+          setEventError(err?.detail || err?.message || 'Não foi possível excluir o tipo. Tente novamente.');
+        } finally {
+          setDeletingTypeId(null);
+        }
+      },
+    });
   }
 
   function setTypeField<K extends keyof TypeFormState>(key: K, val: TypeFormState[K]) {
@@ -313,6 +337,9 @@ export const AdminPage: React.FC = () => {
   function getTypeLabel(key: string): string {
     return eventTypes.find(t => t.key === key)?.label || key;
   }
+
+  useEscapeKey(() => { setShowEventForm(false); setEditingEventId(null); }, showEventForm);
+  useEscapeKey(() => { setShowTypeForm(false); setEditingTypeId(null); }, showTypeForm);
 
   const filteredPosts = posts.filter(p => {
     if (statusFilter === 'all') return true;
@@ -447,8 +474,17 @@ export const AdminPage: React.FC = () => {
                   value={postsSearch}
                   onChange={e => setPostsSearch(e.target.value)}
                   placeholder="Buscar postagem..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                 />
+                {postsSearch && (
+                  <button
+                    onClick={() => setPostsSearch('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-[var(--color-primary-light)] text-[var(--color-on-surface-variant)] transition-colors"
+                    aria-label="Limpar busca"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
             </div>
@@ -457,7 +493,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Tabela de Postagens */}
           {loadingPosts ? (
-            <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : filteredPosts.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
@@ -584,7 +620,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Lista de Eventos */}
           {loadingEvents ? (
-            <div className="h-48 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : events.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
@@ -682,7 +718,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Lista de Tipos */}
           {loadingEvents ? (
-            <div className="h-48 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : eventTypes.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <Tag className="w-12 h-12 text-slate-400 mx-auto mb-3" />
@@ -752,8 +788,8 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
       {showEventForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}>
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'} onClick={() => { setShowEventForm(false); setEditingEventId(null); }}>
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -843,8 +879,8 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ MODAL: TIPO DE ATIVIDADE ═══════════════════ */}
       {showTypeForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}>
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'} onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }}>
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -945,6 +981,15 @@ export const AdminPage: React.FC = () => {
         onClose={() => setIsPostModalOpen(false)}
         onSave={handleSavePost}
         onDelete={handleDeletePost}
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        open={confirmState.open}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onCancel={() => setConfirmState(prev => ({ ...prev, open: false }))}
       />
 
     </div>

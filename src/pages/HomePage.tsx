@@ -108,7 +108,7 @@ export const HomePage: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
             {[1, 2, 3].map(n => (
-              <div key={n} className="h-80 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
+              <div key={n} className="h-80 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : posts.length === 0 ? (

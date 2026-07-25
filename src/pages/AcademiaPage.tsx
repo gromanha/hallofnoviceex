@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Search, Sparkles, Filter, ShieldCheck, Tag } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
+import { useDebounce } from '../lib/useDebounce';
 
 export const AcademiaPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,33 +12,40 @@ export const AcademiaPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const handleNavigatePost = useCallback((slug: string) => {
+    navigate(`/post/${slug}`);
+  }, [navigate]);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadPosts() {
       setLoading(true);
       try {
         let url = '/api/posts';
         const params = new URLSearchParams();
         if (selectedCategory !== 'all') params.append('category', selectedCategory);
-        if (searchQuery.trim()) params.append('search', searchQuery.trim());
+        if (debouncedSearchQuery.trim()) params.append('search', debouncedSearchQuery.trim());
         if (params.toString()) url += `?${params.toString()}`;
 
         const data = await apiGet<Post[]>(url);
-        setPosts(data || []);
+        if (!cancelled) setPosts(data || []);
       } catch (err) {
         console.error('Erro ao carregar postagens na página de Academia:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadPosts();
-  }, [selectedCategory, searchQuery]);
+    return () => { cancelled = true; };
+  }, [selectedCategory, debouncedSearchQuery]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       
       {/* Cabeçalho Majestoso */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] relative overflow-hidden shadow-xl text-center space-y-4">
+      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#0e3838] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] relative overflow-hidden shadow-xl text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase tracking-widest">
           <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
           Códice & Biblioteca Sharlayan
@@ -67,7 +75,7 @@ export const AcademiaPage: React.FC = () => {
       </div>
 
       {/* Barra de Filtros e Busca */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-4 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
         
         {/* Categorias */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -130,7 +138,7 @@ export const AcademiaPage: React.FC = () => {
             <PostCard
               key={post.id}
               post={post}
-              onClick={() => navigate(`/post/${post.slug}`)}
+              onClick={() => handleNavigatePost(post.slug)}
             />
           ))}
         </div>

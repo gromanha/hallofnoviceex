@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Trash2, Eye, Edit3, Pin, Sparkles, Image, Tag as TagIcon } from 'lucide-react';
 import { Post } from '../types';
 import { renderMarkdown } from '../lib/sanitize';
@@ -31,6 +31,7 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (post) {
@@ -57,6 +58,12 @@ export const PostModal: React.FC<PostModalProps> = ({
     setErrorMsg('');
     setActiveTab('editor');
   }, [post, isOpen]);
+
+  useEffect(() => {
+    if (isOpen && titleInputRef.current) {
+      setTimeout(() => titleInputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -89,7 +96,7 @@ export const PostModal: React.FC<PostModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Falha ao salvar postagem.');
+      setErrorMsg(err?.message || 'Não foi possível salvar a postagem. Verifique os campos obrigatórios e tente novamente.');
     } finally {
       setSaving(false);
     }
@@ -97,21 +104,21 @@ export const PostModal: React.FC<PostModalProps> = ({
 
   const handleDelete = async () => {
     if (!post?.id || !onDelete) return;
-    if (!confirm(`Certeza que deseja excluir a postagem "${title}"?`)) return;
+    if (!confirm(`Excluir a postagem "${title}"? Esta ação não pode ser desfeita.`)) return;
 
     setDeleting(true);
     try {
       await onDelete(post.id);
       onClose();
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Falha ao excluir postagem.');
+      setErrorMsg(err?.message || 'Não foi possível excluir a postagem. Tente novamente.');
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-label={post?.id ? 'Editar postagem' : 'Nova postagem'}>
       <div className="bg-[var(--color-surface)] border border-[var(--color-secondary)]/50 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
@@ -125,6 +132,7 @@ export const PostModal: React.FC<PostModalProps> = ({
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors"
+            aria-label="Fechar modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -148,13 +156,16 @@ export const PostModal: React.FC<PostModalProps> = ({
                   Título da Postagem *
                 </label>
                 <input
+                  ref={titleInputRef}
                   type="text"
                   required
                   value={title}
                   onChange={e => setTitle(e.target.value)}
+                  maxLength={200}
                   placeholder="ex: Tratado Completo da Zodiac Weapon"
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                 />
+                <p className="text-[9px] text-slate-400 mt-1">{title.length}/200</p>
               </div>
 
               <div>
@@ -184,9 +195,11 @@ export const PostModal: React.FC<PostModalProps> = ({
                 type="text"
                 value={subtitle}
                 onChange={e => setSubtitle(e.target.value)}
+                maxLength={300}
                 placeholder="Breve resumo da postagem exibido no card de listagem"
                 className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
               />
+              <p className="text-[9px] text-slate-400 mt-1">{subtitle.length}/300</p>
             </div>
 
             {/* Imagem de Capa e Tags */}

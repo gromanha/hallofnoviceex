@@ -1,5 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+/* Animation utilities for modals and transitions */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn95 {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.zoom-in-95 {
+  animation: zoomIn95 0.2s ease-out;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -146,4 +168,39 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ── Hardening Utilities ── */
+.break-words {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+/* Prevent flex/grid items from overflowing their containers */
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+/* Ensure images never overflow their containers */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

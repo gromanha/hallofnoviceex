@@ -28,9 +28,15 @@ function AppRoutes() {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-[var(--color-primary)] focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:text-sm focus:font-bold focus:shadow-lg"
+      >
+        Pular para o conteúdo principal
+      </a>
       <Navbar onOpenLogin={() => setIsLoginOpen(true)} />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1" tabIndex={-1}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<HomePage />} />

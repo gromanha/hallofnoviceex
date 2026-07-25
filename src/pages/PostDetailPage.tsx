@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Tag, BookOpen, Share2, Check } from 'lucide-react';
 import { Post } from '../types';
@@ -12,29 +12,51 @@ export const PostDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const [shareError, setShareError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadPost() {
       setLoading(true);
       setNotFound(false);
       try {
         const data = await apiGet<Post>(`/api/posts?slug=${encodeURIComponent(slug)}`);
-        setPost(data);
+        if (!cancelled) setPost(data);
       } catch (err) {
         console.error('Post não encontrado:', err);
-        setNotFound(true);
+        if (!cancelled) setNotFound(true);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadPost();
+    return () => { cancelled = true; };
   }, [slug]);
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const handleShare = useCallback(async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setShareError(false);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setShareError(true);
+      setTimeout(() => setShareError(false), 3000);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -74,7 +96,7 @@ export const PostDetailPage: React.FC = () => {
     : '';
 
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Botão de Voltar & Compartilhar */}
       <div className="flex items-center justify-between">
@@ -88,9 +110,10 @@ export const PostDetailPage: React.FC = () => {
         <button
           onClick={handleShare}
           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
+          aria-label={copied ? 'Link copiado' : 'Compartilhar postagem'}
         >
           {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
-          {copied ? 'Link Copiado!' : 'Compartilhar'}
+          {copied ? 'Link Copiado!' : shareError ? 'Copie manualmente o link' : 'Compartilhar'}
         </button>
       </div>
 
@@ -100,7 +123,7 @@ export const PostDetailPage: React.FC = () => {
           {post.category}
         </div>
 
-        <h1 className="font-serif font-black text-2xl sm:text-4xl lg:text-5xl text-[var(--color-on-surface)] leading-tight">
+        <h1 className="font-serif font-black text-2xl sm:text-4xl lg:text-5xl text-[var(--color-on-surface)] leading-tight break-words">
           {post.title}
         </h1>
 
@@ -123,12 +146,13 @@ export const PostDetailPage: React.FC = () => {
       </header>
 
       {/* Cover Image */}
-      {post.cover_image && (
+      {post.cover_image && !imgError && (
         <div className="rounded-2xl overflow-hidden shadow-lg border border-[var(--color-outline-variant)] max-h-[450px]">
           <img
             src={post.cover_image}
             alt={post.title}
             className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
           />
         </div>
       )}

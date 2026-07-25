@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
@@ -8,6 +8,7 @@ import { Post, MagicalEvent, EventTypeItem } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { PostModal } from '../components/PostModal';
 import { useAuth } from '../lib/AuthContext';
+import { useDebounce } from '../lib/useDebounce';
 
 const MONTHS = [
   'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -66,10 +67,15 @@ export const AdminPage: React.FC = () => {
   const { admin, onLogout } = useAuth();
   const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'types'>('posts');
 
+  const handleNavigatePost = useCallback((slug: string) => {
+    navigate(`/post/${slug}`);
+  }, [navigate]);
+
   // ── States for Posts Manager ──
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [postsSearch, setPostsSearch] = useState('');
+  const debouncedPostsSearch = useDebounce(postsSearch, 300);
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [selectedPost, setSelectedPost] = useState<Partial<Post> | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
@@ -95,22 +101,22 @@ export const AdminPage: React.FC = () => {
   const [deletingTypeId, setDeletingTypeId] = useState<string | null>(null);
 
   // ── Load Posts ──
-  const loadPosts = async () => {
+  const loadPosts = async (signal?: AbortSignal) => {
     setLoadingPosts(true);
     try {
       let url = '/api/posts?status=all';
-      if (postsSearch) url += `&search=${encodeURIComponent(postsSearch)}`;
+      if (debouncedPostsSearch) url += `&search=${encodeURIComponent(debouncedPostsSearch)}`;
       const data = await apiGet<Post[]>(url);
-      setPosts(data || []);
+      if (!signal?.aborted) setPosts(data || []);
     } catch (err) {
       console.error('Erro ao carregar postagens no admin:', err);
     } finally {
-      setLoadingPosts(false);
+      if (!signal?.aborted) setLoadingPosts(false);
     }
   };
 
   // ── Load Events & Types ──
-  const loadEvents = async () => {
+  const loadEvents = async (signal?: AbortSignal) => {
     setLoadingEvents(true);
     setEventError(null);
     try {
@@ -118,23 +124,27 @@ export const AdminPage: React.FC = () => {
         apiGet<MagicalEvent[]>('/api/events'),
         apiGet<EventTypeItem[]>('/api/event-types'),
       ]);
-      setEvents(evs || []);
-      setEventTypes(types || []);
+      if (!signal?.aborted) {
+        setEvents(evs || []);
+        setEventTypes(types || []);
+      }
     } catch (err: any) {
       console.error('Erro ao carregar eventos no admin:', err);
-      setEventError(err?.detail || err?.message || 'Falha ao carregar eventos.');
+      if (!signal?.aborted) setEventError(err?.detail || err?.message || 'Não foi possível carregar os eventos. Tente recarregar a página.');
     } finally {
-      setLoadingEvents(false);
+      if (!signal?.aborted) setLoadingEvents(false);
     }
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     if (activeTab === 'posts') {
-      loadPosts();
+      loadPosts(controller.signal);
     } else {
-      loadEvents();
+      loadEvents(controller.signal);
     }
-  }, [activeTab, postsSearch]);
+    return () => controller.abort();
+  }, [activeTab, debouncedPostsSearch]);
 
   // ── Post Actions ──
   const handleSavePost = async (postData: Partial<Post>) => {
@@ -221,20 +231,20 @@ export const AdminPage: React.FC = () => {
       setEditingEventId(null);
       await loadEvents();
     } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Erro ao salvar evento.');
+      setEventError(err?.detail || err?.message || 'Não foi possível salvar o evento. Verifique os campos e tente novamente.');
     } finally {
       setSavingEvent(false);
     }
   }
 
   async function handleEventDelete(id: string) {
-    if (!window.confirm('Tem certeza que deseja excluir este evento?')) return;
+    if (!window.confirm('Excluir este evento? Esta ação não pode ser desfeita.')) return;
     setDeletingEventId(id);
     try {
       await apiDel('/api/events', { id });
       await loadEvents();
     } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Erro ao deletar evento.');
+      setEventError(err?.detail || err?.message || 'Não foi possível excluir o evento. Tente novamente.');
     } finally {
       setDeletingEventId(null);
     }
@@ -277,20 +287,20 @@ export const AdminPage: React.FC = () => {
       setEditingTypeId(null);
       await loadEvents();
     } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Erro ao salvar tipo.');
+      setEventError(err?.detail || err?.message || 'Não foi possível salvar o tipo. Verifique os campos e tente novamente.');
     } finally {
       setSavingType(false);
     }
   }
 
   async function handleTypeDelete(id: string) {
-    if (!window.confirm('Tem certeza que deseja excluir este tipo de atividade?')) return;
+    if (!window.confirm('Excluir este tipo de atividade? Esta ação não pode ser desfeita.')) return;
     setDeletingTypeId(id);
     try {
       await apiDel('/api/event-types', { id });
       await loadEvents();
     } catch (err: any) {
-      setEventError(err?.detail || err?.message || 'Erro ao deletar tipo.');
+      setEventError(err?.detail || err?.message || 'Não foi possível excluir o tipo. Tente novamente.');
     } finally {
       setDeletingTypeId(null);
     }
@@ -317,10 +327,10 @@ export const AdminPage: React.FC = () => {
         <div className="space-y-2 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase">
             <ShieldCheck className="w-4 h-4 text-[var(--color-secondary)]" />
-            Área de Administração Reitoral
+            Área Administrativa
           </div>
           <h1 className="font-serif font-black text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
-            Painel Administrativo Unificado
+            Painel Administrativo
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100/90">
             Conectado como <strong className="text-white">{admin.display_name}</strong> (@{admin.username})
@@ -378,7 +388,7 @@ export const AdminPage: React.FC = () => {
       {eventError && (
         <div className="text-xs text-rose-700 bg-rose-50 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-800 rounded-xl px-4 py-3 flex items-center justify-between">
           <span>{eventError}</span>
-          <button onClick={() => setEventError(null)} className="underline font-bold ml-2">dispensar</button>
+          <button onClick={() => setEventError(null)} className="underline font-bold ml-2">Dispensar</button>
         </div>
       )}
 
@@ -387,7 +397,7 @@ export const AdminPage: React.FC = () => {
         <div className="space-y-6">
 
           {/* Controles */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-4 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
 
             <button
               onClick={() => {
@@ -511,9 +521,10 @@ export const AdminPage: React.FC = () => {
                         </td>
                         <td className="p-4 text-right space-x-2">
                           <button
-                            onClick={() => navigate(`/post/${post.slug}`)}
+                            onClick={() => handleNavigatePost(post.slug)}
                             className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                             title="Ver Publicação"
+                            aria-label={`Ver publicação: ${post.title}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -524,6 +535,7 @@ export const AdminPage: React.FC = () => {
                             }}
                             className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                             title="Editar Postagem"
+                            aria-label={`Editar postagem: ${post.title}`}
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
@@ -531,6 +543,7 @@ export const AdminPage: React.FC = () => {
                             onClick={() => handleDeletePost(post.id)}
                             className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400"
                             title="Excluir Postagem"
+                            aria-label={`Excluir postagem: ${post.title}`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -551,7 +564,7 @@ export const AdminPage: React.FC = () => {
         <div className="space-y-6">
 
           {/* Controles de Eventos */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-4 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
 
             <button
               onClick={openEventCreate}
@@ -618,6 +631,7 @@ export const AdminPage: React.FC = () => {
                               onClick={() => openEventEdit(evt)}
                               className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                               title="Editar"
+                              aria-label={`Editar evento: ${evt.title}`}
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
@@ -626,6 +640,7 @@ export const AdminPage: React.FC = () => {
                               disabled={deletingEventId === evt.id}
                               className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 disabled:opacity-50"
                               title="Deletar"
+                              aria-label={`Deletar evento: ${evt.title}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -647,7 +662,7 @@ export const AdminPage: React.FC = () => {
         <div className="space-y-6">
 
           {/* Controles de Tipos */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-4 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
 
             <button
               onClick={openTypeCreate}
@@ -709,6 +724,7 @@ export const AdminPage: React.FC = () => {
                               onClick={() => openTypeEdit(et)}
                               className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
                               title="Editar"
+                              aria-label={`Editar tipo: ${et.label}`}
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
@@ -717,6 +733,7 @@ export const AdminPage: React.FC = () => {
                               disabled={deletingTypeId === et.id}
                               className="p-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 disabled:opacity-50"
                               title="Deletar"
+                              aria-label={`Deletar tipo: ${et.label}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -743,7 +760,7 @@ export const AdminPage: React.FC = () => {
                 <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar modal de evento">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -816,7 +833,7 @@ export const AdminPage: React.FC = () => {
                 </button>
                 <button type="submit" disabled={savingEvent} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
                   <Check className="w-4 h-4 text-[var(--color-secondary)]" />
-                  {savingEvent ? 'Salvando…' : editingEventId ? 'Salvar' : 'Criar'}
+                  {savingEvent ? 'Salvando…' : editingEventId ? 'Salvar Evento' : 'Criar Evento'}
                 </button>
               </div>
             </form>
@@ -834,7 +851,7 @@ export const AdminPage: React.FC = () => {
                 <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar modal de tipo">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -913,7 +930,7 @@ export const AdminPage: React.FC = () => {
                 </button>
                 <button type="submit" disabled={savingType} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
                   <Check className="w-4 h-4 text-[var(--color-secondary)]" />
-                  {savingType ? 'Salvando…' : editingTypeId ? 'Salvar' : 'Criar'}
+                  {savingType ? 'Salvando…' : editingTypeId ? 'Salvar Tipo' : 'Criar Tipo'}
                 </button>
               </div>
             </form>

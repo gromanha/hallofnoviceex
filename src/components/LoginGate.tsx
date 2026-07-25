@@ -22,8 +22,8 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
     } catch (err: any) {
       setError(
         err?.status === 401
-          ? 'Credenciais inválidas.'
-          : err?.message || 'Falha ao autenticar.'
+          ? 'Usuário ou senha incorretos. Tente novamente.'
+          : err?.message || 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
       );
     } finally {
       setBusy(false);
@@ -31,7 +31,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Login do administrador">
       <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative">
         <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
 
@@ -39,6 +39,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
+            aria-label="Fechar modal de login"
           >
             <X className="w-5 h-5" />
           </button>
@@ -60,7 +61,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
           </div>
 
           <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
-            Acesse com suas credenciais de Reitor/Docente para gerenciar o calendário e criar postagens no site.
+            Acesse com suas credenciais de administrador para gerenciar eventos e publicar conteúdo no site.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <AlertTriangle className="w-7 h-7 text-rose-600 dark:text-rose-400" />
             </div>
             <h2 className="text-xl font-serif font-bold text-[var(--color-on-surface)]">
-              Algo saiu do controle
+              Algo deu errado
             </h2>
             <p className="text-sm text-[var(--color-on-surface-variant)]">
               Ocorreu um erro inesperado. Tente recarregar a página.

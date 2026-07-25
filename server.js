@@ -13,6 +13,10 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const JWT_SECRET = process.env.JWT_SECRET;
 const SETUP_TOKEN = process.env.SETUP_TOKEN;
+
+// Dev-only allowance so impeccable live mode can load
+const __impeccableLiveDev =
+  process.env.NODE_ENV === "development" ? " http://localhost:8400" : "";
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -133,7 +137,7 @@ function securityHeaders(_req, res, next) {
   res.setHeader('X-XSS-Protection', '0');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https:; connect-src 'self'");
+  res.setHeader("Content-Security-Policy", `default-src 'self'; script-src 'self'${__impeccableLiveDev}; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https:; connect-src 'self'${__impeccableLiveDev}`);
   if (NODE_ENV === 'production') {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains');
   }

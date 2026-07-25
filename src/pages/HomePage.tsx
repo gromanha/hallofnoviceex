@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare } from 'lucide-react';
 import { Post } from '../types';
@@ -10,18 +10,32 @@ export const HomePage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleNavigateCalendar = useCallback(() => {
+    navigate('/calendario');
+  }, [navigate]);
+
+  const handleNavigateAcademia = useCallback(() => {
+    navigate('/academia');
+  }, [navigate]);
+
+  const handleNavigatePost = useCallback((slug: string) => {
+    navigate(`/post/${slug}`);
+  }, [navigate]);
+
   useEffect(() => {
+    let cancelled = false;
     async function loadPosts() {
       try {
         const data = await apiGet<Post[]>('/api/posts');
-        setPosts(data || []);
+        if (!cancelled) setPosts(data || []);
       } catch (err) {
         console.error('Erro ao carregar postagens:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadPosts();
+    return () => { cancelled = true; };
   }, []);
 
   const pinnedPosts = posts.filter(p => p.is_pinned);
@@ -31,7 +45,7 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-16">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#121921] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[#0e3838] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
         <div className="absolute inset-0 opacity-10 parchment-texture pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
@@ -60,7 +74,7 @@ export const HomePage: React.FC = () => {
             </a>
 
             <button
-              onClick={() => navigate('/calendario')}
+              onClick={handleNavigateCalendar}
               className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all backdrop-blur-md"
             >
               <Calendar className="w-4 h-4 text-[var(--color-secondary)]" />
@@ -84,7 +98,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => navigate('/academia')}
+            onClick={handleNavigateAcademia}
             className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-crystal)] hover:underline flex items-center gap-1"
           >
             Ver todos os guias <ArrowRight className="w-4 h-4" />
@@ -109,14 +123,14 @@ export const HomePage: React.FC = () => {
               <PostCard
                 key={post.id}
                 post={post}
-                onClick={() => navigate(`/post/${post.slug}`)}
+                onClick={() => handleNavigatePost(post.slug)}
               />
             ))}
             {recentPosts.map(post => (
               <PostCard
                 key={post.id}
                 post={post}
-                onClick={() => navigate(`/post/${post.slug}`)}
+                onClick={() => handleNavigatePost(post.slug)}
               />
             ))}
           </div>

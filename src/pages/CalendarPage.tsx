@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock, ShieldCheck,
   Flame, Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star
@@ -54,12 +53,14 @@ export const CalendarPage: React.FC = () => {
   const [monthIndex, setMonthIndex] = useState(() => TODAY.getMonth());
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<MagicalEvent | null>(null);
+  const [eventImgError, setEventImgError] = useState(false);
 
   const [events, setEvents] = useState<MagicalEvent[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypeItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
       setLoading(true);
       try {
@@ -67,15 +68,18 @@ export const CalendarPage: React.FC = () => {
           apiGet<MagicalEvent[]>('/api/events'),
           apiGet<EventTypeItem[]>('/api/event-types'),
         ]);
-        setEvents(evs || []);
-        setEventTypes(types || []);
+        if (!cancelled) {
+          setEvents(evs || []);
+          setEventTypes(types || []);
+        }
       } catch (err) {
         console.error('Erro ao carregar dados do calendário:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadData();
+    return () => { cancelled = true; };
   }, []);
 
   const currentMonth = months[monthIndex];
@@ -154,7 +158,7 @@ export const CalendarPage: React.FC = () => {
       </div>
 
       {/* Filtro de Tipos de Atividade */}
-      <div className="flex flex-wrap items-center gap-2 bg-[var(--color-surface)] p-4 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+      <div className="flex flex-wrap items-center gap-2 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
         <span className="text-xs font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider mr-2">
           Disciplinas:
         </span>
@@ -256,8 +260,8 @@ export const CalendarPage: React.FC = () => {
                       return (
                         <button
                           key={ev.id}
-                          onClick={() => setSelectedEvent(ev)}
-                          className="w-full text-left p-1.5 rounded-lg text-white font-medium text-[11px] truncate flex items-center gap-1.5 transition-transform hover:scale-[1.02]"
+                          onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}
+                          className="w-full text-left py-3 px-2 rounded-lg text-white font-medium text-[11px] truncate flex items-center gap-1.5 transition-transform hover:scale-[1.02]"
                           style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
                         >
                           <span className="truncate flex-1">{ev.title}</span>
@@ -275,73 +279,68 @@ export const CalendarPage: React.FC = () => {
       )}
 
       {/* Modal de Detalhes do Evento */}
-      <AnimatePresence>
-        {selectedEvent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4"
-            >
-              {/* Cover Image */}
-              {selectedEvent.image && (
-                <div className="h-44 relative bg-slate-950">
-                  <img
-                    src={selectedEvent.image}
-                    alt={selectedEvent.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
-                </div>
+      {selectedEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in" role="dialog" aria-modal="true" aria-label="Detalhes do evento">
+          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            {/* Cover Image */}
+            {selectedEvent.image && !eventImgError && (
+              <div className="h-44 relative bg-slate-950">
+                <img
+                  src={selectedEvent.image}
+                  alt={selectedEvent.title}
+                  className="w-full h-full object-cover"
+                  onError={() => setEventImgError(true)}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+              </div>
+            )}
+
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
+                  {selectedEvent.month} • Dia {selectedEvent.day}
+                </span>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
+                  aria-label="Fechar detalhes do evento"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <h2 className="font-serif font-bold text-xl text-[var(--color-on-surface)]">
+                {selectedEvent.title}
+              </h2>
+
+              <div className="flex items-center gap-3 text-xs text-[var(--color-on-surface-variant)]">
+                <span className="flex items-center gap-1 font-semibold">
+                  <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                  {selectedEvent.time}
+                </span>
+                {selectedEvent.instructor && (
+                  <span>• Professor: <strong>{selectedEvent.instructor}</strong></span>
+                )}
+              </div>
+
+              {selectedEvent.description && (
+                <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-outline-variant)]">
+                  {selectedEvent.description}
+                </p>
               )}
 
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
-                    {selectedEvent.month} • Dia {selectedEvent.day}
-                  </span>
-                  <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <h2 className="font-serif font-bold text-xl text-[var(--color-on-surface)]">
-                  {selectedEvent.title}
-                </h2>
-
-                <div className="flex items-center gap-3 text-xs text-[var(--color-on-surface-variant)]">
-                  <span className="flex items-center gap-1 font-semibold">
-                    <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-                    {selectedEvent.time}
-                  </span>
-                  {selectedEvent.instructor && (
-                    <span>• Professor: <strong>{selectedEvent.instructor}</strong></span>
-                  )}
-                </div>
-
-                {selectedEvent.description && (
-                  <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-outline-variant)]">
-                    {selectedEvent.description}
-                  </p>
-                )}
-
-                <div className="pt-2 flex justify-end">
-                  <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
-                  >
-                    Fechar Detalhes
-                  </button>
-                </div>
+              <div className="pt-2 flex justify-end">
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
+                >
+                  Fechar Detalhes
+                </button>
               </div>
-            </motion.div>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
 
     </div>
   );

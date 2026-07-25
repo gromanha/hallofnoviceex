@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
@@ -7,7 +7,7 @@ interface NavbarProps {
   onOpenLogin?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
+export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
   const { admin, onLogout } = useAuth();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -100,6 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
               onClick={toggleTheme}
               className="p-2.5 rounded-xl border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] transition-colors"
               title="Alternar Tema Escuro/Claro"
+              aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5 text-amber-400" />}
             </button>
@@ -113,6 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
                   onClick={onLogout}
                   className="p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                   title="Sair do Painel Admin"
+                  aria-label="Sair do painel administrativo"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
@@ -123,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
                 className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-xs"
               >
                 <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">Acesso Restrito</span>
+                <span className="hidden sm:inline">Painel Admin</span>
               </button>
             )}
           </div>
@@ -138,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
           </NavLink>
           <NavLink to="/academia" className={mobileLinkClass}>
             <BookOpen className="w-4 h-4" />
-            Códice
+            Códice & Guias
           </NavLink>
           <NavLink to="/calendario" className={mobileLinkClass}>
             <Calendar className="w-4 h-4" />
@@ -149,7 +151,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
               `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-secondary)] font-bold' : 'text-slate-500'}`
             }>
               <Shield className="w-4 h-4" />
-              Admin
+              Painel
             </NavLink>
           )}
         </div>
@@ -157,4 +159,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenLogin }) => {
       </div>
     </header>
   );
-};
+});
+
+Navbar.displayName = 'Navbar';

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Calendar, User, Pin, ArrowRight, Tag } from 'lucide-react';
+import React, { useState, memo } from 'react';
+import { Calendar, User, Pin, ArrowRight, Tag, ImageOff } from 'lucide-react';
 import { Post } from '../types';
 
 interface PostCardProps {
@@ -7,7 +7,8 @@ interface PostCardProps {
   onClick: () => void;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
+export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
+  const [imgError, setImgError] = useState(false);
   const formattedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -22,13 +23,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full"
     >
       {/* Cover Image */}
-      {post.cover_image && (
+      {post.cover_image && !imgError && (
         <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-900">
           <img
             src={post.cover_image}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
           
@@ -45,6 +47,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         </div>
       )}
 
+      {/* Fallback when image fails */}
+      {post.cover_image && imgError && (
+        <div className="relative h-32 bg-gradient-to-r from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 flex items-center justify-center">
+          <ImageOff className="w-8 h-8 text-slate-400" />
+          <div className="absolute bottom-3 left-3 bg-[var(--color-primary)]/90 text-white text-xs font-semibold uppercase px-3 py-1 rounded-lg backdrop-blur-md border border-white/10">
+            {post.category}
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
@@ -55,12 +67,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
             </div>
           )}
 
-          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-crystal)] transition-colors mb-2 line-clamp-2">
+          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-crystal)] transition-colors mb-2 line-clamp-2 break-words">
             {post.title}
           </h3>
 
           {post.subtitle && (
-            <p className="text-sm text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 leading-relaxed">
+            <p className="text-sm text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 leading-relaxed break-words">
               {post.subtitle}
             </p>
           )}
@@ -103,4 +115,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
     </article>
   );
-};
+});
+
+PostCard.displayName = 'PostCard';

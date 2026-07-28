@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { memo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut, UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
@@ -6,30 +6,12 @@ import logoUrl from '@/assets/logo.png';
 
 interface NavbarProps {
   onOpenLogin?: () => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
+export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark', onToggleTheme }) => {
   const { admin, onLogout } = useAuth();
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('hon_theme');
-    if (saved === 'dark') {
-      setTheme('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === 'light' ? 'dark' : 'light';
-    setTheme(next);
-    localStorage.setItem('hon_theme', next);
-    if (next === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  };
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${
@@ -103,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={toggleTheme}
+              onClick={onToggleTheme}
               className="p-2 rounded-xl border border-[var(--color-outline)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] transition-all"
               title="Alternar Tema Escuro/Claro"
               aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}

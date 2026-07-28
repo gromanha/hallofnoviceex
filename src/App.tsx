@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Navbar } from './components/Navbar';
@@ -7,6 +7,7 @@ import { LoginGate } from './components/LoginGate';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { PageLoader } from './components/PageLoader';
+import { DashboardLayout } from './components/DashboardLayout';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 
@@ -23,12 +24,36 @@ function AppRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('hon_theme');
+    if (saved === 'dark') {
+      setTheme('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }, []);
+
+  const handleToggleTheme = useCallback(() => {
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem('hon_theme', next);
+      if (next === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      return next;
+    });
+  }, []);
 
   const handleLogin = async (username: string, password: string) => {
     await onLogin(username, password);
     setIsLoginOpen(false);
     navigate('/admin');
   };
+
+  const isHomePage = location.pathname === '/';
 
   return (
     <>
@@ -38,38 +63,57 @@ function AppRoutes() {
       >
         Pular para o conteúdo principal
       </a>
-      <Navbar onOpenLogin={() => setIsLoginOpen(true)} />
+      <Navbar onOpenLogin={() => setIsLoginOpen(true)} theme={theme} onToggleTheme={handleToggleTheme} />
 
       <main id="main-content" className="flex-1" tabIndex={-1}>
-        <Suspense fallback={<PageLoader />}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Routes location={location}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/academia" element={<AcademiaPage />} />
-                <Route path="/post/:slug" element={<PostDetailPage />} />
-                <Route path="/calendario" element={<CalendarPage />} />
-                <Route path="/receitas" element={<RecipesPage />} />
-                <Route path="/receitas/:slug" element={<RecipeDetailPage />} />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute admin={admin}>
-                      <AdminPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </motion.div>
-          </AnimatePresence>
-        </Suspense>
+        {isHomePage ? (
+          <DashboardLayout theme={theme} onToggleTheme={handleToggleTheme}>
+            <Suspense fallback={<PageLoader />}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <Routes location={location}>
+                    <Route path="/" element={<HomePage />} />
+                  </Routes>
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
+          </DashboardLayout>
+        ) : (
+          <Suspense fallback={<PageLoader />}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Routes location={location}>
+                  <Route path="/academia" element={<AcademiaPage />} />
+                  <Route path="/post/:slug" element={<PostDetailPage />} />
+                  <Route path="/calendario" element={<CalendarPage />} />
+                  <Route path="/receitas" element={<RecipesPage />} />
+                  <Route path="/receitas/:slug" element={<RecipeDetailPage />} />
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute admin={admin}>
+                        <AdminPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </motion.div>
+            </AnimatePresence>
+          </Suspense>
+        )}
       </main>
 
       <Footer />

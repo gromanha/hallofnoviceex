@@ -61,7 +61,7 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-16">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] text-white pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] text-[var(--color-on-primary)] pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
         <div className="absolute inset-0 opacity-10 parchment-texture pointer-events-none" />
         
         <motion.div
@@ -70,17 +70,17 @@ export const HomePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary)] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
             Free Company Final Fantasy XIV • Behemoth
           </div>
 
-          <h1 className="font-serif font-black text-3xl sm:text-5xl lg:text-6xl text-[var(--color-secondary-light)] tracking-wider leading-tight max-w-4xl mx-auto">
+          <h1 className="font-serif font-black text-3xl sm:text-5xl lg:text-6xl text-[var(--color-secondary)] tracking-wider leading-tight max-w-4xl mx-auto">
             Onde o conhecimento se torna a sua maior magia
           </h1>
 
-          <p className="text-base sm:text-xl text-emerald-100/90 font-light max-w-2xl mx-auto leading-relaxed">
-            Bem-vindo à <strong className="text-white font-semibold">Hall of the Novice EX [HoN]</strong>. Uma universidade temática de magia, combate didático sem toxicidade e suporte completo aos aventureiros de Eorzea.
+          <p className="text-base sm:text-xl text-[var(--color-on-primary)]/80 font-light max-w-2xl mx-auto leading-relaxed">
+            Bem-vindo à <strong className="text-[var(--color-on-primary)] font-semibold">Hall of the Novice EX [HoN]</strong>. Uma universidade temática de magia, combate didático sem toxicidade e suporte completo aos aventureiros de Eorzea.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 pt-4">
@@ -88,7 +88,7 @@ export const HomePage: React.FC = () => {
               href="https://discord.gg/3XJgrsVUbP"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] font-bold text-sm transition-all shadow-lg hover:scale-105"
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               Matricule-se no Discord
@@ -96,7 +96,7 @@ export const HomePage: React.FC = () => {
 
             <button
               onClick={handleNavigateCalendar}
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all backdrop-blur-md"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-on-primary)]/10 hover:bg-[var(--color-on-primary)]/20 border border-[var(--color-on-primary)]/20 text-[var(--color-on-primary)] font-bold text-sm transition-all backdrop-blur-md"
             >
               <Calendar className="w-4 h-4 text-[var(--color-secondary)]" />
               Ver Calendário de Aulas
@@ -264,18 +264,18 @@ export const HomePage: React.FC = () => {
 
       {/* ── CAMPUS HOUSE ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-12 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+        <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-12 text-[var(--color-on-primary)] border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
           <div className="space-y-4 max-w-xl">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5">
               <MapPin className="w-4 h-4" /> Campus da Guia (FC House)
             </span>
-            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
+            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[var(--color-secondary)]">
               Visite Nosso Campus Físico em Mist
             </h2>
-            <p className="text-sm text-emerald-100/90 leading-relaxed">
+            <p className="text-sm text-[var(--color-on-primary)]/80 leading-relaxed">
               Nossa sede foi carinhosamente decorada para refletir o ambiente acadêmico de Old Sharlayan, contando com Grande Biblioteca, Salas Táticas, Cantina e Deck de Observação.
             </p>
-            <p className="text-xs font-mono bg-slate-950/40 px-4 py-2 rounded-xl border border-white/10 inline-block">
+            <p className="text-xs font-mono bg-[var(--color-on-primary)]/10 px-4 py-2 rounded-xl border border-[var(--color-on-primary)]/10 inline-block">
               Behemoth — Mist — Ward 19, Plot 35
             </p>
           </div>
@@ -284,7 +284,7 @@ export const HomePage: React.FC = () => {
             href="https://discord.gg/3XJgrsVUbP"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-slate-950 font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
+            className="px-8 py-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
           >
             Quero Me Matricular
           </a>

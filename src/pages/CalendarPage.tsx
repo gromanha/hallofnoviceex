@@ -421,7 +421,7 @@ export const CalendarPage: React.FC = () => {
                 <div className="h-16 bg-[var(--color-surface)]" />
               ) : null}
 
-              <div className="p-6 pt-4 space-y-4">
+              <div className="p-6 pt-4 mt-6 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span
                     className="type-label px-2.5 py-1 rounded-lg border text-white"

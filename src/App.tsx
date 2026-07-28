@@ -1,7 +1,6 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LoginGate } from './components/LoginGate';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -61,10 +60,8 @@ function AppRoutes() {
       >
         Pular para o conteúdo principal
       </a>
-      <Navbar onOpenLogin={() => setIsLoginOpen(true)} theme={theme} onToggleTheme={handleToggleTheme} />
-
       <main id="main-content" className="flex-1" tabIndex={-1}>
-        <DashboardLayout theme={theme} onToggleTheme={handleToggleTheme}>
+        <DashboardLayout theme={theme} onToggleTheme={handleToggleTheme} onOpenLogin={() => setIsLoginOpen(true)}>
           <Suspense fallback={<PageLoader />}>
             <AnimatePresence mode="wait">
               <motion.div

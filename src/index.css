@@ -288,6 +288,77 @@ img {
   background: var(--color-primary);
 }
 
+/* ── Sidebar Delight — Arcane Grimoire ── */
+@keyframes brandShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes runeGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes sigilFloat {
+  0%, 100% { transform: translateY(0px); opacity: 0.3; }
+  50% { transform: translateY(-2px); opacity: 0.5; }
+}
+
+.sidebar-brand-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-brand-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(249, 115, 22, 0.08) 40%,
+    rgba(201, 168, 76, 0.12) 50%,
+    rgba(249, 115, 22, 0.08) 60%,
+    transparent 100%
+  );
+  animation: brandShimmer 3s ease-in-out 0.5s 1 forwards;
+  pointer-events: none;
+}
+
+.sidebar-nav-active {
+  position: relative;
+}
+
+.sidebar-nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5), 0 0 16px rgba(249, 115, 22, 0.2);
+  animation: runeGlow 2.5s ease-in-out infinite;
+}
+
+.sidebar-theme-toggle:active svg {
+  animation: iconSpin 0.4s ease-in-out;
+}
+
+.sidebar-sigil {
+  animation: sigilFloat 4s ease-in-out infinite;
+}
+
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

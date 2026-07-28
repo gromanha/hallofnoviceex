@@ -15,9 +15,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+    `flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all relative ${
       isActive
-        ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-l-2 border-[var(--color-primary)]'
+        ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] sidebar-nav-active'
         : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)]'
     }`;
 
@@ -52,7 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Brand */}
-        <div className="px-5 py-6 border-b border-[var(--color-outline)]/30">
+        <div className="px-5 py-6 border-b border-[var(--color-outline)]/30 sidebar-brand-shimmer">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl overflow-hidden border border-[var(--color-outline)] shadow-md shrink-0">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
         <div className="px-3 py-4 border-t border-[var(--color-outline)]/30 space-y-2">
           <button
             onClick={onToggleTheme}
-            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] transition-all"
+            className="sidebar-theme-toggle flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] transition-all"
             title="Alternar Tema"
             aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
             aria-pressed={theme === 'dark'}
@@ -132,6 +132,17 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
               Admin Login
             </button>
           )}
+        </div>
+
+        {/* Arcane Flourish */}
+        <div className="px-5 py-3 flex justify-center" aria-hidden="true">
+          <svg className="sidebar-sigil w-5 h-5 text-[var(--color-outline)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+            <circle cx="12" cy="12" r="10" opacity="0.4" />
+            <path d="M12 2 L14 8 L12 6 L10 8 Z" opacity="0.6" />
+            <path d="M12 22 L14 16 L12 18 L10 16 Z" opacity="0.6" />
+            <path d="M2 12 L8 10 L6 12 L8 14 Z" opacity="0.6" />
+            <path d="M22 12 L16 10 L18 12 L16 14 Z" opacity="0.6" />
+          </svg>
         </div>
       </aside>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BookOpen, Search, Sparkles, Filter, ShieldCheck, Tag, X } from 'lucide-react';
+import { BookOpen, Search, Sparkles, Filter, ShieldCheck, Tag, X, UtensilsCrossed } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
@@ -102,10 +102,10 @@ export const AcademiaPage: React.FC = () => {
 
           {[
             { id: 'all', label: 'Todos os Guias' },
-            { id: 'codice', label: 'Códice' },
+            { id: 'codice', label: 'Codice' },
             { id: 'guias', label: 'Combate EX/Savage' },
             { id: 'crafting', label: 'Crafting & Gathering' },
-            { id: 'noticias', label: 'Notícias' },
+            { id: 'noticias', label: 'Noticias' },
           ].map(cat => (
             <button
               key={cat.id}
@@ -119,6 +119,16 @@ export const AcademiaPage: React.FC = () => {
               {cat.label}
             </button>
           ))}
+
+          <span className="w-px h-6 bg-[var(--color-outline-variant)]" />
+
+          <a
+            href="/receitas"
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-[var(--color-secondary)]/10 text-[var(--color-on-secondary-deep)] hover:bg-[var(--color-secondary)]/20 flex items-center gap-1.5"
+          >
+            <UtensilsCrossed className="w-3.5 h-3.5" />
+            Receitas
+          </a>
         </div>
 
         {/* Input de Busca */}

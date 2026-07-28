@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
-  PlusCircle, X, Clock, Tag, RefreshCw, GripVertical,
+  PlusCircle, X, Clock, Tag, RefreshCw, GripVertical, UtensilsCrossed,
 } from 'lucide-react';
-import { Post, MagicalEvent, EventTypeItem } from '../types';
+import { Post, MagicalEvent, EventTypeItem, Recipe } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { PostModal } from '../components/PostModal';
+import { RecipeModal } from '../components/RecipeModal';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
@@ -67,7 +68,7 @@ const EMPTY_TYPE_FORM: TypeFormState = {
 export const AdminPage: React.FC = () => {
   const navigate = useNavigate();
   const { admin, onLogout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'types'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'types' | 'recipes'>('posts');
 
   const handleNavigatePost = useCallback((slug: string) => {
     navigate(`/post/${slug}`);
@@ -101,6 +102,15 @@ export const AdminPage: React.FC = () => {
   const [typeForm, setTypeForm] = useState<TypeFormState>({ ...EMPTY_TYPE_FORM });
   const [savingType, setSavingType] = useState(false);
   const [deletingTypeId, setDeletingTypeId] = useState<string | null>(null);
+
+  // ── States for Recipes Manager ──
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loadingRecipes, setLoadingRecipes] = useState(true);
+  const [recipesSearch, setRecipesSearch] = useState('');
+  const debouncedRecipesSearch = useDebounce(recipesSearch, 300);
+  const [recipeStatusFilter, setRecipeStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [selectedRecipe, setSelectedRecipe] = useState<Partial<Recipe> | null>(null);
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
 
   // ── Confirm Dialog ──
   const [confirmState, setConfirmState] = useState<{
@@ -146,15 +156,57 @@ export const AdminPage: React.FC = () => {
     }
   };
 
+  // ── Load Recipes ──
+  const loadRecipes = async (signal?: AbortSignal) => {
+    setLoadingRecipes(true);
+    try {
+      let url = '/api/recipes?status=all';
+      if (debouncedRecipesSearch) url += `&search=${encodeURIComponent(debouncedRecipesSearch)}`;
+      const data = await apiGet<Recipe[]>(url);
+      if (!signal?.aborted) setRecipes(data || []);
+    } catch (err) {
+      console.error('Erro ao carregar receitas no admin:', err);
+    } finally {
+      if (!signal?.aborted) setLoadingRecipes(false);
+    }
+  };
+
+  // ── Recipe Actions ──
+  const handleSaveRecipe = async (recipeData: Partial<Recipe>) => {
+    if (recipeData.id) {
+      await apiPatch('/api/recipes', recipeData);
+    } else {
+      await apiPost('/api/recipes', recipeData);
+    }
+    await loadRecipes();
+  };
+
+  const handleDeleteRecipe = async (id: string) => {
+    await apiDel('/api/recipes', { id });
+    await loadRecipes();
+  };
+
+  const handleToggleRecipeStatus = async (recipe: Recipe) => {
+    try {
+      const nextStatus = recipe.status === 'published' ? 'draft' : 'published';
+      await apiPatch('/api/recipes', { id: recipe.id, status: nextStatus });
+      await loadRecipes();
+    } catch (err) {
+      console.error('Erro ao alternar status da receita:', err);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     if (activeTab === 'posts') {
       loadPosts(controller.signal);
+    } else if (activeTab === 'recipes') {
+      loadRecipes(controller.signal);
     } else {
       loadEvents(controller.signal);
     }
     return () => controller.abort();
-  }, [activeTab, debouncedPostsSearch]);
+  }, [activeTab, debouncedPostsSearch, debouncedRecipesSearch]);
 
   // ── Post Actions ──
   const handleSavePost = async (postData: Partial<Post>) => {
@@ -408,6 +460,18 @@ export const AdminPage: React.FC = () => {
         >
           <Tag className="w-4 h-4 text-[var(--color-secondary)]" />
           Tipos de Atividade ({eventTypes.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('recipes')}
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
+            activeTab === 'recipes'
+              ? 'bg-[var(--color-primary)] text-white shadow-md'
+              : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+          }`}
+        >
+          <UtensilsCrossed className="w-4 h-4 text-[var(--color-secondary)]" />
+          Receitas ({recipes.length})
         </button>
       </div>
 
@@ -786,6 +850,160 @@ export const AdminPage: React.FC = () => {
         </div>
       )}
 
+      {/* ═══════════════════ ABA 4: RECEITAS ═══════════════════ */}
+      {activeTab === 'recipes' && (
+        <div className="space-y-6">
+
+          {/* Controles */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
+
+            <button
+              onClick={() => {
+                setSelectedRecipe(null);
+                setIsRecipeModalOpen(true);
+              }}
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+            >
+              <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Receita
+            </button>
+
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+
+              <div className="flex items-center gap-1 bg-[var(--color-background)] p-1 rounded-xl border border-[var(--color-outline-variant)]">
+                <button
+                  onClick={() => setRecipeStatusFilter('all')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-slate-500'}`}
+                >
+                  Todas
+                </button>
+                <button
+                  onClick={() => setRecipeStatusFilter('published')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-slate-500'}`}
+                >
+                  Publicadas
+                </button>
+                <button
+                  onClick={() => setRecipeStatusFilter('draft')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-slate-500'}`}
+                >
+                  Rascunhos
+                </button>
+              </div>
+
+              <div className="relative w-full md:w-64">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={recipesSearch}
+                  onChange={e => setRecipesSearch(e.target.value)}
+                  placeholder="Buscar receita..."
+                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+                />
+                {recipesSearch && (
+                  <button
+                    onClick={() => setRecipesSearch('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-[var(--color-primary-light)] text-[var(--color-on-surface-variant)] transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+            </div>
+          </div>
+
+          {/* Tabela de Receitas */}
+          {loadingRecipes ? (
+            <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+          ) : recipes.length === 0 ? (
+            <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
+              <UtensilsCrossed className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+              <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma receita cadastrada.</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Clique em "Nova Receita" para criar a primeira.</p>
+            </div>
+          ) : (
+            <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-2xl overflow-hidden shadow-xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-[var(--color-on-surface)]">
+                  <thead className="bg-[var(--color-background)] border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] font-bold uppercase tracking-wider">
+                    <tr>
+                      <th className="p-4">Titulo</th>
+                      <th className="p-4">Categoria</th>
+                      <th className="p-4">Dificuldade</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4 text-right">Acoes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
+                    {recipes.filter(r => recipeStatusFilter === 'all' || r.status === recipeStatusFilter).map(recipe => (
+                      <tr key={recipe.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
+                        <td className="p-4 font-bold text-sm max-w-xs truncate">{recipe.title}</td>
+                        <td className="p-4">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
+                            {recipe.category?.replace('_', ' ') || '—'}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                            recipe.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-700' :
+                            recipe.difficulty === 'Medium' ? 'bg-amber-100 text-amber-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {recipe.difficulty}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => handleToggleRecipeStatus(recipe)}
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${
+                              recipe.status === 'published'
+                                ? 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border border-[var(--color-sage)]/30'
+                                : 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border border-[var(--color-amber)]/30'
+                            }`}
+                          >
+                            {recipe.status === 'published' ? 'Publicado' : 'Rascunho'}
+                          </button>
+                        </td>
+                        <td className="p-4 text-right space-x-2">
+                          <button
+                            onClick={() => {
+                              setSelectedRecipe(recipe);
+                              setIsRecipeModalOpen(true);
+                            }}
+                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
+                            title="Editar"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedRecipe(recipe);
+                              setIsRecipeModalOpen(true);
+                            }}
+                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            title="Ver"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteRecipe(recipe.id)}
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-crimson)]/10 text-[var(--color-crimson)]"
+                            title="Excluir"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
       {showEventForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'} onClick={() => { setShowEventForm(false); setEditingEventId(null); }}>
@@ -981,6 +1199,15 @@ export const AdminPage: React.FC = () => {
         onClose={() => setIsPostModalOpen(false)}
         onSave={handleSavePost}
         onDelete={handleDeletePost}
+      />
+
+      {/* Modal de Criação / Edição de Receita */}
+      <RecipeModal
+        isOpen={isRecipeModalOpen}
+        recipe={selectedRecipe}
+        onClose={() => setIsRecipeModalOpen(false)}
+        onSave={handleSaveRecipe}
+        onDelete={handleDeleteRecipe}
       />
 
       {/* Confirm Dialog */}

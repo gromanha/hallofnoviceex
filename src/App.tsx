@@ -15,6 +15,8 @@ const AcademiaPage = React.lazy(() => import('./pages/AcademiaPage').then(m => (
 const PostDetailPage = React.lazy(() => import('./pages/PostDetailPage').then(m => ({ default: m.PostDetailPage })));
 const CalendarPage = React.lazy(() => import('./pages/CalendarPage').then(m => ({ default: m.CalendarPage })));
 const AdminPage = React.lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
+const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then(m => ({ default: m.RecipesPage })));
+const RecipeDetailPage = React.lazy(() => import('./pages/RecipeDetailPage').then(m => ({ default: m.RecipeDetailPage })));
 
 function AppRoutes() {
   const { admin, onLogin, onLogout } = useAuth();
@@ -53,6 +55,8 @@ function AppRoutes() {
                 <Route path="/academia" element={<AcademiaPage />} />
                 <Route path="/post/:slug" element={<PostDetailPage />} />
                 <Route path="/calendario" element={<CalendarPage />} />
+                <Route path="/receitas" element={<RecipesPage />} />
+                <Route path="/receitas/:slug" element={<RecipeDetailPage />} />
                 <Route
                   path="/admin"
                   element={

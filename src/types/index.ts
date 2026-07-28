@@ -57,3 +57,57 @@ export interface AdminUser {
   username: string;
   display_name: string;
 }
+
+export interface RecipeIngredientItem {
+  quantity: string;
+  unit: string;
+  name: string;
+}
+
+export interface RecipeIngredientSection {
+  section_name: string;
+  items: RecipeIngredientItem[];
+}
+
+export interface RecipeInstructionSection {
+  section_name: string;
+  steps: string[];
+}
+
+export interface RecipeLoreQuote {
+  speaker: string;
+  text: string;
+  icon?: string;
+}
+
+export interface Recipe {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  regional_cuisine: string;
+  description: string;
+  lore_quotes: RecipeLoreQuote[];
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  prep_time: string;
+  inactive_time: string;
+  cook_time: string;
+  yield_text: string;
+  dietary_notes: string;
+  equipment: string;
+  ingredient_sections: RecipeIngredientSection[];
+  instruction_sections: RecipeInstructionSection[];
+  cover_image: string;
+  status: 'published' | 'draft';
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecipeCategory {
+  id: string;
+  key: string;
+  label: string;
+  icon: string;
+  sort_order: number;
+}

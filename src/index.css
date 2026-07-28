@@ -219,3 +219,16 @@ img {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Recipe Parchment Card */
+.parchment-recipe {
+  background: linear-gradient(135deg, #f5f0e1 0%, #ede6d3 100%);
+  border: 2px solid var(--color-secondary);
+  border-radius: 1rem;
+  box-shadow: inset 0 0 60px rgba(139, 94, 60, 0.08);
+}
+
+:root[data-theme="dark"] .parchment-recipe {
+  background: linear-gradient(135deg, #2a2520 0%, #1e1a15 100%);
+  box-shadow: inset 0 0 60px rgba(212, 175, 55, 0.05);
+}

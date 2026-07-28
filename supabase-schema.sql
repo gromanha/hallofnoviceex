@@ -106,11 +106,62 @@ SELECT * FROM (VALUES
 ) AS v(slug, title, subtitle, content, category, author_name, cover_image, tags, is_pinned, status)
 WHERE NOT EXISTS (SELECT 1 FROM posts LIMIT 1);
 
--- 5. Habilitar RLS (Row Level Security)
+-- 5. Tabela de categorias de receitas
+CREATE TABLE IF NOT EXISTS recipe_categories (
+  id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  key        TEXT NOT NULL UNIQUE,
+  label      TEXT NOT NULL,
+  icon       TEXT DEFAULT 'UtensilsCrossed',
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 6. Tabela de receitas (cookbook FFXIV)
+CREATE TABLE IF NOT EXISTS recipes (
+  id                   UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  slug                 TEXT NOT NULL UNIQUE,
+  title                TEXT NOT NULL,
+  category             TEXT,
+  regional_cuisine     TEXT,
+  description          TEXT,
+  lore_quotes          JSONB DEFAULT '[]',
+  difficulty           TEXT DEFAULT 'Easy',
+  prep_time            TEXT,
+  inactive_time        TEXT,
+  cook_time            TEXT,
+  yield_text           TEXT,
+  dietary_notes        TEXT,
+  equipment            TEXT,
+  ingredient_sections  JSONB DEFAULT '[]',
+  instruction_sections JSONB DEFAULT '[]',
+  cover_image          TEXT DEFAULT '',
+  status               TEXT DEFAULT 'published',
+  created_by           UUID REFERENCES admins(id),
+  created_at           TIMESTAMPTZ DEFAULT now(),
+  updated_at           TIMESTAMPTZ
+);
+
+-- Seed: categorias padrao de receitas
+INSERT INTO recipe_categories (key, label, icon, sort_order)
+SELECT * FROM (VALUES
+  ('breakfast',    'Cafe da Manha',          'UtensilsCrossed',  0),
+  ('appetizers',   'Aperitivos',             'UtensilsCrossed',  1),
+  ('breads',       'Paes',                   'UtensilsCrossed',  2),
+  ('soups_stews',  'Sopas e Ensopados',      'UtensilsCrossed',  3),
+  ('main_dishes',  'Pratos Principais',      'UtensilsCrossed',  4),
+  ('sides',        'Acompanhamentos',        'UtensilsCrossed',  5),
+  ('desserts',     'Sobremesas',             'UtensilsCrossed',  6),
+  ('drinks',       'Bebidas',                'UtensilsCrossed',  7)
+) AS v(key, label, icon, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM recipe_categories LIMIT 1);
+
+-- 7. Habilitar RLS (Row Level Security)
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE event_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recipe_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
 
 -- 6. Politicas RLS para Leitura Publica
 DROP POLICY IF EXISTS "Allow public read events" ON events;
@@ -121,3 +172,9 @@ CREATE POLICY "Allow public read event_types" ON event_types FOR SELECT USING (t
 
 DROP POLICY IF EXISTS "Allow public read published posts" ON posts;
 CREATE POLICY "Allow public read published posts" ON posts FOR SELECT USING (status = 'published');
+
+DROP POLICY IF EXISTS "Allow public read recipe_categories" ON recipe_categories;
+CREATE POLICY "Allow public read recipe_categories" ON recipe_categories FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read published recipes" ON recipes;
+CREATE POLICY "Allow public read published recipes" ON recipes FOR SELECT USING (status = 'published');

@@ -677,6 +677,277 @@ app.delete('/api/posts', async (req, res) => {
   }
 });
 
+// ── Recipe Categories CRUD ──────────────────────────────────────
+
+app.get('/api/recipe-categories', async (_req, res) => {
+  try {
+    const { data, error } = await supabaseAnon
+      .from('recipe_categories')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('[recipe-categories] list error', err);
+    res.status(500).json({ error: 'recipe_categories_list_failed' });
+  }
+});
+
+app.post('/api/recipe-categories', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const b = req.body || {};
+    const key = clampStr(b.key, 30).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
+    const label = clampStr(b.label, 100);
+    const icon = clampStr(b.icon, 30) || 'UtensilsCrossed';
+    const sort_order = Number(b.sort_order) || 0;
+
+    if (!key || !label) return res.status(400).json({ error: 'key_and_label_required' });
+    if (!TYPE_KEY_RE.test(key)) return res.status(400).json({ error: 'invalid_key_format' });
+
+    const { data, error } = await supabaseAdmin
+      .from('recipe_categories')
+      .insert({ key, label, icon, sort_order: Math.max(0, Math.min(999, sort_order)) })
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[recipe-categories] insert error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.patch('/api/recipe-categories', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id, ...raw } = req.body;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+    const fields = {};
+    if (raw.key !== undefined) {
+      const slug = clampStr(raw.key, 30).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '-');
+      if (!TYPE_KEY_RE.test(slug)) return res.status(400).json({ error: 'invalid_key_format' });
+      fields.key = slug;
+    }
+    if (raw.label !== undefined) fields.label = clampStr(raw.label, 100);
+    if (raw.icon !== undefined) fields.icon = clampStr(raw.icon, 30);
+    if (raw.sort_order !== undefined) fields.sort_order = Math.max(0, Math.min(999, Number(raw.sort_order) || 0));
+    if (Object.keys(fields).length === 0) return res.status(400).json({ error: 'no_fields_to_update' });
+    const { data, error } = await supabaseAdmin.from('recipe_categories').update(fields).eq('id', id).select().single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[recipe-categories] update error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.delete('/api/recipe-categories', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.body;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+    const { error } = await supabaseAdmin.from('recipe_categories').delete().eq('id', id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[recipe-categories] delete error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Recipes CRUD ───────────────────────────────────────────────
+
+const VALID_DIFFICULTIES = ['Easy', 'Medium', 'Hard'];
+const CATEGORY_RE = /^[a-z][a-z0-9_]{0,30}$/;
+
+app.get('/api/recipes', async (req, res) => {
+  try {
+    const claims = getAdminFromReq(req);
+    const isAdmin = !!claims;
+    const { slug, id, category, status, search } = req.query;
+
+    if (slug) {
+      let query = (isAdmin ? supabaseAdmin : supabaseAnon).from('recipes').select('*').eq('slug', String(slug));
+      if (!isAdmin) query = query.eq('status', 'published');
+      const { data, error } = await query.maybeSingle();
+      if (error) throw error;
+      if (!data) return res.status(404).json({ error: 'recipe_not_found' });
+      return res.json(data);
+    }
+
+    if (id) {
+      let query = (isAdmin ? supabaseAdmin : supabaseAnon).from('recipes').select('*').eq('id', String(id));
+      if (!isAdmin) query = query.eq('status', 'published');
+      const { data, error } = await query.maybeSingle();
+      if (error) throw error;
+      if (!data) return res.status(404).json({ error: 'recipe_not_found' });
+      return res.json(data);
+    }
+
+    let query = (isAdmin ? supabaseAdmin : supabaseAnon)
+      .from('recipes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!isAdmin || status !== 'all') {
+      if (status && isAdmin) {
+        query = query.eq('status', String(status));
+      } else {
+        query = query.eq('status', 'published');
+      }
+    }
+
+    if (category && category !== 'all') {
+      query = query.eq('category', String(category));
+    }
+
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('[recipes] list error', err);
+    res.status(500).json({ error: 'recipes_list_failed' });
+  }
+});
+
+app.post('/api/recipes', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const b = req.body || {};
+    const title = clampStr(b.title, 200);
+    if (!title) return res.status(400).json({ error: 'title_required' });
+
+    let generatedSlug = title.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+    if (!generatedSlug) generatedSlug = `recipe-${Date.now()}`;
+
+    const { data: existing } = await supabaseAdmin.from('recipes').select('id').eq('slug', generatedSlug).maybeSingle();
+    if (existing) generatedSlug = `${generatedSlug}-${Date.now().toString(36)}`;
+
+    const category = clampStr(b.category, 30);
+    if (category && !CATEGORY_RE.test(category)) return res.status(400).json({ error: 'invalid_category' });
+
+    const difficulty = clampStr(b.difficulty, 10);
+    if (difficulty && !VALID_DIFFICULTIES.includes(difficulty)) return res.status(400).json({ error: 'invalid_difficulty' });
+
+    if (b.cover_image && !isSafeUrl(clampStr(b.cover_image, 500))) return res.status(400).json({ error: 'invalid_image_url' });
+
+    const payload = {
+      title,
+      slug: generatedSlug,
+      category: category || null,
+      regional_cuisine: clampStr(b.regional_cuisine, 100),
+      description: clampStr(b.description, 2000),
+      lore_quotes: Array.isArray(b.lore_quotes) ? b.lore_quotes.slice(0, 10) : [],
+      difficulty: VALID_DIFFICULTIES.includes(difficulty) ? difficulty : 'Easy',
+      prep_time: clampStr(b.prep_time, 50),
+      inactive_time: clampStr(b.inactive_time, 50),
+      cook_time: clampStr(b.cook_time, 50),
+      yield_text: clampStr(b.yield_text, 50),
+      dietary_notes: clampStr(b.dietary_notes, 200),
+      equipment: clampStr(b.equipment, 500),
+      ingredient_sections: Array.isArray(b.ingredient_sections) ? b.ingredient_sections : [],
+      instruction_sections: Array.isArray(b.instruction_sections) ? b.instruction_sections : [],
+      cover_image: clampStr(b.cover_image, 500),
+      status: b.status === 'draft' ? 'draft' : 'published',
+      created_by: claims.sub,
+    };
+
+    const { data, error } = await supabaseAdmin.from('recipes').insert(payload).select().single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[recipes] insert error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.patch('/api/recipes', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id, ...raw } = req.body;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+
+    const fields = {};
+    if (raw.title !== undefined) {
+      fields.title = clampStr(raw.title, 200);
+      if (raw.generate_slug !== false && raw.slug === undefined) {
+        let newSlug = fields.title.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+        const { data: existing } = await supabaseAdmin.from('recipes').select('id').eq('slug', newSlug).maybeSingle();
+        if (existing && existing.id !== id) newSlug = `${newSlug}-${Date.now().toString(36)}`;
+        fields.slug = newSlug;
+      }
+    }
+    if (raw.slug !== undefined) fields.slug = clampStr(raw.slug, 200);
+    if (raw.category !== undefined) {
+      const cat = clampStr(raw.category, 30);
+      if (cat && !CATEGORY_RE.test(cat)) return res.status(400).json({ error: 'invalid_category' });
+      fields.category = cat || null;
+    }
+    if (raw.regional_cuisine !== undefined) fields.regional_cuisine = clampStr(raw.regional_cuisine, 100);
+    if (raw.description !== undefined) fields.description = clampStr(raw.description, 2000);
+    if (raw.lore_quotes !== undefined) fields.lore_quotes = Array.isArray(raw.lore_quotes) ? raw.lore_quotes.slice(0, 10) : [];
+    if (raw.difficulty !== undefined) {
+      const d = clampStr(raw.difficulty, 10);
+      if (d && !VALID_DIFFICULTIES.includes(d)) return res.status(400).json({ error: 'invalid_difficulty' });
+      fields.difficulty = VALID_DIFFICULTIES.includes(d) ? d : 'Easy';
+    }
+    if (raw.prep_time !== undefined) fields.prep_time = clampStr(raw.prep_time, 50);
+    if (raw.inactive_time !== undefined) fields.inactive_time = clampStr(raw.inactive_time, 50);
+    if (raw.cook_time !== undefined) fields.cook_time = clampStr(raw.cook_time, 50);
+    if (raw.yield_text !== undefined) fields.yield_text = clampStr(raw.yield_text, 50);
+    if (raw.dietary_notes !== undefined) fields.dietary_notes = clampStr(raw.dietary_notes, 200);
+    if (raw.equipment !== undefined) fields.equipment = clampStr(raw.equipment, 500);
+    if (raw.ingredient_sections !== undefined) fields.ingredient_sections = Array.isArray(raw.ingredient_sections) ? raw.ingredient_sections : [];
+    if (raw.instruction_sections !== undefined) fields.instruction_sections = Array.isArray(raw.instruction_sections) ? raw.instruction_sections : [];
+    if (raw.cover_image !== undefined) {
+      if (!isSafeUrl(clampStr(raw.cover_image, 500))) return res.status(400).json({ error: 'invalid_image_url' });
+      fields.cover_image = clampStr(raw.cover_image, 500);
+    }
+    if (raw.status !== undefined) fields.status = raw.status === 'draft' ? 'draft' : 'published';
+
+    if (Object.keys(fields).length === 0) return res.status(400).json({ error: 'no_fields_to_update' });
+    fields.updated_at = new Date().toISOString();
+
+    const { data, error } = await supabaseAdmin.from('recipes').update(fields).eq('id', id).select().single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('[recipes] update error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.delete('/api/recipes', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.body || req.query;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+    const { error } = await supabaseAdmin.from('recipes').delete().eq('id', id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[recipes] delete error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
 // ── Catch-all ──────────────────────────────────────────────────
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {

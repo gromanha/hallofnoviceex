@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut } from 'lucide-react';
+import { BookOpen, Calendar, Shield, Moon, Sun, Home, LogOut, UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import logoUrl from '@/assets/logo.png';
 
@@ -78,7 +78,12 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
 
             <NavLink to="/calendario" className={linkClass}>
               <Calendar className="w-4 h-4" />
-              Calendário
+              Calendario
+            </NavLink>
+
+            <NavLink to="/receitas" className={linkClass}>
+              <UtensilsCrossed className="w-4 h-4" />
+              Receitas
             </NavLink>
 
             {admin && (
@@ -145,7 +150,11 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
           </NavLink>
           <NavLink to="/calendario" className={mobileLinkClass}>
             <Calendar className="w-4 h-4" />
-            Calendário
+            Calendario
+          </NavLink>
+          <NavLink to="/receitas" className={mobileLinkClass}>
+            <UtensilsCrossed className="w-4 h-4" />
+            Receitas
           </NavLink>
           {admin && (
             <NavLink to="/admin" className={({ isActive }) =>

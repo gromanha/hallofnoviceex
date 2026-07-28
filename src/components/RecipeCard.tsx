@@ -25,7 +25,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       tabIndex={0}
       role="link"
-      className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow"
+      className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow card-shimmer-accent"
     >
       {recipe.cover_image && !imgError && (
         <div className="relative h-48 sm:h-52 overflow-hidden bg-[var(--color-surface-alt)]">

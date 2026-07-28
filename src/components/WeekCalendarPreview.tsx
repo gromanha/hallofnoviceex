@@ -154,7 +154,7 @@ export const WeekCalendarPreview: React.FC = memo(() => {
               <div
                 key={idx}
                 className={`px-5 py-3 flex items-start gap-3 transition-colors ${
-                  isToday ? 'bg-[var(--color-primary)]/5' : 'hover:bg-[var(--color-surface-alt)]/30'
+                  isToday ? 'bg-[var(--color-primary)]/5 today-glow' : 'hover:bg-[var(--color-surface-alt)]/30'
                 }`}
               >
                 {/* Day Label */}

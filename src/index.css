@@ -168,40 +168,114 @@ body {
   --color-info: #5dade2;
   --color-info-light: rgba(93, 173, 226, 0.12);
   --color-on-info: #ffffff;
+
+  /* ── Theme-aware Glass & Effects ── */
+  --glass-bg: rgba(35, 42, 59, 0.8);
+  --glass-bg-hover: rgba(35, 42, 59, 0.9);
+  --glass-border: rgba(55, 65, 81, 0.5);
+  --card-shadow-rest: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 8px 24px rgba(249, 115, 22, 0.15);
+  --card-shadow-active: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --card-border-hover: rgba(249, 115, 22, 0.3);
+  --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --sidebar-nav-glow: 0 0 8px rgba(249, 115, 22, 0.5), 0 0 16px rgba(249, 115, 22, 0.2);
+}
+
+/* ── Light Theme Overrides ── */
+[data-theme="light"] {
+  --color-background: #f5f3ef;
+  --color-surface: #ffffff;
+  --color-surface-alt: #ebe8e3;
+  --color-on-background: #1a1f2e;
+  --color-on-surface: #1a1f2e;
+  --color-on-surface-variant: #5a6478;
+  --color-outline: #d1cdc5;
+  --color-outline-variant: rgba(209, 205, 197, 0.5);
+
+  --color-primary: #ea6a1a;
+  --color-primary-deep: #b8520f;
+  --color-primary-light: rgba(234, 106, 26, 0.1);
+  --color-primary-hover: #f07d33;
+
+  --color-secondary: #a8892e;
+  --color-secondary-light: rgba(168, 137, 46, 0.1);
+  --color-secondary-accent: #b89a3a;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-deep: #7a6520;
+
+  --color-tertiary: #3a8dc0;
+  --color-tertiary-light: rgba(58, 141, 192, 0.1);
+  --color-on-tertiary: #ffffff;
+
+  --color-error: #dc3545;
+  --color-error-light: rgba(220, 53, 69, 0.1);
+
+  --color-crystal: #3a8dc0;
+  --color-crystal-light: rgba(58, 141, 192, 0.1);
+  --color-rose: #dc3545;
+  --color-rose-light: rgba(220, 53, 69, 0.1);
+  --color-sage: #28a745;
+  --color-sage-light: rgba(40, 167, 69, 0.1);
+
+  --color-indigo: #6366f1;
+  --color-indigo-light: rgba(99, 102, 241, 0.1);
+  --color-amber: #d4a017;
+  --color-amber-light: rgba(212, 160, 23, 0.1);
+  --color-copper: #a8892e;
+  --color-copper-light: rgba(168, 137, 46, 0.1);
+  --color-crimson: #dc3545;
+  --color-crimson-light: rgba(220, 53, 69, 0.1);
+
+  --color-info: #3a8dc0;
+  --color-info-light: rgba(58, 141, 192, 0.1);
+  --color-on-info: #ffffff;
+
+  /* ── Theme-aware Glass & Effects (Light) ── */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg-hover: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(209, 205, 197, 0.6);
+  --card-shadow-rest: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 8px 24px rgba(234, 106, 26, 0.12);
+  --card-shadow-active: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --card-border-hover: rgba(234, 106, 26, 0.3);
+  --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --sidebar-nav-glow: 0 0 8px rgba(234, 106, 26, 0.4), 0 0 16px rgba(234, 106, 26, 0.15);
 }
 
 /* ── Glass-morphism Utilities ── */
 .glass {
-  background: rgba(35, 42, 59, 0.8);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(55, 65, 81, 0.5);
+  border: 1px solid var(--glass-border);
 }
 
 .glass-hover:hover {
-  background: rgba(35, 42, 59, 0.9);
-  border-color: rgba(249, 115, 22, 0.3);
+  background: var(--glass-bg-hover);
+  border-color: var(--card-border-hover);
 }
 
 .glow-hover:hover {
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* ── Card Glow on Hover ── */
 .card-glow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--card-shadow-rest);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
 }
 
 .card-glow:hover {
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
-  border-color: rgba(249, 115, 22, 0.3);
+  box-shadow: var(--card-shadow-hover);
+  border-color: var(--card-border-hover);
   transform: translateY(-2px);
 }
 
 .card-glow:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--card-shadow-active);
   transition-duration: 0.1s;
 }
 
@@ -299,8 +373,8 @@ img {
 }
 
 .recipe-card:hover {
-  border-color: rgba(249, 115, 22, 0.3);
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.1);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* ── Sidebar Scroll ── */
@@ -380,7 +454,7 @@ img {
   width: 3px;
   border-radius: 0 2px 2px 0;
   background: var(--color-primary);
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5), 0 0 16px rgba(249, 115, 22, 0.2);
+  box-shadow: var(--sidebar-nav-glow);
   animation: runeGlow 2.5s ease-in-out infinite;
 }
 
@@ -390,6 +464,149 @@ img {
 
 .sidebar-sigil {
   animation: sigilFloat 4s ease-in-out infinite;
+}
+
+/* ── Delight: Rune Loading Circle ── */
+@keyframes runeRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes runeRotateReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes runePulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes runeGlowBreathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.2)); }
+  50% { filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.5)); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.rune-circle {
+  animation: runeRotate 8s linear infinite;
+}
+
+.rune-circle-reverse {
+  animation: runeRotateReverse 12s linear infinite;
+}
+
+.rune-dot {
+  animation: runePulse 2s ease-in-out infinite;
+}
+
+.rune-glow {
+  animation: runeGlowBreathe 3s ease-in-out infinite;
+}
+
+.logo-float {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* ── Delight: Card Shimmer Accent ── */
+@keyframes shimmerAccent {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.card-shimmer-accent::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(201, 168, 76, 0.08) 45%,
+    rgba(249, 115, 22, 0.06) 50%,
+    rgba(201, 168, 76, 0.08) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.group:hover .card-shimmer-accent,
+*:hover > .card-shimmer-accent {
+  opacity: 1;
+  animation: shimmerAccent 1.5s ease-in-out;
+}
+
+/* ── Delight: Wandering Book (404) ── */
+@keyframes wanderFloat {
+  0%, 100% { transform: translate(0, 0) rotate(-3deg); }
+  25% { transform: translate(6px, -8px) rotate(2deg); }
+  50% { transform: translate(-4px, -12px) rotate(-1deg); }
+  75% { transform: translate(8px, -5px) rotate(3deg); }
+}
+
+@keyframes wanderGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.2); }
+}
+
+.wander-book {
+  animation: wanderFloat 6s ease-in-out infinite, wanderGlow 4s ease-in-out infinite;
+}
+
+/* ── Delight: Sparkle Float ── */
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-16px) scale(0.8); opacity: 0; }
+}
+
+@keyframes sparkleDrift {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translate(var(--drift-x, 20px), var(--drift-y, -30px)) rotate(180deg); opacity: 0; }
+}
+
+.sparkle-particle {
+  animation: sparkleDrift var(--sparkle-duration, 3s) ease-in-out infinite;
+  animation-delay: var(--sparkle-delay, 0s);
+}
+
+/* ── Delight: Today Glow ── */
+@keyframes todayGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+  50% { box-shadow: 0 0 12px 2px rgba(249, 115, 22, 0.15); }
+}
+
+.today-glow {
+  animation: todayGlow 3s ease-in-out infinite;
+}
+
+/* ── Delight: Toast Slide ── */
+@keyframes toastSlideIn {
+  from { transform: translateY(100%) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to { transform: translateY(100%) scale(0.95); opacity: 0; }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toast-exit {
+  animation: toastSlideOut 0.25s ease-in forwards;
 }
 
 /* ── Reduced Motion ── */

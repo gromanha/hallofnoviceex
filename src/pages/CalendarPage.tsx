@@ -407,7 +407,7 @@ export const CalendarPage: React.FC = () => {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               {selectedEvent.image && !eventImgError && (
-                <div className="h-56 bg-[var(--color-surface)]">
+                <div className="h-64 bg-[var(--color-surface)]">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
@@ -421,7 +421,7 @@ export const CalendarPage: React.FC = () => {
                 <div className="h-16 bg-[var(--color-surface)]" />
               ) : null}
 
-              <div className="p-6 pt-4 mt-6 space-y-4">
+              <div className="p-6 pt-6 border-t border-[var(--color-outline)]/30 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span
                     className="type-label px-2.5 py-1 rounded-lg border text-white"

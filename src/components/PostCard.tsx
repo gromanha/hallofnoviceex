@@ -70,50 +70,50 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
             </div>
           )}
 
-          <h3 className="font-display font-bold text-base text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
+          <h3 className="type-title text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
             {post.title}
           </h3>
 
           {post.subtitle && (
-            <p className="text-xs text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 leading-relaxed break-words">
+            <p className="type-body text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 break-words">
               {post.subtitle}
             </p>
           )}
         </div>
 
-        {/* Tags & Meta */}
-        <div className="pt-3 border-t border-[var(--color-outline)]/30 mt-3">
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {post.tags.slice(0, 3).map((tag, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
-                >
-                  <Tag className="w-2.5 h-2.5" />
-                  {tag}
+          {/* Tags & Meta */}
+          <div className="pt-3 border-t border-[var(--color-outline)]/30 mt-3">
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {post.tags.slice(0, 3).map((tag, i) => (
+                  <span
+                    key={i}
+                    className="type-label normal-case px-2 py-0.5 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
+                  >
+                    <Tag className="w-2.5 h-2.5 inline mr-1" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between type-caption text-[var(--color-on-surface-variant)]">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <User className="w-3 h-3" />
+                  {post.author_name}
                 </span>
-              ))}
-            </div>
-          )}
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {formattedDate}
+                </span>
+              </div>
 
-          <div className="flex items-center justify-between text-[10px] text-[var(--color-on-surface-variant)]">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <User className="w-3 h-3" />
-                {post.author_name}
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {formattedDate}
+              <span className="text-[var(--color-primary)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Ler <ArrowRight className="w-3 h-3" />
               </span>
             </div>
-
-            <span className="text-[var(--color-primary)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Ler <ArrowRight className="w-3 h-3" />
-            </span>
           </div>
-        </div>
 
       </div>
     </article>

@@ -74,11 +74,11 @@ export const RecipeDetailPage: React.FC = () => {
     return (
       <div className="max-w-xl text-center py-20 px-4 space-y-4">
         <ChefHat className="w-16 h-16 text-[var(--color-on-surface-variant)] mx-auto opacity-30" />
-        <h2 className="font-display font-bold text-xl text-[var(--color-on-surface)]">Receita nao encontrada</h2>
-        <p className="text-xs text-[var(--color-on-surface-variant)]">A receita solicitada nao existe ou foi removida.</p>
+        <h2 className="type-headline text-[var(--color-on-surface)]">Receita nao encontrada</h2>
+        <p className="type-body text-[var(--color-on-surface-variant)]">A receita solicitada nao existe ou foi removida.</p>
         <button
           onClick={() => navigate('/receitas')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-bold text-xs uppercase tracking-wider hover:bg-[var(--color-primary-deep)] transition-all shadow-md shadow-[var(--color-primary)]/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white type-label normal-case font-bold hover:bg-[var(--color-primary-deep)] transition-all shadow-md shadow-[var(--color-primary)]/20"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao Livro de Receitas
         </button>
@@ -92,14 +92,14 @@ export const RecipeDetailPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate('/receitas')}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao Livro
         </button>
 
         <button
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
         >
           {copied ? <Check className="w-4 h-4 text-[var(--color-sage)]" /> : <Share2 className="w-4 h-4" />}
           {copied ? 'Link Copiado!' : 'Compartilhar'}
@@ -110,22 +110,22 @@ export const RecipeDetailPage: React.FC = () => {
 
         <header className="space-y-4 text-center">
           {recipe.regional_cuisine && (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-secondary)]">
+            <p className="type-label text-[var(--color-secondary)]">
               Regional Cuisine: {recipe.regional_cuisine}
             </p>
           )}
 
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest">
+          <div className="type-label text-[var(--color-primary)] inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10">
             <UtensilsCrossed className="w-3.5 h-3.5" />
             {recipe.category?.replace('_', ' & ') || 'Receita'}
           </div>
 
-          <h1 className="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-[var(--color-on-surface)] leading-tight break-words">
+          <h1 className="type-display text-[var(--color-on-surface)] break-words">
             {recipe.title}
           </h1>
 
           {recipe.description && (
-            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed italic max-w-2xl mx-auto">
+            <p className="type-body italic text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
               {recipe.description}
             </p>
           )}
@@ -138,9 +138,9 @@ export const RecipeDetailPage: React.FC = () => {
                     <span className="text-lg mt-0.5">{quote.icon}</span>
                   )}
                   <div className="text-left">
-                    <p className="text-xs text-[var(--color-on-surface)] italic leading-relaxed">"{quote.text}"</p>
+                    <p className="type-body italic text-[var(--color-on-surface)]">"{quote.text}"</p>
                     {quote.speaker && (
-                      <p className="text-[10px] font-display font-bold text-[var(--color-secondary)] mt-1">
+                      <p className="type-caption font-display font-bold text-[var(--color-secondary)] mt-1">
                         — {quote.speaker}
                       </p>
                     )}
@@ -151,7 +151,7 @@ export const RecipeDetailPage: React.FC = () => {
           )}
         </header>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 py-4 border-y border-[var(--color-outline)]/30 text-[10px] font-semibold text-[var(--color-on-surface)]">
+        <div className="flex flex-wrap items-center justify-center gap-4 py-4 border-y border-[var(--color-outline)]/30 type-caption font-semibold text-[var(--color-on-surface)]">
           {recipe.difficulty && (
             <span className={`px-2.5 py-1 rounded-lg border ${DIFFICULTY_BADGE[recipe.difficulty] || DIFFICULTY_BADGE.Easy}`}>
               {recipe.difficulty}
@@ -186,29 +186,29 @@ export const RecipeDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {recipe.equipment && (
             <div className="bg-[var(--color-primary)]/5 rounded-xl p-5 border border-[var(--color-primary)]/10">
-              <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--color-primary)] mb-3 flex items-center gap-2">
+              <h3 className="type-label text-[var(--color-primary)] mb-3 flex items-center gap-2">
                 <UtensilsCrossed className="w-3.5 h-3.5" /> Equipment
               </h3>
-              <p className="text-xs text-[var(--color-on-surface)] leading-relaxed whitespace-pre-line">{recipe.equipment}</p>
+              <p className="type-body text-[var(--color-on-surface)] whitespace-pre-line">{recipe.equipment}</p>
             </div>
           )}
 
           {recipe.ingredient_sections && recipe.ingredient_sections.length > 0 && (
             <div className="bg-[var(--color-secondary)]/5 rounded-xl p-5 border border-[var(--color-secondary)]/10">
-              <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--color-secondary)] mb-3 flex items-center gap-2">
+              <h3 className="type-label text-[var(--color-secondary)] mb-3 flex items-center gap-2">
                 <ChefHat className="w-3.5 h-3.5" /> Ingredients
               </h3>
               <div className="space-y-4">
                 {recipe.ingredient_sections.map((section, si) => (
                   <div key={si}>
                     {section.section_name && (
-                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-secondary)] mb-2">
+                      <h4 className="type-caption font-bold text-[var(--color-secondary)] mb-2">
                         {section.section_name}
                       </h4>
                     )}
                     <ul className="space-y-1">
                       {section.items.map((item, ii) => (
-                        <li key={ii} className="text-xs text-[var(--color-on-surface)] flex items-baseline gap-2">
+                        <li key={ii} className="type-body text-[var(--color-on-surface)] flex items-baseline gap-2">
                           <span className="font-semibold text-[var(--color-primary)] whitespace-nowrap">
                             {[item.quantity, item.unit].filter(Boolean).join(' ')}
                           </span>
@@ -225,20 +225,20 @@ export const RecipeDetailPage: React.FC = () => {
 
         {recipe.instruction_sections && recipe.instruction_sections.length > 0 && (
           <div className="space-y-6">
-            <h3 className="font-display font-bold text-base text-[var(--color-on-surface)] border-b border-[var(--color-outline)]/30 pb-2">
+            <h3 className="type-title text-[var(--color-on-surface)] border-b border-[var(--color-outline)]/30 pb-2">
               Instructions
             </h3>
             {recipe.instruction_sections.map((section, si) => (
               <div key={si} className="space-y-3">
                 {section.section_name && (
-                  <h4 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--color-primary)]">
+                  <h4 className="type-label text-[var(--color-primary)]">
                     {section.section_name}
                   </h4>
                 )}
                 <ol className="space-y-3">
                   {section.steps.map((step, sti) => (
-                    <li key={sti} className="flex items-start gap-3 text-xs text-[var(--color-on-surface)] leading-relaxed">
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--color-primary)] text-white text-[10px] font-bold flex items-center justify-center mt-0.5">
+                    <li key={sti} className="flex items-start gap-3 type-body text-[var(--color-on-surface)]">
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--color-primary)] text-white type-caption font-bold flex items-center justify-center mt-0.5">
                         {sti + 1}
                       </span>
                       <span>{step}</span>

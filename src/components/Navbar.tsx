@@ -37,10 +37,10 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
             <div>
-              <span className="font-display font-bold tracking-wider text-sm sm:text-base text-[var(--color-on-surface)] block leading-none">
+              <span className="type-title tracking-wider text-[var(--color-on-surface)] block leading-none">
                 HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
               </span>
-              <span className="font-sans text-[10px] tracking-widest text-[var(--color-on-surface-variant)] uppercase block mt-0.5">
+              <span className="type-label normal-case text-[var(--color-on-surface-variant)] block mt-0.5">
                 Majestic Battle Academy
               </span>
             </div>
@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
 
             <NavLink to="/calendario" className={linkClass}>
               <Calendar className="w-4 h-4" />
-              Calendario
+              Calendário
             </NavLink>
 
             <NavLink to="/receitas" className={linkClass}>
@@ -134,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
           </NavLink>
           <NavLink to="/calendario" className={mobileLinkClass}>
             <Calendar className="w-4 h-4" />
-            Calendario
+            Calendário
           </NavLink>
           <NavLink to="/receitas" className={mobileLinkClass}>
             <UtensilsCrossed className="w-4 h-4" />

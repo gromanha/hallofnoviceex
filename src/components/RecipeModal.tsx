@@ -97,7 +97,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      setErrorMsg('Titulo e obrigatorio.');
+      setErrorMsg('Título é obrigatório.');
       return;
     }
     setSaving(true);
@@ -231,7 +231,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
 
                 {/* Title */}
                 <div>
-                  <label className="block text-xs font-bold text-[var(--color-on-surface)] uppercase tracking-wider mb-1.5">Titulo da Receita *</label>
+                  <label className="block text-xs font-bold text-[var(--color-on-surface)] uppercase tracking-wider mb-1.5">Título da Receita *</label>
                   <input ref={titleInputRef} type="text" required value={title} onChange={e => setTitle(e.target.value)} maxLength={200} className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none" />
                 </div>
 

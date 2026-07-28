@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
-  PlusCircle, X, Clock, Tag, RefreshCw, GripVertical, UtensilsCrossed,
+  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed,
 } from 'lucide-react';
 import { Post, MagicalEvent, EventTypeItem, Recipe } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
@@ -11,6 +11,7 @@ import { RecipeModal } from '../components/RecipeModal';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
+import { useFocusTrap } from '../lib/useFocusTrap';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 
 const MONTHS = [
@@ -418,6 +419,8 @@ export const AdminPage: React.FC = () => {
 
   useEscapeKey(() => { setShowEventForm(false); setEditingEventId(null); }, showEventForm);
   useEscapeKey(() => { setShowTypeForm(false); setEditingTypeId(null); }, showTypeForm);
+  const eventModalRef = useFocusTrap(showEventForm);
+  const typeModalRef = useFocusTrap(showTypeForm);
 
   const filteredPosts = posts.filter(p => {
     if (statusFilter === 'all') return true;
@@ -425,36 +428,39 @@ export const AdminPage: React.FC = () => {
   });
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
       {/* Header do Painel Admin */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="glass rounded-2xl p-8 border border-[var(--color-outline)]/50 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary-light)] text-xs font-bold uppercase">
-            <ShieldCheck className="w-4 h-4 text-[var(--color-secondary)]" />
+          <div className="type-label text-[var(--color-primary)] inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20">
+            <ShieldCheck className="w-4 h-4" />
             Área Administrativa
           </div>
-          <h1 className="font-display font-bold text-2xl sm:text-4xl text-[var(--color-on-surface)]">
+          <h1 className="type-display text-[var(--color-on-surface)]">
             Painel Administrativo
           </h1>
-          <p className="text-xs sm:text-sm text-[var(--color-on-surface)]/90">
-            Conectado como <strong className="text-white">{admin.display_name}</strong> (@{admin.username})
+          <p className="type-body text-[var(--color-on-surface-variant)]">
+            Conectado como <strong className="text-[var(--color-on-surface)]">{admin.display_name}</strong> (@{admin.username})
           </p>
         </div>
 
         <button
           onClick={onLogout}
-          className="px-5 py-2.5 rounded-xl bg-[var(--color-crimson)]/20 hover:bg-[var(--color-crimson)]/30 text-[var(--color-crimson)] border border-[var(--color-crimson)]/40 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shrink-0"
+          className="px-5 py-2.5 rounded-xl bg-[var(--color-crimson)]/10 hover:bg-[var(--color-crimson)]/20 text-[var(--color-crimson)] border border-[var(--color-crimson)]/30 type-label normal-case font-bold flex items-center gap-2 transition-all shrink-0"
         >
           <LogOut className="w-4 h-4" /> Sair do Painel
         </button>
       </div>
 
       {/* Abas de Gerenciamento */}
-      <div className="flex items-center gap-2 border-b border-[var(--color-outline-variant)] pb-3 overflow-x-auto">
+      <div role="tablist" className="flex items-center gap-2 border-b border-[var(--color-outline-variant)] pb-3 overflow-x-auto">
         <button
+          role="tab"
+          aria-selected={activeTab === 'posts'}
+          aria-controls="tabpanel-posts"
           onClick={() => setActiveTab('posts')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl type-title transition-all whitespace-nowrap ${
             activeTab === 'posts'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -465,8 +471,11 @@ export const AdminPage: React.FC = () => {
         </button>
 
         <button
+          role="tab"
+          aria-selected={activeTab === 'events'}
+          aria-controls="tabpanel-events"
           onClick={() => setActiveTab('events')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl type-title transition-all whitespace-nowrap ${
             activeTab === 'events'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -477,8 +486,11 @@ export const AdminPage: React.FC = () => {
         </button>
 
         <button
+          role="tab"
+          aria-selected={activeTab === 'types'}
+          aria-controls="tabpanel-types"
           onClick={() => setActiveTab('types')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl type-title transition-all whitespace-nowrap ${
             activeTab === 'types'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -489,8 +501,11 @@ export const AdminPage: React.FC = () => {
         </button>
 
         <button
+          role="tab"
+          aria-selected={activeTab === 'recipes'}
+          aria-controls="tabpanel-recipes"
           onClick={() => setActiveTab('recipes')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl type-title transition-all whitespace-nowrap ${
             activeTab === 'recipes'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -503,7 +518,7 @@ export const AdminPage: React.FC = () => {
 
       {/* Error Banner */}
       {eventError && (
-        <div className="text-xs text-[var(--color-crimson)] bg-[var(--color-crimson)]/10 border border-[var(--color-crimson)]/30 rounded-xl px-4 py-3 flex items-center justify-between">
+        <div className="type-body text-[var(--color-crimson)] bg-[var(--color-crimson)]/10 border border-[var(--color-crimson)]/30 rounded-xl px-4 py-3 flex items-center justify-between">
           <span>{eventError}</span>
           <button onClick={() => setEventError(null)} className="underline font-bold ml-2">Dispensar</button>
         </div>
@@ -511,7 +526,7 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ ABA 1: POSTAGENS ═══════════════════ */}
       {activeTab === 'posts' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="tabpanel-posts" aria-labelledby="tab-posts" className="space-y-6">
 
           {/* Controles */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -521,7 +536,7 @@ export const AdminPage: React.FC = () => {
                 setSelectedPost(null);
                 setIsPostModalOpen(true);
               }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] type-label normal-case font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
             >
               <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Postagem / Guia
             </button>
@@ -532,24 +547,24 @@ export const AdminPage: React.FC = () => {
               <div className="flex items-center gap-1 bg-[var(--color-background)] p-1 rounded-xl border border-[var(--color-outline-variant)]">
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-slate-500'
+                  className={`px-3 py-1 rounded-lg type-body font-bold transition-all ${
+                    statusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-on-surface-variant)]'
                   }`}
                 >
                   Todas
                 </button>
                 <button
                   onClick={() => setStatusFilter('published')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-slate-500'
+                  className={`px-3 py-1 rounded-lg type-body font-bold transition-all ${
+                    statusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-[var(--color-on-surface-variant)]'
                   }`}
                 >
                   Publicadas
                 </button>
                 <button
                   onClick={() => setStatusFilter('draft')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    statusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-slate-500'
+                  className={`px-3 py-1 rounded-lg type-body font-bold transition-all ${
+                    statusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-[var(--color-on-surface-variant)]'
                   }`}
                 >
                   Rascunhos
@@ -558,13 +573,13 @@ export const AdminPage: React.FC = () => {
 
               {/* Busca */}
               <div className="relative w-full md:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]" />
                 <input
                   type="text"
                   value={postsSearch}
                   onChange={e => setPostsSearch(e.target.value)}
                   placeholder="Buscar postagem..."
-                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-xs text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] type-body text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                 />
                 {postsSearch && (
                   <button
@@ -586,15 +601,15 @@ export const AdminPage: React.FC = () => {
             <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : filteredPosts.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-              <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma postagem cadastrada.</p>
-              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Clique em "Nova Postagem / Guia" para criar a primeira publicação.</p>
+              <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
+              <p className="type-title text-[var(--color-on-surface)]">Nenhuma postagem cadastrada.</p>
+              <p className="type-body text-[var(--color-on-surface-variant)] mt-1">Clique em "Nova Postagem / Guia" para criar a primeira publicação.</p>
             </div>
           ) : (
             <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-2xl overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-[var(--color-on-surface)]">
-                  <thead className="bg-[var(--color-background)] border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] font-bold uppercase tracking-wider">
+                <table className="w-full text-left type-body text-[var(--color-on-surface)]">
+                  <thead className="bg-[var(--color-background)] border-b border-[var(--color-outline-variant)] type-label text-[var(--color-on-surface-variant)]">
                     <tr>
                       <th className="p-4">Título</th>
                       <th className="p-4">Categoria</th>
@@ -608,18 +623,18 @@ export const AdminPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
                     {filteredPosts.map(post => (
                       <tr key={post.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
-                        <td className="p-4 font-bold text-sm max-w-xs truncate">
+                        <td className="p-4 type-title max-w-xs truncate">
                           {post.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
+                          <span className="type-caption font-bold text-[var(--color-primary)] px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10">
                             {post.category}
                           </span>
                         </td>
                         <td className="p-4">
                           <button
                             onClick={() => handleToggleStatus(post)}
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${
+                            className={`px-2.5 py-1 rounded-full type-caption font-bold transition-all cursor-pointer hover:opacity-80 ${
                               post.status === 'published'
                                 ? 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border border-[var(--color-sage)]/30'
                                 : 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border border-[var(--color-amber)]/30'
@@ -631,18 +646,18 @@ export const AdminPage: React.FC = () => {
                         <td className="p-4">
                           <button
                             onClick={() => handleTogglePin(post)}
-                            className={`p-1.5 rounded-lg border transition-all ${
+                            className={`p-1.5 rounded-lg border transition-all cursor-pointer hover:opacity-80 ${
                               post.is_pinned
                                 ? 'bg-[var(--color-secondary)] text-[var(--color-background)] border-[var(--color-secondary)]'
-                                : 'text-slate-400 border-[var(--color-outline-variant)] hover:text-[var(--color-secondary)]'
+                                : 'text-[var(--color-on-surface-variant)] border-[var(--color-outline-variant)] hover:text-[var(--color-secondary)]'
                             }`}
                             title={post.is_pinned ? 'Remover dos Destaques' : 'Fixar em Destaque'}
                           >
                             <Pin className="w-4 h-4 fill-current" />
                           </button>
                         </td>
-                        <td className="p-4 text-slate-500">{post.author_name}</td>
-                        <td className="p-4 text-slate-500">
+                        <td className="p-4 text-[var(--color-on-surface-variant)]">{post.author_name}</td>
+                        <td className="p-4 text-[var(--color-on-surface-variant)]">
                           {post.published_at ? new Date(post.published_at).toLocaleDateString('pt-BR') : '-'}
                         </td>
                         <td className="p-4 text-right space-x-2">
@@ -687,14 +702,14 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ ABA 2: EVENTOS DO CALENDÁRIO ═══════════════════ */}
       {activeTab === 'events' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="tabpanel-events" aria-labelledby="tab-events" className="space-y-6">
 
           {/* Controles de Eventos */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
 
             <button
               onClick={openEventCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:shadow-md"
             >
               <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Evento
             </button>
@@ -713,7 +728,7 @@ export const AdminPage: React.FC = () => {
             <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : events.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-              <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+              <Calendar className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
               <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhum evento cadastrado.</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Clique em "Novo Evento" para criar o primeiro registro no calendário.</p>
             </div>
@@ -750,7 +765,7 @@ export const AdminPage: React.FC = () => {
                             {getTypeLabel(evt.type)}
                           </span>
                         </td>
-                        <td className="p-4 text-slate-500">{evt.instructor || '—'}</td>
+                        <td className="p-4 text-[var(--color-on-surface-variant)]">{evt.instructor || '—'}</td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
@@ -785,14 +800,14 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ ABA 3: TIPOS DE ATIVIDADE ═══════════════════ */}
       {activeTab === 'types' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="tabpanel-types" aria-labelledby="tab-types" className="space-y-6">
 
           {/* Controles de Tipos */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
 
             <button
               onClick={openTypeCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:shadow-md"
             >
               <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Tipo
             </button>
@@ -811,7 +826,7 @@ export const AdminPage: React.FC = () => {
             <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : eventTypes.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-              <Tag className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+              <Tag className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
               <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhum tipo cadastrado.</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Clique em "Novo Tipo" para criar o primeiro tipo de atividade.</p>
             </div>
@@ -832,15 +847,15 @@ export const AdminPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
                     {eventTypes.map(et => (
                       <tr key={et.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
-                        <td className="p-4 text-slate-400">
-                          <GripVertical className="w-4 h-4" />
+                        <td className="p-4 text-[var(--color-on-surface-variant)]">
+                          {et.sort_order}
                         </td>
                         <td className="p-4 font-mono text-xs text-[var(--color-on-secondary-deep)]">{et.key}</td>
                         <td className="p-4 font-semibold">{et.label}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded-full border border-slate-300" style={{ backgroundColor: et.color }} />
-                            <span className="text-xs font-mono text-slate-500">{et.color}</span>
+                            <div className="w-4 h-4 rounded-full border border-[var(--color-outline)]" style={{ backgroundColor: et.color }} />
+                            <span className="text-xs font-mono text-[var(--color-on-surface-variant)]">{et.color}</span>
                           </div>
                         </td>
                         <td className="p-4 text-xs">{et.icon}</td>
@@ -878,7 +893,7 @@ export const AdminPage: React.FC = () => {
 
       {/* ═══════════════════ ABA 4: RECEITAS ═══════════════════ */}
       {activeTab === 'recipes' && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="tabpanel-recipes" aria-labelledby="tab-recipes" className="space-y-6">
 
           {/* Controles */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -888,7 +903,7 @@ export const AdminPage: React.FC = () => {
                 setSelectedRecipe(null);
                 setIsRecipeModalOpen(true);
               }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:shadow-md"
             >
               <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Receita
             </button>
@@ -898,26 +913,26 @@ export const AdminPage: React.FC = () => {
               <div className="flex items-center gap-1 bg-[var(--color-background)] p-1 rounded-xl border border-[var(--color-outline-variant)]">
                 <button
                   onClick={() => setRecipeStatusFilter('all')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-slate-500'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-on-surface-variant)]'}`}
                 >
                   Todas
                 </button>
                 <button
                   onClick={() => setRecipeStatusFilter('published')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-slate-500'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'published' ? 'bg-[var(--color-sage)] text-white' : 'text-[var(--color-on-surface-variant)]'}`}
                 >
                   Publicadas
                 </button>
                 <button
                   onClick={() => setRecipeStatusFilter('draft')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-slate-500'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${recipeStatusFilter === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'text-[var(--color-on-surface-variant)]'}`}
                 >
                   Rascunhos
                 </button>
               </div>
 
               <div className="relative w-full md:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]" />
                 <input
                   type="text"
                   value={recipesSearch}
@@ -929,6 +944,7 @@ export const AdminPage: React.FC = () => {
                   <button
                     onClick={() => setRecipesSearch('')}
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-[var(--color-primary-light)] text-[var(--color-on-surface-variant)] transition-colors"
+                    aria-label="Limpar busca"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -943,7 +959,7 @@ export const AdminPage: React.FC = () => {
             <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
           ) : recipes.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-              <UtensilsCrossed className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+              <UtensilsCrossed className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
               <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma receita cadastrada.</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Clique em "Nova Receita" para criar a primeira.</p>
             </div>
@@ -953,11 +969,11 @@ export const AdminPage: React.FC = () => {
                 <table className="w-full text-left text-xs text-[var(--color-on-surface)]">
                   <thead className="bg-[var(--color-background)] border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] font-bold uppercase tracking-wider">
                     <tr>
-                      <th className="p-4">Titulo</th>
+                      <th className="p-4">Título</th>
                       <th className="p-4">Categoria</th>
                       <th className="p-4">Dificuldade</th>
                       <th className="p-4">Status</th>
-                      <th className="p-4 text-right">Acoes</th>
+                      <th className="p-4 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
@@ -1033,7 +1049,7 @@ export const AdminPage: React.FC = () => {
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
       {showEventForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'} onClick={() => { setShowEventForm(false); setEditingEventId(null); }}>
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div ref={eventModalRef} className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -1041,7 +1057,7 @@ export const AdminPage: React.FC = () => {
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
                 <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de evento">
-                  <X className="w-5 h-5 text-slate-500" />
+                  <X className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
                 </button>
               </div>
 
@@ -1066,13 +1082,13 @@ export const AdminPage: React.FC = () => {
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Título *</label>
                 <input type="text" required value={eventForm.title} onChange={e => setEventField('title', e.target.value)} maxLength={200} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
-                <p className="text-[9px] text-slate-400 mt-1">Máximo 200 caracteres</p>
+                <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">Máximo 200 caracteres</p>
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Descrição</label>
                 <textarea rows={3} value={eventForm.description} onChange={e => setEventField('description', e.target.value)} maxLength={2000} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 resize-none" />
-                <p className="text-[9px] text-slate-400 mt-1">{eventForm.description.length}/2000</p>
+                <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">{eventForm.description.length}/2000</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1108,10 +1124,10 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-outline-variant)]">
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-outline)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl transition-colors">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingEvent} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                <button type="submit" disabled={savingEvent} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all hover:shadow-md hover:shadow-[var(--color-primary)]/20">
                   <Check className="w-4 h-4 text-[var(--color-secondary)]" />
                   {savingEvent ? 'Salvando…' : editingEventId ? 'Salvar Evento' : 'Criar Evento'}
                 </button>
@@ -1124,7 +1140,7 @@ export const AdminPage: React.FC = () => {
       {/* ═══════════════════ MODAL: TIPO DE ATIVIDADE ═══════════════════ */}
       {showTypeForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'} onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }}>
-          <div className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div ref={typeModalRef} className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -1132,7 +1148,7 @@ export const AdminPage: React.FC = () => {
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
                 <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de tipo">
-                  <X className="w-5 h-5 text-slate-500" />
+                  <X className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
                 </button>
               </div>
 
@@ -1146,7 +1162,7 @@ export const AdminPage: React.FC = () => {
                   placeholder="ex: spells, alchemy"
                   className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
                 />
-                <p className="text-[9px] text-slate-400 mt-1">Slug lowercase, sem espaços (ex: my-type)</p>
+                <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">Slug lowercase, sem espaços (ex: my-type)</p>
               </div>
 
               <div>
@@ -1205,10 +1221,10 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-outline-variant)]">
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-outline)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl transition-colors">
                   Cancelar
                 </button>
-                <button type="submit" disabled={savingType} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                <button type="submit" disabled={savingType} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all hover:shadow-md hover:shadow-[var(--color-primary)]/20">
                   <Check className="w-4 h-4 text-[var(--color-secondary)]" />
                   {savingType ? 'Salvando…' : editingTypeId ? 'Salvar Tipo' : 'Criar Tipo'}
                 </button>
@@ -1245,6 +1261,6 @@ export const AdminPage: React.FC = () => {
         onCancel={() => setConfirmState(prev => ({ ...prev, open: false }))}
       />
 
-    </div>
+    </main>
   );
 };

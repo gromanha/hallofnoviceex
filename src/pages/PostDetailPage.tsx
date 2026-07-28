@@ -75,11 +75,11 @@ export const PostDetailPage: React.FC = () => {
     return (
       <div className="max-w-xl text-center py-20 px-4 space-y-4">
         <BookOpen className="w-16 h-16 text-[var(--color-on-surface-variant)] mx-auto opacity-30" />
-        <h2 className="font-display font-bold text-xl text-[var(--color-on-surface)]">Postagem não encontrada</h2>
-        <p className="text-xs text-[var(--color-on-surface-variant)]">A publicação solicitada não existe ou foi removida pelo autor.</p>
+        <h2 className="type-headline text-[var(--color-on-surface)]">Postagem não encontrada</h2>
+        <p className="type-body text-[var(--color-on-surface-variant)]">A publicação solicitada não existe ou foi removida pelo autor.</p>
         <button
           onClick={() => navigate('/academia')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-bold text-xs uppercase tracking-wider hover:bg-[var(--color-primary-deep)] transition-all shadow-md shadow-[var(--color-primary)]/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white type-label normal-case font-bold hover:bg-[var(--color-primary-deep)] transition-all shadow-md shadow-[var(--color-primary)]/20"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar para o Códice
         </button>
@@ -101,14 +101,14 @@ export const PostDetailPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate('/academia')}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao Códice
         </button>
 
         <button
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
           aria-label={copied ? 'Link copiado' : 'Compartilhar postagem'}
         >
           {copied ? <Check className="w-4 h-4 text-[var(--color-sage)]" /> : <Share2 className="w-4 h-4" />}
@@ -117,21 +117,21 @@ export const PostDetailPage: React.FC = () => {
       </div>
 
       <header className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest">
+        <div className="type-label text-[var(--color-primary)] inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10">
           {post.category}
         </div>
 
-        <h1 className="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-[var(--color-on-surface)] leading-tight break-words">
+        <h1 className="type-display text-[var(--color-on-surface)] break-words">
           {post.title}
         </h1>
 
         {post.subtitle && (
-          <p className="text-sm sm:text-base text-[var(--color-on-surface-variant)] leading-relaxed italic">
+          <p className="type-body italic text-[var(--color-on-surface-variant)]">
             {post.subtitle}
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--color-on-surface-variant)] pt-3 border-t border-[var(--color-outline)]/30">
+        <div className="flex flex-wrap items-center gap-4 type-body text-[var(--color-on-surface-variant)] pt-3 border-t border-[var(--color-outline)]/30">
           <span className="flex items-center gap-1.5 font-medium">
             <User className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
             {post.author_name}
@@ -154,7 +154,7 @@ export const PostDetailPage: React.FC = () => {
         </div>
       )}
 
-      <div className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 leading-relaxed text-sm text-[var(--color-on-surface)]">
+      <div className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)]">
         <div
           className="prose max-w-none space-y-4"
           dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
@@ -163,13 +163,13 @@ export const PostDetailPage: React.FC = () => {
 
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-[var(--color-outline)]/30">
-          <span className="text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider flex items-center gap-1">
+          <span className="type-label text-[var(--color-on-surface-variant)] flex items-center gap-1">
             <Tag className="w-3 h-3 text-[var(--color-secondary)]" /> Tags:
           </span>
           {post.tags.map((tag, i) => (
             <span
               key={i}
-              className="px-2 py-0.5 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-[10px] font-semibold"
+              className="type-caption font-semibold px-2 py-0.5 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
             >
               #{tag}
             </span>

@@ -31,7 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme }) =
             <span className="font-display font-bold tracking-wider text-xs text-[var(--color-on-surface)] block leading-none truncate">
               HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
             </span>
-            <span className="font-sans text-[9px] tracking-widest text-[var(--color-on-surface-variant)] uppercase block mt-1">
+            <span className="font-sans text-[10px] tracking-widest text-[var(--color-on-surface-variant)] uppercase block mt-1">
               Majestic Battle Academy
             </span>
           </div>
@@ -52,7 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme }) =
 
         <NavLink to="/calendario" className={linkClass}>
           <Calendar className="w-4 h-4 shrink-0" />
-          Calendario
+          Calendário
         </NavLink>
 
         <NavLink to="/receitas" className={linkClass}>

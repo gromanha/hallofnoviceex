@@ -57,7 +57,7 @@ function getWeekdayOfMonth(monthName: string, day: number, year: number): number
 }
 
 function isEventPast(event: MagicalEvent): boolean {
-  if (event.is_recurring) return true;
+  if (event.is_recurring) return false;
   const evEndMonthIdx = REAL_MONTH_NAMES.indexOf(event.end_month || event.month);
   const evEndDay = event.end_day || event.day;
   const curMonthIdx = REAL_MONTH_NAMES.indexOf(REAL_MONTH_NAMES[TODAY.getMonth()]);

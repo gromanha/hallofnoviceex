@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
-  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed,
+  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed, Copy,
 } from 'lucide-react';
 import { Post, MagicalEvent, EventTypeItem, Recipe } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
@@ -282,6 +282,26 @@ export const AdminPage: React.FC = () => {
   function openEventCreate() {
     setEditingEventId(null);
     setEventForm({ ...EMPTY_EVENT_FORM, type: eventTypes[0]?.key || '' });
+    setShowEventForm(true);
+  }
+
+  function openEventClone(evt: MagicalEvent) {
+    setEditingEventId(null);
+    setEventForm({
+      month: evt.month,
+      day: evt.day,
+      time: evt.time,
+      title: evt.title + ' (Cópia)',
+      description: evt.description,
+      instructor: evt.instructor || '',
+      type: evt.type,
+      image: evt.image || '',
+      crystal: evt.crystal || false,
+      stars: evt.stars || false,
+      is_recurring: evt.is_recurring || false,
+      end_day: evt.end_day ?? null,
+      end_month: evt.end_month ?? null,
+    });
     setShowEventForm(true);
   }
 
@@ -818,6 +838,14 @@ export const AdminPage: React.FC = () => {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => openEventClone(evt)}
+                              className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-secondary)]"
+                              title="Clonar evento"
+                              aria-label={`Clonar evento: ${evt.title}`}
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
                             <button
                               onClick={() => openEventEdit(evt)}
                               className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-primary)]"

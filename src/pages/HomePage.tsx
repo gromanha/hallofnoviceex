@@ -64,7 +64,7 @@ export const HomePage: React.FC = () => {
           <img
             src="/id.png"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.12] blur-[1px] mix-blend-soft-light"
+            className="absolute inset-0 w-full h-full object-cover opacity-25 blur-[1px] mix-blend-soft-light"
             aria-hidden="true"
           />
           {/* Gradient veil over the image for delicacy */}

@@ -56,6 +56,17 @@ function getWeekdayOfMonth(monthName: string, day: number, year: number): number
   return new Date(year, monthIdx, day).getDay();
 }
 
+function isEventPast(event: MagicalEvent): boolean {
+  if (event.is_recurring) return false;
+  const evEndMonthIdx = REAL_MONTH_NAMES.indexOf(event.end_month || event.month);
+  const evEndDay = event.end_day || event.day;
+  const curMonthIdx = REAL_MONTH_NAMES.indexOf(REAL_MONTH_NAMES[TODAY.getMonth()]);
+  if (evEndMonthIdx === -1) return false;
+  if (evEndMonthIdx < curMonthIdx) return true;
+  if (evEndMonthIdx === curMonthIdx && evEndDay < TODAY.getDate()) return true;
+  return false;
+}
+
 function eventMatchesMonth(event: MagicalEvent, monthName: string, year: number): boolean {
   const evMonth = event.month.toLowerCase();
   const curMonth = monthName.toLowerCase();
@@ -357,20 +368,22 @@ export const CalendarPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-0.5 mt-1">
-                    {dayEvs.map(ev => {
-                      const tInfo = typeMap.get(ev.type);
-                      return (
-                        <button
-                          key={ev.id}
-                          onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}
-                          className="w-full text-left py-1.5 px-1.5 rounded-lg text-white type-caption font-medium truncate flex items-center gap-1 transition-transform hover:scale-[1.02]"
-                          style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
-                        >
-                          {ev.is_recurring && <RefreshCw className="w-2.5 h-2.5 shrink-0 opacity-80" />}
-                          <span className="truncate flex-1">{ev.title}</span>
-                        </button>
-                      );
-                    })}
+                     {dayEvs.map(ev => {
+                       const tInfo = typeMap.get(ev.type);
+                       const past = isEventPast(ev);
+                       return (
+                         <button
+                           key={ev.id}
+                           onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}
+                           className={`w-full text-left py-1.5 px-1.5 rounded-lg text-white type-caption font-medium truncate flex items-center gap-1 transition-transform hover:scale-[1.02] ${past ? 'opacity-40 saturate-[0.3] line-through' : ''}`}
+                           style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
+                         >
+                           {ev.is_recurring && <RefreshCw className="w-2.5 h-2.5 shrink-0 opacity-80" />}
+                           <span className="truncate flex-1">{ev.title}</span>
+                           {past && <span className="type-caption text-[8px] opacity-60 shrink-0">Encerrado</span>}
+                         </button>
+                       );
+                     })}
                   </div>
                 </div>
               );

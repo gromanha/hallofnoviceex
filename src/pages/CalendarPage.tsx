@@ -407,46 +407,56 @@ export const CalendarPage: React.FC = () => {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               {selectedEvent.image && !eventImgError && (
-                <div className="h-56 bg-[var(--color-surface)]">
+                <div className="h-56 bg-[var(--color-surface)] relative">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
                     className="w-full h-full object-contain"
                     onError={() => setEventImgError(true)}
                   />
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="absolute top-3 right-3 p-2 rounded-lg bg-[var(--color-background)]/60 backdrop-blur-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
+                    aria-label="Fechar detalhes do evento"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               )}
 
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                   <span
-                     className="type-label px-2.5 py-1 rounded-lg border text-white"
-                     style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.25)' }}
-                   >
-                     {selectedEvent.month} • Dia {selectedEvent.day}
-                   </span>
-                   <button
-                     onClick={() => setSelectedEvent(null)}
-                     className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
-                     aria-label="Fechar detalhes do evento"
-                   >
-                     <X className="w-4 h-4" />
-                   </button>
-                 </div>
+              {!selectedEvent.image || eventImgError && (
+                <div className="h-16 bg-[var(--color-surface)] relative">
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="absolute top-3 right-3 p-2 rounded-lg bg-[var(--color-background)]/60 backdrop-blur-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
+                    aria-label="Fechar detalhes do evento"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
 
-                 {selectedEvent.is_recurring && (
-                   <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 w-fit">
-                     <RefreshCw className="w-3 h-3" />
-                     Evento fixo — toda semana
-                   </span>
-                 )}
-
-                 {selectedEvent.end_day && (
-                   <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] border border-[var(--color-secondary)]/20 w-fit">
-                     <Calendar className="w-3 h-3" />
-                     Até {selectedEvent.end_day} de {selectedEvent.end_month || selectedEvent.month}
-                   </span>
-                 )}
+              <div className="p-6 pt-4 space-y-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span
+                    className="type-label px-2.5 py-1 rounded-lg border text-white"
+                    style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.25)' }}
+                  >
+                    {selectedEvent.month} • Dia {selectedEvent.day}
+                  </span>
+                  {selectedEvent.is_recurring && (
+                    <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 w-fit">
+                      <RefreshCw className="w-3 h-3" />
+                      Evento fixo — toda semana
+                    </span>
+                  )}
+                  {selectedEvent.end_day && (
+                    <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] border border-[var(--color-secondary)]/20 w-fit">
+                      <Calendar className="w-3 h-3" />
+                      Até {selectedEvent.end_day} de {selectedEvent.end_month || selectedEvent.month}
+                    </span>
+                  )}
+                </div>
 
                 <h2 className="type-title text-[var(--color-on-surface)]">
                   {selectedEvent.title}

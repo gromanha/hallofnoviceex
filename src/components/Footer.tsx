@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, BookOpen, MapPin } from 'lucide-react';
+import { MessageSquare, BookOpen, MapPin, ChevronUp, ExternalLink } from 'lucide-react';
 import logoUrl from '@/assets/logo.png';
 
 export const Footer: React.FC = () => {
@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
               <div className="w-10 h-10 rounded-lg overflow-hidden border border-[var(--color-secondary)]">
                 <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
               </div>
-              <span className="font-serif font-bold text-lg text-white tracking-wider">
+              <span className="font-serif font-bold text-lg text-[var(--color-on-surface)] tracking-wider">
                 HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>
               </span>
             </div>
@@ -28,20 +28,20 @@ export const Footer: React.FC = () => {
 
           {/* Coluna 2: Sede do Campus */}
           <div>
-            <h3 className="font-serif text-white font-bold text-base mb-4 flex items-center gap-2">
+            <h3 className="font-serif text-[var(--color-on-surface)] font-bold text-base mb-4 flex items-center gap-2">
               <MapPin className="w-4 h-4 text-[var(--color-secondary)]" />
               Campus Físico (FC House)
             </h3>
             <ul className="text-sm text-[var(--color-on-surface-variant)] space-y-2">
               <li><strong className="text-[var(--color-on-surface)]">Mundo:</strong> Behemoth (Primal)</li>
               <li><strong className="text-[var(--color-on-surface)]">Local:</strong> Mist — Ward 19, Plot 35</li>
-              <li><strong className="text-[var(--color-on-surface)]">Instalações:</strong> Grande Biblioteca, Salas Táticas, Refeitório & Observatório</li>
+              <li className="break-words"><strong className="text-[var(--color-on-surface)]">Instalações:</strong> Grande Biblioteca, Salas Táticas, Refeitório & Observatório</li>
             </ul>
           </div>
 
           {/* Coluna 3: Links e Discord */}
           <div>
-            <h3 className="font-serif text-white font-bold text-base mb-4 flex items-center gap-2">
+            <h3 className="font-serif text-[var(--color-on-surface)] font-bold text-base mb-4 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
               Matrícula Digital
             </h3>
@@ -56,12 +56,21 @@ export const Footer: React.FC = () => {
             >
               <MessageSquare className="w-4 h-4" />
               Entrar no Discord Oficial
+              <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
           </div>
 
         </div>
 
         <div className="border-t border-[var(--color-outline-variant)] pt-6 text-center text-xs text-[var(--color-on-surface-variant)]">
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--color-primary)] hover:text-white transition-all"
+            aria-label="Voltar ao topo"
+          >
+            <ChevronUp className="w-3 h-3" />
+            Voltar ao Topo
+          </button>
           <p>© 2026 Hall of the Novice EX. Desenvolvido para a comunidade de Final Fantasy XIV.</p>
           <p className="mt-1">Todos os direitos de imagem e marca pertencem à Square Enix Co., Ltd.</p>
         </div>

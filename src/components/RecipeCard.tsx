@@ -21,7 +21,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
   return (
     <article
       onClick={onClick}
-      className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      tabIndex={0}
+      role="link"
+      className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-secondary)]"
     >
       {recipe.cover_image && !imgError && (
         <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-900">
@@ -60,14 +63,14 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
       )}
 
       {!recipe.cover_image && (
-        <div className="relative h-24 bg-gradient-to-r from-[var(--color-secondary)]/10 to-[var(--color-primary)]/10 flex items-center justify-center">
+        <div className="relative h-32 bg-gradient-to-r from-[var(--color-secondary)]/10 to-[var(--color-primary)]/10 flex items-center justify-center">
           <ChefHat className="w-10 h-10 text-[var(--color-secondary)]/40" />
         </div>
       )}
 
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-crystal)] transition-colors mb-2 line-clamp-2 break-words">
+          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
             {recipe.title}
           </h3>
 
@@ -101,7 +104,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
               )}
             </div>
 
-            <span className="text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            <span className="text-[var(--color-primary)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
               Ver <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </div>

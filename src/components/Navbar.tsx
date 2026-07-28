@@ -34,12 +34,12 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
       isActive
-        ? 'bg-[var(--color-primary)] text-white shadow-sm'
+        ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-sm'
         : 'text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]'
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`;
+    `flex flex-col items-center gap-1 text-[10px] ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`;
 
   return (
     <header className="sticky top-0 z-40 bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-secondary)]/30 shadow-sm transition-colors">
@@ -49,13 +49,13 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
           {/* Logo / Brand */}
           <NavLink
             to="/"
-            className="flex items-center gap-3 text-left group focus:outline-none"
+            className="flex items-center gap-3 text-left group"
           >
             <div className="w-11 h-11 rounded-xl overflow-hidden border border-[var(--color-secondary)] shadow-md group-hover:scale-105 transition-transform">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
             <div>
-              <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[var(--color-primary)] dark:text-[var(--color-crystal)] block leading-none">
+              <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[var(--color-primary)] block leading-none">
                 HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>
               </span>
               <span className="font-sans text-xs tracking-wider text-[var(--color-on-surface-variant)] uppercase block mt-1">
@@ -65,7 +65,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
           </NavLink>
 
           {/* Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1" aria-label="Menu principal">
             <NavLink to="/" end className={linkClass}>
               <Home className="w-4 h-4" />
               Início
@@ -107,6 +107,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
               className="p-2.5 rounded-xl border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)] transition-colors"
               title="Alternar Tema Escuro/Claro"
               aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              aria-pressed={theme === 'dark'}
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5 text-amber-400" />}
             </button>
@@ -129,6 +130,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
               <button
                 onClick={onOpenLogin}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-xs"
+                aria-label="Fazer login no painel administrativo"
               >
                 <Shield className="w-4 h-4" />
                 <span className="hidden sm:inline">Painel Admin</span>
@@ -139,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
         </div>
 
         {/* Mobile Navigation bar */}
-        <div className="md:hidden flex items-center justify-around py-2.5 border-t border-[var(--color-outline-variant)] text-xs font-medium">
+        <nav className="md:hidden flex items-center justify-around py-2.5 border-t border-[var(--color-outline-variant)] text-xs font-medium" aria-label="Menu de navegação mobile">
           <NavLink to="/" end className={mobileLinkClass}>
             <Home className="w-4 h-4" />
             Início
@@ -164,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin }) => {
               Painel
             </NavLink>
           )}
-        </div>
+        </nav>
 
       </div>
     </header>

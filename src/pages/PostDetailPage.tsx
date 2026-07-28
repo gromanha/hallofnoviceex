@@ -139,7 +139,7 @@ export const PostDetailPage: React.FC = () => {
             {post.author_name}
           </span>
           <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-crystal)]" />
+            <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
             {formattedDate}
           </span>
         </div>
@@ -160,7 +160,7 @@ export const PostDetailPage: React.FC = () => {
       {/* Conteúdo Principal */}
       <div className="bg-[var(--color-surface)] p-6 sm:p-10 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm leading-relaxed text-sm sm:text-base text-[var(--color-on-surface)] space-y-4">
         <div
-          className="prose dark:prose-invert max-w-none space-y-4"
+          className="prose max-w-none space-y-4"
           dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
         />
       </div>

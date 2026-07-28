@@ -20,7 +20,10 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
   return (
     <article
       onClick={onClick}
-      className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      tabIndex={0}
+      role="link"
+      className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-secondary)]"
     >
       {/* Cover Image */}
       {post.cover_image && !imgError && (
@@ -67,7 +70,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
             </div>
           )}
 
-          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-crystal)] transition-colors mb-2 line-clamp-2 break-words">
+          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
             {post.title}
           </h3>
 
@@ -106,7 +109,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
               </span>
             </div>
 
-            <span className="text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            <span className="text-[var(--color-primary)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
               Ler <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </div>

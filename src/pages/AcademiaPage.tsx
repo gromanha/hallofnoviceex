@@ -78,7 +78,7 @@ export const AcademiaPage: React.FC = () => {
 
       {/* Prólogo do Reitor */}
       <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-2xl p-6 sm:p-8 shadow-sm space-y-3">
-        <h2 className="font-serif font-bold text-xl text-[var(--color-primary)] dark:text-[var(--color-crystal)] flex items-center gap-2">
+        <h2 className="font-serif font-bold text-xl text-[var(--color-primary)] flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-[var(--color-secondary)]" />
           Carta da Reitoria aos Estudantes
         </h2>

@@ -275,7 +275,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                       className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                         status === 'published'
                           ? 'bg-[var(--color-sage)] text-white shadow-xs'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]'
                       }`}
                     >
                       Publicado
@@ -286,7 +286,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                       className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                         status === 'draft'
                           ? 'bg-[var(--color-amber)] text-white shadow-xs'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]'
                       }`}
                     >
                       Rascunho
@@ -301,12 +301,12 @@ export const PostModal: React.FC<PostModalProps> = ({
                       Conteúdo da Postagem (Formatação Markdown / HTML) *
                     </label>
 
-                    <div className="flex items-center bg-slate-200 dark:bg-slate-800 p-1 rounded-lg text-xs font-medium">
+                    <div className="flex items-center bg-[var(--color-surface-alt)] p-1 rounded-lg text-xs font-medium">
                       <button
                         type="button"
                         onClick={() => setActiveTab('editor')}
                         className={`flex items-center gap-1 px-3 py-1 rounded-md transition-all ${
-                          activeTab === 'editor' ? 'bg-white dark:bg-slate-700 text-[var(--color-primary)] font-bold shadow-xs' : 'text-slate-600 dark:text-slate-400'
+                          activeTab === 'editor' ? 'bg-[var(--color-surface)] text-[var(--color-primary)] font-bold shadow-xs' : 'text-[var(--color-on-surface-variant)]'
                         }`}
                       >
                         <Edit3 className="w-3.5 h-3.5" /> Editor
@@ -315,7 +315,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                         type="button"
                         onClick={() => setActiveTab('preview')}
                         className={`flex items-center gap-1 px-3 py-1 rounded-md transition-all ${
-                          activeTab === 'preview' ? 'bg-white dark:bg-slate-700 text-[var(--color-primary)] font-bold shadow-xs' : 'text-slate-600 dark:text-slate-400'
+                          activeTab === 'preview' ? 'bg-[var(--color-surface)] text-[var(--color-primary)] font-bold shadow-xs' : 'text-[var(--color-on-surface-variant)]'
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" /> Pré-visualização
@@ -333,7 +333,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                       className="w-full px-4 py-3 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] font-mono text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none leading-relaxed"
                     />
                   ) : (
-                    <div className="min-h-[300px] p-6 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] prose dark:prose-invert max-w-none">
+                    <div className="min-h-[300px] p-6 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] prose max-w-none">
                       <div dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
                     </div>
                   )}
@@ -342,7 +342,7 @@ export const PostModal: React.FC<PostModalProps> = ({
               </div>
 
               {/* Footer Buttons */}
-              <div className="px-6 py-4 bg-slate-100 dark:bg-slate-900 border-t border-[var(--color-outline-variant)] flex items-center justify-between">
+              <div className="px-6 py-4 bg-[var(--color-surface-alt)] border-t border-[var(--color-outline-variant)] flex items-center justify-between">
                 {post?.id && onDelete ? (
                   <button
                     type="button"
@@ -359,7 +359,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
+                    className="px-5 py-2.5 rounded-xl border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] text-xs font-bold hover:bg-[var(--color-surface-alt)] transition-all"
                   >
                     Cancelar
                   </button>

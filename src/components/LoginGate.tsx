@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useEscapeKey } from '../lib/useEscapeKey';
@@ -14,6 +14,21 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab' || !modalRef.current) return;
+    const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,8 +63,10 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
       transition={{ duration: 0.2 }}
     >
       <motion.div
+        ref={modalRef}
         className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative"
         onClick={e => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
@@ -60,7 +77,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
+            className="absolute top-4 right-4 p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-slate-500"
             aria-label="Fechar modal de login"
           >
             <X className="w-5 h-5" />

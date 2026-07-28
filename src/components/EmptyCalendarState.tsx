@@ -12,8 +12,8 @@ export const EmptyCalendarState: React.FC = () => {
       className="col-span-7 my-8 sm:my-12"
     >
       <div className="bg-[var(--color-surface)] border-2 border-dashed border-[var(--color-primary)]/20 rounded-2xl p-6 sm:p-8 text-center max-w-xl mx-auto parchment-texture">
-        <div className="w-16 h-16 bg-[var(--color-primary-light)] dark:bg-teal-950/40 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CalendarPlus className="w-8 h-8 text-[var(--color-primary)] dark:text-[var(--color-crystal)]" />
+        <div className="w-16 h-16 bg-[var(--color-primary-light)] rounded-full flex items-center justify-center mx-auto mb-4">
+          <CalendarPlus className="w-8 h-8 text-[var(--color-primary)]" />
         </div>
 
         <h3 className="font-serif text-xl sm:text-2xl font-bold text-[var(--color-on-surface)] mb-2">

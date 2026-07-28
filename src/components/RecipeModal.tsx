@@ -386,15 +386,15 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
                   </div>
                   <div className="flex items-end gap-3">
                     <span className="text-xs font-bold uppercase text-[var(--color-on-surface)]">Status:</span>
-                    <button type="button" onClick={() => setStatus('published')} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${status === 'published' ? 'bg-[var(--color-sage)] text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600'}`}>Publicado</button>
-                    <button type="button" onClick={() => setStatus('draft')} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${status === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600'}`}>Rascunho</button>
+                    <button type="button" onClick={() => setStatus('published')} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${status === 'published' ? 'bg-[var(--color-sage)] text-white' : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]'}`}>Publicado</button>
+                    <button type="button" onClick={() => setStatus('draft')} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${status === 'draft' ? 'bg-[var(--color-amber)] text-white' : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]'}`}>Rascunho</button>
                   </div>
                 </div>
 
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 bg-slate-100 dark:bg-slate-900 border-t border-[var(--color-outline-variant)] flex items-center justify-between">
+              <div className="px-6 py-4 bg-[var(--color-surface-alt)] border-t border-[var(--color-outline-variant)] flex items-center justify-between">
                 {recipe?.id && onDelete ? (
                   <button type="button" onClick={handleDelete} disabled={deleting || saving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[var(--color-crimson)] border border-[var(--color-crimson)]/30 hover:bg-[var(--color-crimson)]/10 text-xs font-bold transition-all disabled:opacity-50">
                     <Trash2 className="w-4 h-4" />
@@ -402,7 +402,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
                   </button>
                 ) : <div />}
                 <div className="flex items-center gap-3">
-                  <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">Cancelar</button>
+                  <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] text-xs font-bold hover:bg-[var(--color-surface-alt)] transition-all">Cancelar</button>
                   <button type="submit" disabled={saving || deleting} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-bold transition-all shadow-md disabled:opacity-50">
                     <Save className="w-4 h-4" />
                     {saving ? 'Salvando...' : 'Salvar Receita'}

@@ -66,6 +66,12 @@ body {
   background: color-mix(in srgb, var(--color-primary) 70%, transparent);
 }
 
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-variant) transparent;
+}
+
 @theme {
   --font-serif: "Cinzel", "Playfair Display", Georgia, serif;
   --font-sans: "Inter", "Hanken Grotesk", sans-serif;
@@ -171,53 +177,10 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ── Hardening Utilities ── */
-.break-words {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  hyphens: auto;
-}
-
-.min-w-0 {
-  min-width: 0;
-}
-
-/* Prevent flex/grid items from overflowing their containers */
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-
 /* Ensure images never overflow their containers */
 img {
   max-width: 100%;
   height: auto;
-}
-
-/* Screen reader only utility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
 }
 
 /* Recipe Parchment Card */
@@ -231,4 +194,14 @@ img {
 :root[data-theme="dark"] .parchment-recipe {
   background: linear-gradient(135deg, #2a2520 0%, #1e1a15 100%);
   box-shadow: inset 0 0 60px rgba(212, 175, 55, 0.05);
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

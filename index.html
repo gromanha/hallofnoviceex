@@ -39,6 +39,14 @@
     </noscript>
   </head>
   <body>
+    <script>
+      (function() {
+        var saved = localStorage.getItem('hon_theme');
+        if (saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -182,8 +182,21 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleDeleteRecipe = async (id: string) => {
-    await apiDel('/api/recipes', { id });
-    await loadRecipes();
+    const recipe = recipes.find(r => r.id === id);
+    setConfirmState({
+      open: true,
+      title: 'Excluir receita',
+      message: `Excluir a receita "${recipe?.title || ''}"? Esta ação não pode ser desfeita.`,
+      onConfirm: async () => {
+        setConfirmState(prev => ({ ...prev, open: false }));
+        try {
+          await apiDel('/api/recipes', { id });
+          await loadRecipes();
+        } catch (err) {
+          console.error('Erro ao excluir receita:', err);
+        }
+      },
+    });
   };
 
   const handleToggleRecipeStatus = async (recipe: Recipe) => {
@@ -219,8 +232,21 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleDeletePost = async (id: string) => {
-    await apiDel('/api/posts', { id });
-    await loadPosts();
+    const post = posts.find(p => p.id === id);
+    setConfirmState({
+      open: true,
+      title: 'Excluir postagem',
+      message: `Excluir a postagem "${post?.title || ''}"? Esta ação não pode ser desfeita.`,
+      onConfirm: async () => {
+        setConfirmState(prev => ({ ...prev, open: false }));
+        try {
+          await apiDel('/api/posts', { id });
+          await loadPosts();
+        } catch (err) {
+          console.error('Erro ao excluir postagem:', err);
+        }
+      },
+    });
   };
 
   const handleTogglePin = async (post: Post) => {
@@ -430,7 +456,7 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('posts')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'posts'
-              ? 'bg-[var(--color-primary)] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
@@ -442,7 +468,7 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('events')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'events'
-              ? 'bg-[var(--color-primary)] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
@@ -454,7 +480,7 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('types')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'types'
-              ? 'bg-[var(--color-primary)] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
@@ -466,7 +492,7 @@ export const AdminPage: React.FC = () => {
           onClick={() => setActiveTab('recipes')}
           className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'recipes'
-              ? 'bg-[var(--color-primary)] text-white shadow-md'
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
@@ -495,7 +521,7 @@ export const AdminPage: React.FC = () => {
                 setSelectedPost(null);
                 setIsPostModalOpen(true);
               }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
               <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Postagem / Guia
             </button>
@@ -586,7 +612,7 @@ export const AdminPage: React.FC = () => {
                           {post.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
                             {post.category}
                           </span>
                         </td>
@@ -608,7 +634,7 @@ export const AdminPage: React.FC = () => {
                             className={`p-1.5 rounded-lg border transition-all ${
                               post.is_pinned
                                 ? 'bg-[var(--color-secondary)] text-slate-950 border-[var(--color-secondary)]'
-                                : 'text-slate-400 border-slate-300 dark:border-slate-700 hover:text-[var(--color-secondary)]'
+                                : 'text-slate-400 border-[var(--color-outline-variant)] hover:text-[var(--color-secondary)]'
                             }`}
                             title={post.is_pinned ? 'Remover dos Destaques' : 'Fixar em Destaque'}
                           >
@@ -622,7 +648,7 @@ export const AdminPage: React.FC = () => {
                         <td className="p-4 text-right space-x-2">
                           <button
                             onClick={() => handleNavigatePost(post.slug)}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
                             title="Ver Publicação"
                             aria-label={`Ver publicação: ${post.title}`}
                           >
@@ -633,7 +659,7 @@ export const AdminPage: React.FC = () => {
                               setSelectedPost(post);
                               setIsPostModalOpen(true);
                             }}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-primary)]"
                             title="Editar Postagem"
                             aria-label={`Editar postagem: ${post.title}`}
                           >
@@ -668,14 +694,14 @@ export const AdminPage: React.FC = () => {
 
             <button
               onClick={openEventCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
               <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Evento
             </button>
 
             <button
               onClick={() => void loadEvents()}
-              className="px-4 py-2.5 rounded-xl bg-[var(--color-background)] hover:bg-slate-200 dark:hover:bg-slate-800 border border-[var(--color-outline-variant)] text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all"
+              className="px-4 py-2.5 rounded-xl bg-[var(--color-background)] hover:bg-[var(--color-surface-alt)] border border-[var(--color-outline-variant)] text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all"
             >
               <RefreshCw className="w-4 h-4" /> Recarregar
             </button>
@@ -720,7 +746,7 @@ export const AdminPage: React.FC = () => {
                           {evt.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
                             {getTypeLabel(evt.type)}
                           </span>
                         </td>
@@ -729,7 +755,7 @@ export const AdminPage: React.FC = () => {
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => openEventEdit(evt)}
-                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
+                              className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-primary)]"
                               title="Editar"
                               aria-label={`Editar evento: ${evt.title}`}
                             >
@@ -766,14 +792,14 @@ export const AdminPage: React.FC = () => {
 
             <button
               onClick={openTypeCreate}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
               <PlusCircle className="w-4 h-4 text-[var(--color-secondary)]" /> Novo Tipo
             </button>
 
             <button
               onClick={() => void loadEvents()}
-              className="px-4 py-2.5 rounded-xl bg-[var(--color-background)] hover:bg-slate-200 dark:hover:bg-slate-800 border border-[var(--color-outline-variant)] text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all"
+              className="px-4 py-2.5 rounded-xl bg-[var(--color-background)] hover:bg-[var(--color-surface-alt)] border border-[var(--color-outline-variant)] text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all"
             >
               <RefreshCw className="w-4 h-4" /> Recarregar
             </button>
@@ -822,7 +848,7 @@ export const AdminPage: React.FC = () => {
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => openTypeEdit(et)}
-                              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
+                              className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-primary)]"
                               title="Editar"
                               aria-label={`Editar tipo: ${et.label}`}
                             >
@@ -862,7 +888,7 @@ export const AdminPage: React.FC = () => {
                 setSelectedRecipe(null);
                 setIsRecipeModalOpen(true);
               }}
-              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+              className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
             >
               <Plus className="w-4 h-4 text-[var(--color-secondary)]" /> Nova Receita
             </button>
@@ -939,7 +965,7 @@ export const AdminPage: React.FC = () => {
                       <tr key={recipe.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
                         <td className="p-4 font-bold text-sm max-w-xs truncate">{recipe.title}</td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-crystal)] font-bold uppercase text-[10px]">
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
                             {recipe.category?.replace('_', ' ') || '—'}
                           </span>
                         </td>
@@ -970,18 +996,17 @@ export const AdminPage: React.FC = () => {
                               setSelectedRecipe(recipe);
                               setIsRecipeModalOpen(true);
                             }}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-[var(--color-primary)] dark:text-[var(--color-crystal)]"
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-primary)]"
                             title="Editar"
+                            aria-label={`Editar receita: ${recipe.title}`}
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => {
-                              setSelectedRecipe(recipe);
-                              setIsRecipeModalOpen(true);
-                            }}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            onClick={() => navigate(`/receitas/${recipe.slug}`)}
+                            className="p-1.5 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
                             title="Ver"
+                            aria-label={`Ver receita: ${recipe.title}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -989,6 +1014,7 @@ export const AdminPage: React.FC = () => {
                             onClick={() => handleDeleteRecipe(recipe.id)}
                             className="p-1.5 rounded-lg hover:bg-[var(--color-crimson)]/10 text-[var(--color-crimson)]"
                             title="Excluir"
+                            aria-label={`Excluir receita: ${recipe.title}`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1014,7 +1040,7 @@ export const AdminPage: React.FC = () => {
                 <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar modal de evento">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de evento">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -1082,7 +1108,7 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-outline-variant)]">
-                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
+                <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
                   Cancelar
                 </button>
                 <button type="submit" disabled={savingEvent} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">
@@ -1105,7 +1131,7 @@ export const AdminPage: React.FC = () => {
                 <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Fechar modal de tipo">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de tipo">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -1179,7 +1205,7 @@ export const AdminPage: React.FC = () => {
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-outline-variant)]">
-                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
+                <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl">
                   Cancelar
                 </button>
                 <button type="submit" disabled={savingType} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md">

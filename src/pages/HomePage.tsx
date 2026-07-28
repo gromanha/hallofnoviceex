@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare } from 'lucide-react';
+import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare, ExternalLink } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
@@ -92,6 +92,7 @@ export const HomePage: React.FC = () => {
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               Matricule-se no Discord
+              <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
 
             <button
@@ -110,7 +111,7 @@ export const HomePage: React.FC = () => {
         <div className="flex items-center justify-between mb-8 border-b border-[var(--color-outline-variant)] pb-4">
           <div>
             <h2 className="font-serif font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)] flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-crystal)]" />
+              <BookOpen className="w-6 h-6 text-[var(--color-primary)]" />
               Últimas Postagens & Códices
             </h2>
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
@@ -120,7 +121,7 @@ export const HomePage: React.FC = () => {
 
           <button
             onClick={handleNavigateAcademia}
-            className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-crystal)] hover:underline flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:underline flex items-center gap-1"
           >
             Ver todos os guias <ArrowRight className="w-4 h-4" />
           </button>
@@ -237,7 +238,7 @@ export const HomePage: React.FC = () => {
                 AR
               </div>
               <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Aquilles Romanha</h3>
-              <p className="text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-crystal)] uppercase">Reitor & Sábio (Sage)</p>
+              <p className="text-xs font-bold text-[var(--color-primary)] uppercase">Reitor & Sábio (Sage)</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Estratégia de Combate e Planejamento Tático</p>
             </div>
 
@@ -287,6 +288,7 @@ export const HomePage: React.FC = () => {
             className="px-8 py-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
           >
             Quero Me Matricular
+            <ExternalLink className="w-3 h-3 opacity-60" />
           </a>
         </div>
       </section>

@@ -229,7 +229,7 @@ export const CalendarPage: React.FC = () => {
             {currentMonth.prevMonthDays.map(pDay => (
               <div
                 key={`prev-${pDay}`}
-                className="min-h-[110px] p-2 bg-slate-100/50 dark:bg-slate-900/30 rounded-2xl opacity-40 border border-transparent select-none"
+                className="min-h-[110px] p-2 bg-[var(--color-surface-alt)] rounded-2xl opacity-40 border border-transparent select-none"
               >
                 <span className="text-xs font-bold text-slate-400">{pDay}</span>
               </div>
@@ -331,7 +331,7 @@ export const CalendarPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500"
+                    className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-slate-500"
                     aria-label="Fechar detalhes do evento"
                   >
                     <X className="w-5 h-5" />

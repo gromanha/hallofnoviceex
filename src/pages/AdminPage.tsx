@@ -14,6 +14,7 @@ import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { DatePicker } from '../components/DatePicker';
 import { getRecipeCategoryColor, getPostCategoryColor } from '../lib/colors';
 
 const MONTHS = [
@@ -45,7 +46,7 @@ type EventFormState = {
 const EMPTY_EVENT_FORM: EventFormState = {
   month: MONTHS[new Date().getMonth()],
   day: 1,
-  time: '09:00 — 11:30',
+  time: '00:00 — 23:59',
   title: '',
   description: '',
   instructor: '',
@@ -1149,22 +1150,21 @@ export const AdminPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Mês</label>
-                  <select value={eventForm.month} onChange={e => setEventField('month', e.target.value)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30">
-                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Dia</label>
-                  <input type="number" min={1} max={31} value={eventForm.day} onChange={e => setEventField('day', Number(e.target.value))} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
-                </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Data</label>
+                <DatePicker
+                  month={eventForm.month}
+                  day={eventForm.day}
+                  onChange={(month, day) => {
+                    setEventField('month', month);
+                    setEventField('day', day);
+                  }}
+                />
               </div>
 
               <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-1">Horário</label>
-                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="09:00 — 11:30" className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
+                <input type="text" value={eventForm.time} onChange={e => setEventField('time', e.target.value)} placeholder="00:00 — 23:59" className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
               </div>
 
               <div>

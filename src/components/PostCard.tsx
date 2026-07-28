@@ -23,28 +23,28 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       tabIndex={0}
       role="link"
-      className="group relative bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-outline-variant)] hover:border-[var(--color-secondary)]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-secondary)]"
+      className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow"
     >
       {/* Cover Image */}
       {post.cover_image && !imgError && (
-        <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-900">
+        <div className="relative h-48 sm:h-52 overflow-hidden bg-[var(--color-surface-alt)]">
           <img
             src={post.cover_image}
             alt={post.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
             onError={() => setImgError(true)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-background)] via-transparent to-transparent" />
           
           {post.is_pinned && (
-            <div className="absolute top-3 right-3 bg-[var(--color-secondary)] text-slate-950 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-              <Pin className="w-3.5 h-3.5 fill-current" />
+            <div className="absolute top-3 right-3 bg-[var(--color-primary)] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
+              <Pin className="w-3 h-3 fill-current" />
               Destaque
             </div>
           )}
 
-          <div className="absolute bottom-3 left-3 bg-[var(--color-primary)]/90 text-white text-xs font-semibold uppercase px-3 py-1 rounded-lg backdrop-blur-md border border-white/10">
+          <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
             {post.category}
           </div>
         </div>
@@ -52,43 +52,43 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
 
       {/* Fallback when image fails */}
       {post.cover_image && imgError && (
-        <div className="relative h-32 bg-gradient-to-r from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 flex items-center justify-center">
-          <ImageOff className="w-8 h-8 text-slate-400" />
-          <div className="absolute bottom-3 left-3 bg-[var(--color-primary)]/90 text-white text-xs font-semibold uppercase px-3 py-1 rounded-lg backdrop-blur-md border border-white/10">
+        <div className="relative h-28 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-secondary)]/5 flex items-center justify-center">
+          <ImageOff className="w-8 h-8 text-[var(--color-on-surface-variant)] opacity-30" />
+          <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
             {post.category}
           </div>
         </div>
       )}
 
       {/* Content */}
-      <div className="p-6 flex-1 flex flex-col justify-between">
+      <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
           {!post.cover_image && post.is_pinned && (
-            <div className="inline-flex items-center gap-1 bg-[var(--color-secondary)] text-slate-950 text-xs font-bold px-2.5 py-0.5 rounded-full mb-3">
+            <div className="inline-flex items-center gap-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-[10px] font-bold px-2 py-0.5 rounded-lg mb-3">
               <Pin className="w-3 h-3 fill-current" />
               Destaque
             </div>
           )}
 
-          <h3 className="font-serif font-bold text-lg sm:text-xl text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
+          <h3 className="font-display font-bold text-base text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
             {post.title}
           </h3>
 
           {post.subtitle && (
-            <p className="text-sm text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 leading-relaxed break-words">
+            <p className="text-xs text-[var(--color-on-surface-variant)] mb-4 line-clamp-2 leading-relaxed break-words">
               {post.subtitle}
             </p>
           )}
         </div>
 
         {/* Tags & Meta */}
-        <div className="pt-4 border-t border-[var(--color-outline-variant)] mt-4">
+        <div className="pt-3 border-t border-[var(--color-outline)]/30 mt-3">
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {post.tags.slice(0, 3).map((tag, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-[var(--color-primary-light)] text-[var(--color-primary)]"
+                  className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
                 >
                   <Tag className="w-2.5 h-2.5" />
                   {tag}
@@ -97,20 +97,20 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
             </div>
           )}
 
-          <div className="flex items-center justify-between text-xs text-[var(--color-on-surface-variant)]">
+          <div className="flex items-center justify-between text-[10px] text-[var(--color-on-surface-variant)]">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
-                <User className="w-3.5 h-3.5" />
+                <User className="w-3 h-3" />
                 {post.author_name}
               </span>
               <span className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-3 h-3" />
                 {formattedDate}
               </span>
             </div>
 
             <span className="text-[var(--color-primary)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Ler <ArrowRight className="w-3.5 h-3.5" />
+              Ler <ArrowRight className="w-3 h-3" />
             </span>
           </div>
         </div>

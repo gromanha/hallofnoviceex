@@ -434,7 +434,7 @@ export const AdminPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4 text-[var(--color-secondary)]" />
             Área Administrativa
           </div>
-          <h1 className="font-serif font-black text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
+          <h1 className="font-display font-bold text-2xl sm:text-4xl text-[var(--color-on-surface)]">
             Painel Administrativo
           </h1>
           <p className="text-xs sm:text-sm text-[var(--color-on-surface)]/90">
@@ -454,7 +454,7 @@ export const AdminPage: React.FC = () => {
       <div className="flex items-center gap-2 border-b border-[var(--color-outline-variant)] pb-3 overflow-x-auto">
         <button
           onClick={() => setActiveTab('posts')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'posts'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -466,7 +466,7 @@ export const AdminPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('events')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'events'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -478,7 +478,7 @@ export const AdminPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('types')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'types'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -490,7 +490,7 @@ export const AdminPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('recipes')}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-serif font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-display font-bold text-sm transition-all whitespace-nowrap ${
             activeTab === 'recipes'
               ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
               : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
@@ -633,7 +633,7 @@ export const AdminPage: React.FC = () => {
                             onClick={() => handleTogglePin(post)}
                             className={`p-1.5 rounded-lg border transition-all ${
                               post.is_pinned
-                                ? 'bg-[var(--color-secondary)] text-slate-950 border-[var(--color-secondary)]'
+                                ? 'bg-[var(--color-secondary)] text-[var(--color-background)] border-[var(--color-secondary)]'
                                 : 'text-slate-400 border-[var(--color-outline-variant)] hover:text-[var(--color-secondary)]'
                             }`}
                             title={post.is_pinned ? 'Remover dos Destaques' : 'Fixar em Destaque'}
@@ -735,7 +735,7 @@ export const AdminPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--color-outline-variant)] font-medium">
                     {events.map(evt => (
                       <tr key={evt.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
-                        <td className="p-4 font-serif font-bold text-[var(--color-primary-deep)]">
+                        <td className="p-4 font-display font-bold text-[var(--color-primary-deep)]">
                           {evt.day < 10 ? `0${evt.day}` : evt.day}
                         </td>
                         <td className="p-4">{evt.month}</td>
@@ -1037,7 +1037,7 @@ export const AdminPage: React.FC = () => {
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
-                <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
+                <h3 className="text-lg font-display font-bold text-[var(--color-primary)]">
                   {editingEventId ? 'Editar Evento' : 'Novo Evento'}
                 </h3>
                 <button type="button" onClick={() => { setShowEventForm(false); setEditingEventId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de evento">
@@ -1128,7 +1128,7 @@ export const AdminPage: React.FC = () => {
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
-                <h3 className="text-lg font-serif font-bold text-[var(--color-primary)]">
+                <h3 className="text-lg font-display font-bold text-[var(--color-primary)]">
                   {editingTypeId ? 'Editar Tipo' : 'Novo Tipo'}
                 </h3>
                 <button type="button" onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }} className="p-1 rounded-full hover:bg-[var(--color-surface-alt)]" aria-label="Fechar modal de tipo">

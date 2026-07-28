@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock, ShieldCheck,
-  Flame, Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar
+  BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock,
+  Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventTypeItem } from '../types';
 import { apiGet } from '../lib/api';
@@ -11,7 +11,7 @@ import { EmptyCalendarState } from '../components/EmptyCalendarState';
 import { useEscapeKey } from '../lib/useEscapeKey';
 
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  Wand2, Swords, FlaskConical, BookOpen, Sparkles, Flame, Eye, Moon, Star, Layers,
+  Wand2, Swords, FlaskConical, BookOpen, Sparkles, Eye, Moon, Star, Layers,
 };
 
 function resolveIcon(name: string): React.ComponentType<any> {
@@ -86,7 +86,6 @@ export const CalendarPage: React.FC = () => {
 
   const currentMonth = months[monthIndex];
 
-  // Map types for colors and icons
   const typeMap = useMemo(() => {
     const map = new Map<string, { label: string; color: string; icon: string }>();
     for (const t of eventTypes) {
@@ -95,7 +94,6 @@ export const CalendarPage: React.FC = () => {
     return map;
   }, [eventTypes]);
 
-  // Filter events for the current month and selected type
   const monthEvents = useMemo(() => {
     return events.filter(e => e.month.toLowerCase() === currentMonth.name.toLowerCase());
   }, [events, currentMonth.name]);
@@ -124,55 +122,54 @@ export const CalendarPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header do Calendário */}
-      <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-10 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">
-          <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5 justify-center md:justify-start">
-            <Sparkles className="w-4 h-4" /> Cronograma de Aulas e Batalhas
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)] flex items-center gap-1.5 justify-center md:justify-start">
+            <Sparkles className="w-3.5 h-3.5" /> Cronograma de Aulas e Batalhas
           </span>
-          <h1 className="font-serif font-black text-3xl sm:text-4xl text-[var(--color-secondary-light)]">
-            Calendário de Atividades — {currentMonth.name} {currentMonth.cycle}
+          <h1 className="font-display font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)]">
+            Calendário — {currentMonth.name} {currentMonth.cycle}
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-100/90">
+          <p className="text-xs text-[var(--color-on-surface-variant)]">
             Acompanhe as Learning Parties, Exames de Combate e Rituais Acadêmicos.
           </p>
         </div>
 
-        {/* Seletor de Mês */}
-        <div className="flex items-center gap-3 bg-slate-950/40 p-2 rounded-2xl border border-white/10 shrink-0">
+        <div className="flex items-center gap-2 bg-[var(--color-surface-alt)] p-1.5 rounded-xl border border-[var(--color-outline)] shrink-0">
           <button
             onClick={prevMonth}
             disabled={monthIndex === 0}
-            className="p-2 rounded-xl hover:bg-white/10 text-white disabled:opacity-30 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] disabled:opacity-30 transition-colors"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="font-serif font-bold text-sm px-4 min-w-[120px] text-center text-[var(--color-secondary-light)]">
+          <span className="font-display font-bold text-sm px-3 min-w-[100px] text-center text-[var(--color-on-surface)]">
             {currentMonth.name}
           </span>
 
           <button
             onClick={nextMonth}
             disabled={monthIndex === months.length - 1}
-            className="p-2 rounded-xl hover:bg-white/10 text-white disabled:opacity-30 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] disabled:opacity-30 transition-colors"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Filtro de Tipos de Atividade */}
-      <div className="flex flex-wrap items-center gap-2 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
-        <span className="text-xs font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider mr-2">
+      <div className="flex flex-wrap items-center gap-2 glass p-4 rounded-2xl border border-[var(--color-outline)]/50">
+        <span className="text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider mr-1">
           Disciplinas:
         </span>
 
         <button
           onClick={() => setSelectedType('all')}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${
             selectedType === 'all'
-              ? 'bg-[var(--color-primary)] text-white shadow-xs'
-              : 'bg-[var(--color-background)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)]'
+              ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+              : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
           Todas ({monthEvents.length})
@@ -185,14 +182,14 @@ export const CalendarPage: React.FC = () => {
             <button
               key={t.id}
               onClick={() => setSelectedType(t.key)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${
                 selectedType === t.key
-                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                  : 'bg-[var(--color-background)] text-[var(--color-on-surface)] hover:bg-[var(--color-primary-light)]'
+                  ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+                  : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
               }`}
             >
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: t.color }} />
-              <IconComp className="w-3.5 h-3.5" />
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: t.color }} />
+              <IconComp className="w-3 h-3" />
               {t.label} ({count})
             </button>
           );
@@ -201,41 +198,36 @@ export const CalendarPage: React.FC = () => {
 
       {/* Grade do Calendário */}
       {loading ? (
-        <div className="h-96 bg-[var(--color-surface-alt)] rounded-3xl animate-pulse" />
+        <div className="h-96 bg-[var(--color-surface)] rounded-2xl shimmer" />
       ) : monthEvents.length === 0 ? (
         <EmptyCalendarState />
       ) : filteredEvents.length === 0 ? (
-        <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-          <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Nenhum evento nesta disciplina</h3>
+        <div className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
+          <Calendar className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-30" />
+          <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Nenhum evento nesta disciplina</h3>
           <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Selecione "Todas" ou outro tipo para ver mais eventos.</p>
         </div>
       ) : (
-        <div className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div className="glass rounded-2xl p-4 sm:p-6 border border-[var(--color-outline)]/50">
           
-          {/* Dias da semana */}
-          <div className="grid grid-cols-7 gap-2 mb-3 text-center text-xs font-bold uppercase tracking-wider text-[var(--color-on-surface-variant)]">
+          <div className="grid grid-cols-7 gap-1.5 mb-2 text-center text-[10px] font-bold uppercase tracking-wider text-[var(--color-on-surface-variant)]">
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-              <div key={d} className="py-2 bg-[var(--color-background)] rounded-xl">
+              <div key={d} className="py-2 bg-[var(--color-surface-alt)] rounded-lg">
                 {d}
               </div>
             ))}
           </div>
 
-          {/* Células dos dias */}
-          <div className="grid grid-cols-7 gap-2">
-            
-            {/* Overflow mês anterior */}
+          <div className="grid grid-cols-7 gap-1.5">
             {currentMonth.prevMonthDays.map(pDay => (
               <div
                 key={`prev-${pDay}`}
-                className="min-h-[110px] p-2 bg-[var(--color-surface-alt)] rounded-2xl opacity-40 border border-transparent select-none"
+                className="min-h-[90px] p-1.5 bg-[var(--color-surface-alt)]/50 rounded-xl opacity-30 border border-transparent select-none"
               >
-                <span className="text-xs font-bold text-slate-400">{pDay}</span>
+                <span className="text-[10px] font-bold text-[var(--color-on-surface-variant)]">{pDay}</span>
               </div>
             ))}
 
-            {/* Dias do mês atual */}
             {Array.from({ length: currentMonth.daysCount }, (_, i) => i + 1).map(day => {
               const dayEvs = eventsByDay.get(day) || [];
               const isToday =
@@ -246,32 +238,31 @@ export const CalendarPage: React.FC = () => {
               return (
                 <div
                   key={day}
-                  className={`min-h-[110px] p-2.5 rounded-2xl border transition-all flex flex-col justify-between ${
+                  className={`min-h-[90px] p-1.5 rounded-xl border transition-all flex flex-col justify-between ${
                     isToday
-                      ? 'border-[var(--color-secondary)] bg-[var(--color-secondary)]/10 shadow-md ring-2 ring-[var(--color-secondary)]/40'
-                      : 'border-[var(--color-outline-variant)] bg-[var(--color-background)] hover:border-[var(--color-primary)]/50'
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-md shadow-[var(--color-primary)]/10'
+                      : 'border-[var(--color-outline)]/30 bg-[var(--color-surface-alt)]/30 hover:border-[var(--color-primary)]/30'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-bold ${isToday ? 'text-[var(--color-secondary)] font-black scale-110' : 'text-[var(--color-on-surface)]'}`}>
+                    <span className={`text-[10px] font-bold ${isToday ? 'text-[var(--color-primary)] font-black' : 'text-[var(--color-on-surface-variant)]'}`}>
                       {day}
                     </span>
                     {isToday && (
-                      <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-[var(--color-secondary)] text-slate-950">
+                      <span className="text-[8px] uppercase font-black px-1 py-0.5 rounded bg-[var(--color-primary)] text-white">
                         Hoje
                       </span>
                     )}
                   </div>
 
-                  {/* Lista de eventos no dia */}
-                  <div className="space-y-1 mt-2">
+                  <div className="space-y-0.5 mt-1">
                     {dayEvs.map(ev => {
                       const tInfo = typeMap.get(ev.type);
                       return (
                         <button
                           key={ev.id}
                           onClick={() => { setEventImgError(false); setSelectedEvent(ev); }}
-                          className="w-full text-left py-3 px-2 rounded-lg text-white font-medium text-[11px] truncate flex items-center gap-1.5 transition-transform hover:scale-[1.02]"
+                          className="w-full text-left py-1.5 px-1.5 rounded-lg text-white font-medium text-[9px] truncate flex items-center gap-1 transition-transform hover:scale-[1.02]"
                           style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
                         >
                           <span className="truncate flex-1">{ev.title}</span>
@@ -293,7 +284,7 @@ export const CalendarPage: React.FC = () => {
         {selectedEvent && (
           <motion.div
             key="event-modal"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-background)]/80 backdrop-blur-sm"
             role="dialog"
             aria-modal="true"
             aria-label="Detalhes do evento"
@@ -304,41 +295,40 @@ export const CalendarPage: React.FC = () => {
             transition={{ duration: 0.2 }}
           >
             <motion.div
-              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4"
+              className="glass rounded-2xl max-w-lg w-full overflow-hidden border border-[var(--color-outline)]/50 shadow-2xl space-y-4"
               onClick={e => e.stopPropagation()}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              {/* Cover Image */}
               {selectedEvent.image && !eventImgError && (
-                <div className="h-44 relative bg-slate-950">
+                <div className="h-40 relative bg-[var(--color-surface-alt)]">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
                     className="w-full h-full object-cover"
                     onError={() => setEventImgError(true)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-background)] via-transparent to-transparent" />
                 </div>
               )}
 
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-3 py-1 rounded-full border border-[var(--color-secondary)]/30">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-1 rounded-lg border border-[var(--color-primary)]/20">
                     {selectedEvent.month} • Dia {selectedEvent.day}
                   </span>
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-slate-500"
+                    className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
                     aria-label="Fechar detalhes do evento"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
 
-                <h2 className="font-serif font-bold text-xl text-[var(--color-on-surface)]">
+                <h2 className="font-display font-bold text-lg text-[var(--color-on-surface)]">
                   {selectedEvent.title}
                 </h2>
 
@@ -353,7 +343,7 @@ export const CalendarPage: React.FC = () => {
                 </div>
 
                 {selectedEvent.description && (
-                  <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-outline-variant)]">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed bg-[var(--color-surface-alt)] p-4 rounded-xl border border-[var(--color-outline)]/30">
                     {selectedEvent.description}
                   </p>
                 )}
@@ -361,9 +351,9 @@ export const CalendarPage: React.FC = () => {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="px-5 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-hover)] transition-all"
+                    className="px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all shadow-md shadow-[var(--color-primary)]/20"
                   >
-                    Fechar Detalhes
+                    Fechar
                   </button>
                 </div>
               </div>

@@ -199,7 +199,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-background)]/80 backdrop-blur-sm overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-label={recipe?.id ? 'Editar receita' : 'Nova receita'}
@@ -211,7 +211,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
             <div className="px-6 py-4 bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] flex items-center justify-between border-b border-[var(--color-primary)]/30">
               <div className="flex items-center gap-2">
                 <ChefHat className="w-5 h-5" />
-                <h2 className="font-serif font-bold text-lg">
+                <h2 className="font-display font-bold text-lg">
                   {recipe?.id ? 'Editar Receita' : 'Nova Receita'}
                 </h2>
               </div>

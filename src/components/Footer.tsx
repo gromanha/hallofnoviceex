@@ -4,35 +4,35 @@ import logoUrl from '@/assets/logo.png';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[var(--color-background)] text-[var(--color-on-surface-variant)] border-t-4 border-[var(--color-secondary)] pt-12 pb-8">
+    <footer className="bg-[var(--color-background)] text-[var(--color-on-surface-variant)] border-t border-[var(--color-outline)] pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           
           {/* Coluna 1: Sobre */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg overflow-hidden border border-[var(--color-secondary)]">
+              <div className="w-10 h-10 rounded-xl overflow-hidden border border-[var(--color-outline)]">
                 <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
               </div>
-              <span className="font-serif font-bold text-lg text-[var(--color-on-surface)] tracking-wider">
-                HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>
+              <span className="font-display font-bold text-sm text-[var(--color-on-surface)] tracking-wider">
+                HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
               </span>
             </div>
-            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed mb-4">
+            <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed mb-4">
               Comunidade brasileira de Final Fantasy XIV focada em ensino sem toxicidade, imersão temática acadêmica em Sharlayan e produção de guias de alta didática.
             </p>
-            <p className="text-xs text-[var(--color-secondary)] font-serif italic">
+            <p className="text-xs text-[var(--color-secondary)] font-display italic">
               "Onde o conhecimento se torna a sua maior magia."
             </p>
           </div>
 
           {/* Coluna 2: Sede do Campus */}
           <div>
-            <h3 className="font-serif text-[var(--color-on-surface)] font-bold text-base mb-4 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[var(--color-secondary)]" />
+            <h3 className="font-display text-[var(--color-on-surface)] font-bold text-sm mb-4 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[var(--color-primary)]" />
               Campus Físico (FC House)
             </h3>
-            <ul className="text-sm text-[var(--color-on-surface-variant)] space-y-2">
+            <ul className="text-xs text-[var(--color-on-surface-variant)] space-y-2">
               <li><strong className="text-[var(--color-on-surface)]">Mundo:</strong> Behemoth (Primal)</li>
               <li><strong className="text-[var(--color-on-surface)]">Local:</strong> Mist — Ward 19, Plot 35</li>
               <li className="break-words"><strong className="text-[var(--color-on-surface)]">Instalações:</strong> Grande Biblioteca, Salas Táticas, Refeitório & Observatório</li>
@@ -41,31 +41,31 @@ export const Footer: React.FC = () => {
 
           {/* Coluna 3: Links e Discord */}
           <div>
-            <h3 className="font-serif text-[var(--color-on-surface)] font-bold text-base mb-4 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
+            <h3 className="font-display text-[var(--color-on-surface)] font-bold text-sm mb-4 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[var(--color-primary)]" />
               Matrícula Digital
             </h3>
-            <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
+            <p className="text-xs text-[var(--color-on-surface-variant)] mb-4">
               Junte-se a nós pelo Discord oficial para participar dos eventos, learning parties e matricular seu personagem.
             </p>
             <a
               href="https://discord.gg/3XJgrsVUbP"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-medium text-sm transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-medium text-xs transition-all shadow-md shadow-[var(--color-primary)]/20"
             >
               <MessageSquare className="w-4 h-4" />
-              Entrar no Discord Oficial
+              Entrar no Discord
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
           </div>
 
         </div>
 
-        <div className="border-t border-[var(--color-outline-variant)] pt-6 text-center text-xs text-[var(--color-on-surface-variant)]">
+        <div className="border-t border-[var(--color-outline)]/50 pt-6 text-center text-xs text-[var(--color-on-surface-variant)]">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--color-primary)] hover:text-white transition-all"
+            className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--color-primary)] hover:text-white transition-all border border-[var(--color-outline)]"
             aria-label="Voltar ao topo"
           >
             <ChevronUp className="w-3 h-3" />

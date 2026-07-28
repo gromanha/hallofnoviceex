@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare, ExternalLink } from 'lucide-react';
+import { Sparkles, BookOpen, Calendar, ShieldCheck, HeartHandshake, MapPin, ArrowRight, MessageSquare, ExternalLink, Swords, FlaskConical } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
@@ -16,13 +16,13 @@ export const HomePage: React.FC = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.08,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 16 },
     show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
   };
 
@@ -61,8 +61,11 @@ export const HomePage: React.FC = () => {
     <div className="space-y-16 pb-16">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] text-[var(--color-on-primary)] pt-16 pb-24 border-b-4 border-[var(--color-secondary)]">
-        <div className="absolute inset-0 opacity-10 parchment-texture pointer-events-none" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-background)] via-[var(--color-surface)] to-[var(--color-background)] text-[var(--color-on-background)] pt-20 pb-24 border-b border-[var(--color-outline)]">
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-secondary)]/8 rounded-full blur-3xl" />
+        </div>
         
         <motion.div
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6"
@@ -70,17 +73,18 @@ export const HomePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 text-[var(--color-secondary)] text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest">
+            <Sparkles className="w-3 h-3" />
             Free Company Final Fantasy XIV • Behemoth
           </div>
 
-          <h1 className="font-serif font-black text-3xl sm:text-5xl lg:text-6xl text-[var(--color-secondary)] tracking-wider leading-tight max-w-4xl mx-auto">
-            Onde o conhecimento se torna a sua maior magia
+          <h1 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-[var(--color-on-surface)] tracking-tight leading-tight max-w-4xl mx-auto">
+            Onde o conhecimento se torna a sua{' '}
+            <span className="text-accent-orange font-bold">maior magia</span>
           </h1>
 
-          <p className="text-base sm:text-xl text-[var(--color-on-primary)]/80 font-light max-w-2xl mx-auto leading-relaxed">
-            Bem-vindo à <strong className="text-[var(--color-on-primary)] font-semibold">Hall of the Novice EX [HoN]</strong>. Uma universidade temática de magia, combate didático sem toxicidade e suporte completo aos aventureiros de Eorzea.
+          <p className="text-sm sm:text-lg text-[var(--color-on-surface-variant)] font-light max-w-2xl mx-auto leading-relaxed">
+            Bem-vindo à <strong className="text-[var(--color-on-surface)] font-semibold">Hall of the Novice EX [HoN]</strong>. Uma universidade temática de magia, combate didático sem toxicidade e suporte completo aos aventureiros de Eorzea.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 pt-4">
@@ -88,18 +92,18 @@ export const HomePage: React.FC = () => {
               href="https://discord.gg/3XJgrsVUbP"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] font-bold text-sm transition-all shadow-lg hover:scale-105"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-sm transition-all shadow-lg shadow-[var(--color-primary)]/25 hover:scale-[1.02]"
             >
-              <MessageSquare className="w-4 h-4 fill-current" />
+              <MessageSquare className="w-4 h-4" />
               Matricule-se no Discord
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
 
             <button
               onClick={handleNavigateCalendar}
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[var(--color-on-primary)]/10 hover:bg-[var(--color-on-primary)]/20 border border-[var(--color-on-primary)]/20 text-[var(--color-on-primary)] font-bold text-sm transition-all backdrop-blur-md"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-surface)] hover:bg-[var(--color-surface-alt)] border border-[var(--color-outline)] text-[var(--color-on-surface)] font-bold text-sm transition-all"
             >
-              <Calendar className="w-4 h-4 text-[var(--color-secondary)]" />
+              <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
               Ver Calendário de Aulas
             </button>
           </div>
@@ -108,10 +112,10 @@ export const HomePage: React.FC = () => {
 
       {/* ── POSTAGENS EM DESTAQUE & NOTÍCIAS (DO SUPABASE) ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8 border-b border-[var(--color-outline-variant)] pb-4">
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--color-outline)]/50">
           <div>
-            <h2 className="font-serif font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)] flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-[var(--color-primary)]" />
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--color-on-surface)] flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[var(--color-primary)]" />
               Últimas Postagens & Códices
             </h2>
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
@@ -121,21 +125,21 @@ export const HomePage: React.FC = () => {
 
           <button
             onClick={handleNavigateAcademia}
-            className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:underline flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] flex items-center gap-1 transition-colors"
           >
-            Ver todos os guias <ArrowRight className="w-4 h-4" />
+            Ver todos <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map(n => (
-              <div key={n} className="h-80 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+              <div key={n} className="h-80 bg-[var(--color-surface)] rounded-2xl shimmer" />
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-12 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
-            <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+          <div className="text-center py-12 glass rounded-2xl p-8">
+            <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-40" />
             <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma postagem encontrada.</p>
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Use o Painel Admin para criar a primeira publicação.</p>
           </div>
@@ -169,50 +173,50 @@ export const HomePage: React.FC = () => {
       {/* ── PILARES DA ACADEMIA ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="font-serif font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)]">
+          <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--color-on-surface)]">
             Nossos Quatro Pilares Acadêmicos
           </h2>
-          <p className="text-sm text-[var(--color-on-surface-variant)] mt-2">
+          <p className="text-xs text-[var(--color-on-surface-variant)] mt-2">
             Base ideológica que estrutura nossa universidade em Sharlayan
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-sage)]/10 text-[var(--color-sage)] flex items-center justify-center font-bold">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="glass rounded-2xl p-6 space-y-3 card-glow">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-sage)]/10 text-[var(--color-sage)] flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Ensino Sem Toxicidade</h3>
+            <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">Ensino Sem Toxicidade</h3>
             <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
               Learning Parties para Extreme, Savage e Ultimate com paciência total. O erro é visto apenas como a ementa da aula.
             </p>
           </div>
 
-          <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-indigo)]/10 text-[var(--color-indigo)] flex items-center justify-center font-bold">
+          <div className="glass rounded-2xl p-6 space-y-3 card-glow">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-indigo)]/10 text-[var(--color-indigo)] flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Imersão Temática</h3>
+            <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">Imersão Temática</h3>
             <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
               Estrutura de reitoria, professores e alunos. RPG amigável integrado às atividades diárias de guilda.
             </p>
           </div>
 
-          <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center font-bold">
+          <div className="glass rounded-2xl p-6 space-y-3 card-glow">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
               <BookOpen className="w-5 h-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Polo de Informação PT-BR</h3>
+            <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">Polo de Informação PT-BR</h3>
             <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
               Manuais didáticos traduzidos, instruções táticas de batalhas e suporte contínuo para a comunidade brasileira.
             </p>
           </div>
 
-          <div className="bg-[var(--color-surface)] p-6 rounded-2xl border border-[var(--color-outline-variant)] shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-amber)]/10 text-[var(--color-amber)] flex items-center justify-center font-bold">
+          <div className="glass rounded-2xl p-6 space-y-3 card-glow">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-amber)]/10 text-[var(--color-amber)] flex items-center justify-center">
               <HeartHandshake className="w-5 h-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Vivência Acadêmica</h3>
+            <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">Vivência Acadêmica</h3>
             <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
               Excursões de mapas, gincanas, ensaios fotográficos de formatura e confraternizações no campus litorâneo.
             </p>
@@ -221,10 +225,10 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ── CORPO DOCENTE ── */}
-      <section className="bg-[var(--color-surface)] py-12 border-y border-[var(--color-outline-variant)]">
+      <section className="py-12 border-y border-[var(--color-outline)]/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="font-serif font-bold text-2xl sm:text-3xl text-[var(--color-on-surface)]">
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--color-on-surface)]">
               Corpo Docente & Alto Conselho
             </h2>
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
@@ -233,30 +237,30 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[var(--color-primary)] text-[var(--color-secondary)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-secondary)]">
+            <div className="glass rounded-2xl p-6 text-center space-y-3 card-glow">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 text-[var(--color-primary)] font-display font-bold text-xl flex items-center justify-center mx-auto border-2 border-[var(--color-primary)]/30">
                 AR
               </div>
-              <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Aquilles Romanha</h3>
-              <p className="text-xs font-bold text-[var(--color-primary)] uppercase">Reitor & Sábio (Sage)</p>
+              <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Aquilles Romanha</h3>
+              <p className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest">Reitor & Sábio (Sage)</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Estratégia de Combate e Planejamento Tático</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[var(--color-sage)] text-[var(--color-secondary-light)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-sage)]">
+            <div className="glass rounded-2xl p-6 text-center space-y-3 card-glow">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-sage)]/20 text-[var(--color-sage)] font-display font-bold text-xl flex items-center justify-center mx-auto border-2 border-[var(--color-sage)]/30">
                 LO
               </div>
-              <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Leafa Oakfall</h3>
-              <p className="text-xs font-bold text-[var(--color-sage)] uppercase">Conselheiro & Druida</p>
+              <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Leafa Oakfall</h3>
+              <p className="text-[10px] font-bold text-[var(--color-sage)] uppercase tracking-widest">Conselheiro & Druida</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Cura Avançada e Alquimia de Campo</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[var(--color-background)] border border-[var(--color-outline-variant)] text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-[var(--color-indigo)] text-[var(--color-secondary-light)] font-serif font-black text-2xl flex items-center justify-center mx-auto border-2 border-[var(--color-indigo)]">
+            <div className="glass rounded-2xl p-6 text-center space-y-3 card-glow">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-indigo)]/20 text-[var(--color-indigo)] font-display font-bold text-xl flex items-center justify-center mx-auto border-2 border-[var(--color-indigo)]/30">
                 NT
               </div>
-              <h3 className="font-serif font-bold text-lg text-[var(--color-on-surface)]">Nick Trentini</h3>
-              <p className="text-xs font-bold text-[var(--color-indigo)] uppercase">Conselheiro & Artista</p>
+              <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Nick Trentini</h3>
+              <p className="text-[10px] font-bold text-[var(--color-indigo)] uppercase tracking-widest">Conselheiro & Artista</p>
               <p className="text-xs text-[var(--color-on-surface-variant)] italic">Ritmo de Combate (Dancer/Pictomancer)</p>
             </div>
           </div>
@@ -265,18 +269,18 @@ export const HomePage: React.FC = () => {
 
       {/* ── CAMPUS HOUSE ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-deep)] rounded-3xl p-8 sm:p-12 text-[var(--color-on-primary)] border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+        <div className="glass rounded-2xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-[var(--color-outline)]/50">
           <div className="space-y-4 max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-secondary)] flex items-center gap-1.5">
-              <MapPin className="w-4 h-4" /> Campus da Guia (FC House)
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)] flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" /> Campus da Guia (FC House)
             </span>
-            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[var(--color-secondary)]">
+            <h2 className="font-display font-bold text-xl sm:text-3xl text-[var(--color-on-surface)]">
               Visite Nosso Campus Físico em Mist
             </h2>
-            <p className="text-sm text-[var(--color-on-primary)]/80 leading-relaxed">
+            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
               Nossa sede foi carinhosamente decorada para refletir o ambiente acadêmico de Old Sharlayan, contando com Grande Biblioteca, Salas Táticas, Cantina e Deck de Observação.
             </p>
-            <p className="text-xs font-mono bg-[var(--color-on-primary)]/10 px-4 py-2 rounded-xl border border-[var(--color-on-primary)]/10 inline-block">
+            <p className="text-xs font-mono bg-[var(--color-surface-alt)] px-4 py-2 rounded-xl border border-[var(--color-outline)] inline-block text-[var(--color-on-surface)]">
               Behemoth — Mist — Ward 19, Plot 35
             </p>
           </div>
@@ -285,10 +289,10 @@ export const HomePage: React.FC = () => {
             href="https://discord.gg/3XJgrsVUbP"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-accent)] text-[var(--color-on-secondary)] font-bold text-sm transition-all shadow-lg hover:scale-105 shrink-0"
+            className="px-8 py-3.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-sm transition-all shadow-lg shadow-[var(--color-primary)]/25 hover:scale-[1.02] shrink-0 flex items-center gap-2"
           >
             Quero Me Matricular
-            <ExternalLink className="w-3 h-3 opacity-60" />
+            <ExternalLink className="w-3.5 h-3.5 opacity-60" />
           </a>
         </div>
       </section>

@@ -399,7 +399,7 @@ export const CalendarPage: React.FC = () => {
           >
             <motion.div
               ref={modalRef}
-              className="glass rounded-2xl max-w-lg w-full overflow-hidden border border-[var(--color-outline)]/50 shadow-2xl space-y-4"
+              className="glass rounded-2xl max-w-lg w-full overflow-hidden border border-[var(--color-outline)]/80 shadow-2xl space-y-4"
               onClick={e => e.stopPropagation()}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -407,11 +407,11 @@ export const CalendarPage: React.FC = () => {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               {selectedEvent.image && !eventImgError && (
-                <div className="h-48 relative overflow-hidden">
+                <div className="h-56 bg-[var(--color-surface)]">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     onError={() => setEventImgError(true)}
                   />
                 </div>

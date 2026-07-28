@@ -153,6 +153,21 @@ body {
   --color-copper-light: rgba(201, 168, 76, 0.12);
   --color-crimson: #ef4444;
   --color-crimson-light: rgba(239, 68, 68, 0.12);
+
+  /* ── Recipe Category Colors ── */
+  --color-cat-breakfast: #f97316;
+  --color-cat-appetizers: #c9a84c;
+  --color-cat-breads: #d97706;
+  --color-cat-soups: #ef4444;
+  --color-cat-main: #f97316;
+  --color-cat-sides: #4ade80;
+  --color-cat-desserts: #f472b6;
+  --color-cat-drinks: #5dade2;
+
+  /* ── Info & Wayfinding ── */
+  --color-info: #5dade2;
+  --color-info-light: rgba(93, 173, 226, 0.12);
+  --color-on-info: #ffffff;
 }
 
 /* ── Glass-morphism Utilities ── */
@@ -182,6 +197,24 @@ body {
   box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
   border-color: rgba(249, 115, 22, 0.3);
   transform: translateY(-2px);
+}
+
+.card-glow:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition-duration: 0.1s;
+}
+
+/* ── Active Press States ── */
+button:active:not(:disabled),
+[role="button"]:active:not(:disabled) {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+button:active:not(:disabled):hover,
+[role="button"]:active:not(:disabled):hover {
+  transform: scale(0.97);
 }
 
 /* ── Shimmer Loading ── */

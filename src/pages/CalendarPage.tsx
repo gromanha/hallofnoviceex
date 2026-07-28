@@ -54,6 +54,7 @@ export const CalendarPage: React.FC = () => {
   const navigate = useNavigate();
   const months = useMemo(() => buildRealMonths(TODAY.getFullYear(), 0, 12), []);
   const [monthIndex, setMonthIndex] = useState(() => TODAY.getMonth());
+  const [monthDirection, setMonthDirection] = useState<1 | -1>(1);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<MagicalEvent | null>(null);
   const [eventImgError, setEventImgError] = useState(false);
@@ -114,8 +115,8 @@ export const CalendarPage: React.FC = () => {
     return map;
   }, [filteredEvents]);
 
-  const nextMonth = () => setMonthIndex(i => Math.min(months.length - 1, i + 1));
-  const prevMonth = () => setMonthIndex(i => Math.max(0, i - 1));
+  const nextMonth = () => { setMonthDirection(1); setMonthIndex(i => Math.min(months.length - 1, i + 1)); };
+  const prevMonth = () => { setMonthDirection(-1); setMonthIndex(i => Math.max(0, i - 1)); };
 
   useEscapeKey(() => setSelectedEvent(null), !!selectedEvent);
   const modalRef = useFocusTrap(!!selectedEvent);
@@ -203,18 +204,40 @@ export const CalendarPage: React.FC = () => {
       </div>
 
       {/* Grade do Calendário */}
-      {loading ? (
-        <div className="h-96 bg-[var(--color-surface)] rounded-2xl shimmer" />
-      ) : monthEvents.length === 0 ? (
-        <EmptyCalendarState />
-      ) : filteredEvents.length === 0 ? (
-        <div className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
-          <Calendar className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-30" />
-          <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Nenhum evento nesta disciplina</h3>
-          <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Selecione "Todas" ou outro tipo para ver mais eventos.</p>
-        </div>
-      ) : (
-        <div className="glass rounded-2xl p-4 sm:p-6 border border-[var(--color-outline)]/50">
+      <AnimatePresence mode="wait" initial={false}>
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="h-96 bg-[var(--color-surface)] rounded-2xl shimmer"
+          />
+        ) : monthEvents.length === 0 ? (
+          <EmptyCalendarState />
+        ) : filteredEvents.length === 0 ? (
+          <motion.div
+            key="no-events"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50"
+          >
+            <Calendar className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-30" />
+            <h3 className="font-display font-bold text-base text-[var(--color-on-surface)]">Nenhum evento nesta disciplina</h3>
+            <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Selecione "Todas" ou outro tipo para ver mais eventos.</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`month-${monthIndex}`}
+            initial={{ opacity: 0, x: monthDirection * 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: monthDirection * -24 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="glass rounded-2xl p-4 sm:p-6 border border-[var(--color-outline)]/50"
+          >
           
           <div className="grid grid-cols-7 gap-1.5 mb-2 text-center type-label text-[var(--color-on-surface-variant)]">
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
@@ -246,16 +269,16 @@ export const CalendarPage: React.FC = () => {
                   key={day}
                   className={`min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] p-2 rounded-xl border transition-all flex flex-col justify-between ${
                     isToday
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-md shadow-[var(--color-primary)]/10'
+                      ? 'border-[var(--color-tertiary)] bg-[var(--color-tertiary)]/5 shadow-md shadow-[var(--color-tertiary)]/10'
                       : 'border-[var(--color-outline)]/30 bg-[var(--color-surface-alt)]/30 hover:border-[var(--color-primary)]/30'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`type-caption font-bold ${isToday ? 'text-[var(--color-primary)] font-black' : 'text-[var(--color-on-surface-variant)]'}`}>
+                    <span className={`type-caption font-bold ${isToday ? 'text-[var(--color-tertiary)] font-black' : 'text-[var(--color-on-surface-variant)]'}`}>
                       {day}
                     </span>
                     {isToday && (
-                      <span className="type-caption uppercase font-black px-1 py-0.5 rounded bg-[var(--color-primary)] text-white">
+                      <span className="type-caption uppercase font-black px-1 py-0.5 rounded bg-[var(--color-tertiary)] text-white">
                         Hoje
                       </span>
                     )}
@@ -282,8 +305,9 @@ export const CalendarPage: React.FC = () => {
 
           </div>
 
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modal de Detalhes do Evento */}
       <AnimatePresence>
@@ -323,7 +347,10 @@ export const CalendarPage: React.FC = () => {
 
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="type-label text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-1 rounded-lg border border-[var(--color-primary)]/20">
+                  <span
+                    className="type-label px-2.5 py-1 rounded-lg border text-white"
+                    style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.2)' }}
+                  >
                     {selectedEvent.month} • Dia {selectedEvent.day}
                   </span>
                   <button

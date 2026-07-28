@@ -59,6 +59,18 @@ export const HomePage: React.FC = () => {
 
       {/* ═══════════════════ HERO: The Sharlayan Threshold ═══════════════════ */}
       <section className="relative overflow-hidden">
+        {/* Background image — soft & ethereal */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="/id.png"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.12] blur-[1px] mix-blend-soft-light"
+            aria-hidden="true"
+          />
+          {/* Gradient veil over the image for delicacy */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-surface)]/80 via-[var(--color-surface)]/50 to-[var(--color-surface)]/90" />
+        </div>
+
         {/* Atmospheric depth layers */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[-20%] left-[10%] w-[500px] h-[500px] bg-[var(--color-primary)]/[0.04] rounded-full blur-[100px]" />

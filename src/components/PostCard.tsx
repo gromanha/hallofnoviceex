@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react';
 import { Calendar, User, Pin, ArrowRight, Tag, ImageOff } from 'lucide-react';
 import { Post } from '../types';
+import { getPostCategoryColor } from '../lib/colors';
 
 interface PostCardProps {
   post: Post;
@@ -44,7 +45,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
             </div>
           )}
 
-          <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
+          <div className={`absolute bottom-3 left-3 ${getPostCategoryColor(post.category).bg} ${getPostCategoryColor(post.category).text} text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-current/20`}>
             {post.category}
           </div>
         </div>
@@ -54,7 +55,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
       {post.cover_image && imgError && (
         <div className="relative h-28 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-secondary)]/5 flex items-center justify-center">
           <ImageOff className="w-8 h-8 text-[var(--color-on-surface-variant)] opacity-30" />
-          <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
+          <div className={`absolute bottom-3 left-3 ${getPostCategoryColor(post.category).bg} ${getPostCategoryColor(post.category).text} text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-current/20`}>
             {post.category}
           </div>
         </div>

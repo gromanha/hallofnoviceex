@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
   PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed,
@@ -13,6 +14,7 @@ import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { getRecipeCategoryColor, getPostCategoryColor } from '../lib/colors';
 
 const MONTHS = [
   'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -61,7 +63,7 @@ type TypeFormState = {
 const EMPTY_TYPE_FORM: TypeFormState = {
   key: '',
   label: '',
-  color: '#1B4F7E',
+  color: '#5dade2',
   icon: 'Wand2',
   sort_order: 0,
 };
@@ -524,9 +526,20 @@ export const AdminPage: React.FC = () => {
         </div>
       )}
 
-      {/* ═══════════════════ ABA 1: POSTAGENS ═══════════════════ */}
-      {activeTab === 'posts' && (
-        <div role="tabpanel" id="tabpanel-posts" aria-labelledby="tab-posts" className="space-y-6">
+      {/* ═══════════════════ TAB CONTENT ═══════════════════ */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'posts' && (
+          <motion.div
+            key="tabpanel-posts"
+            role="tabpanel"
+            id="tabpanel-posts"
+            aria-labelledby="tab-posts"
+            className="space-y-6"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
 
           {/* Controles */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -598,7 +611,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Tabela de Postagens */}
           {loadingPosts ? (
-            <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+            <div className="h-64 bg-[var(--color-surface)] rounded-2xl shimmer" />
           ) : filteredPosts.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
@@ -627,7 +640,7 @@ export const AdminPage: React.FC = () => {
                           {post.title}
                         </td>
                         <td className="p-4">
-                          <span className="type-caption font-bold text-[var(--color-primary)] px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10">
+                          <span className={`type-caption font-bold px-2.5 py-1 rounded-md ${getPostCategoryColor(post.category).bg} ${getPostCategoryColor(post.category).text}`}>
                             {post.category}
                           </span>
                         </td>
@@ -697,12 +710,21 @@ export const AdminPage: React.FC = () => {
             </div>
           )}
 
-        </div>
-      )}
+          </motion.div>
+        )}
 
-      {/* ═══════════════════ ABA 2: EVENTOS DO CALENDÁRIO ═══════════════════ */}
-      {activeTab === 'events' && (
-        <div role="tabpanel" id="tabpanel-events" aria-labelledby="tab-events" className="space-y-6">
+        {activeTab === 'events' && (
+        <motion.div
+          key="tabpanel-events"
+          role="tabpanel"
+          id="tabpanel-events"
+          aria-labelledby="tab-events"
+          className="space-y-6"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+        >
 
           {/* Controles de Eventos */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -725,7 +747,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Lista de Eventos */}
           {loadingEvents ? (
-            <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+            <div className="h-48 bg-[var(--color-surface)] rounded-2xl shimmer" />
           ) : events.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <Calendar className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
@@ -761,7 +783,10 @@ export const AdminPage: React.FC = () => {
                           {evt.title}
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
+                          <span
+                            className="px-2.5 py-1 rounded-md font-bold uppercase text-[10px] text-white"
+                            style={{ backgroundColor: eventTypes.find(t => t.key === evt.type)?.color || 'var(--color-primary)' }}
+                          >
                             {getTypeLabel(evt.type)}
                           </span>
                         </td>
@@ -795,12 +820,21 @@ export const AdminPage: React.FC = () => {
             </div>
           )}
 
-        </div>
-      )}
+          </motion.div>
+        )}
 
-      {/* ═══════════════════ ABA 3: TIPOS DE ATIVIDADE ═══════════════════ */}
       {activeTab === 'types' && (
-        <div role="tabpanel" id="tabpanel-types" aria-labelledby="tab-types" className="space-y-6">
+        <motion.div
+          key="tabpanel-types"
+          role="tabpanel"
+          id="tabpanel-types"
+          aria-labelledby="tab-types"
+          className="space-y-6"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+        >
 
           {/* Controles de Tipos */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -823,7 +857,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Lista de Tipos */}
           {loadingEvents ? (
-            <div className="h-48 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+            <div className="h-48 bg-[var(--color-surface)] rounded-2xl shimmer" />
           ) : eventTypes.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <Tag className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
@@ -888,12 +922,21 @@ export const AdminPage: React.FC = () => {
             </div>
           )}
 
-        </div>
-      )}
+          </motion.div>
+        )}
 
-      {/* ═══════════════════ ABA 4: RECEITAS ═══════════════════ */}
       {activeTab === 'recipes' && (
-        <div role="tabpanel" id="tabpanel-recipes" aria-labelledby="tab-recipes" className="space-y-6">
+        <motion.div
+          key="tabpanel-recipes"
+          role="tabpanel"
+          id="tabpanel-recipes"
+          aria-labelledby="tab-recipes"
+          className="space-y-6"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+        >
 
           {/* Controles */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--color-surface)] p-5 rounded-2xl border border-[var(--color-outline-variant)] shadow-xs">
@@ -956,7 +999,7 @@ export const AdminPage: React.FC = () => {
 
           {/* Tabela de Receitas */}
           {loadingRecipes ? (
-            <div className="h-64 bg-[var(--color-surface-alt)] rounded-2xl animate-pulse" />
+            <div className="h-64 bg-[var(--color-surface)] rounded-2xl shimmer" />
           ) : recipes.length === 0 ? (
             <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-outline-variant)] rounded-2xl p-8">
               <UtensilsCrossed className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
@@ -981,7 +1024,7 @@ export const AdminPage: React.FC = () => {
                       <tr key={recipe.id} className="hover:bg-[var(--color-primary-light)]/40 transition-colors">
                         <td className="p-4 font-bold text-sm max-w-xs truncate">{recipe.title}</td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold uppercase text-[10px]">
+                          <span className={`px-2.5 py-1 rounded-md font-bold uppercase text-[10px] ${getRecipeCategoryColor(recipe.category).bg} ${getRecipeCategoryColor(recipe.category).text}`}>
                             {recipe.category?.replace('_', ' ') || '—'}
                           </span>
                         </td>
@@ -1043,13 +1086,34 @@ export const AdminPage: React.FC = () => {
             </div>
           )}
 
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
-      {showEventForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingEventId ? 'Editar evento' : 'Novo evento'} onClick={() => { setShowEventForm(false); setEditingEventId(null); }}>
-          <div ref={eventModalRef} className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl" onClick={e => e.stopPropagation()}>
+      <AnimatePresence>
+        {showEventForm && (
+          <motion.div
+            key="event-modal"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label={editingEventId ? 'Editar evento' : 'Novo evento'}
+            onClick={() => { setShowEventForm(false); setEditingEventId(null); }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              ref={eventModalRef}
+              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-xl shadow-2xl"
+              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleEventSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -1133,14 +1197,35 @@ export const AdminPage: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ═══════════════════ MODAL: TIPO DE ATIVIDADE ═══════════════════ */}
-      {showTypeForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'} onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }}>
-          <div ref={typeModalRef} className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+      <AnimatePresence>
+        {showTypeForm && (
+          <motion.div
+            key="type-modal"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label={editingTypeId ? 'Editar tipo' : 'Novo tipo'}
+            onClick={() => { setShowTypeForm(false); setEditingTypeId(null); }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              ref={typeModalRef}
+              className="bg-[var(--color-surface)] border-2 border-[var(--color-secondary)] rounded-2xl w-full max-w-md shadow-2xl"
+              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
             <div className="h-1.5 bg-[var(--color-secondary)] w-full" />
             <form onSubmit={e => void handleTypeSave(e)} className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[var(--color-outline-variant)] pb-4">
@@ -1230,9 +1315,10 @@ export const AdminPage: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modal de Criação / Edição de Postagem */}
       <PostModal

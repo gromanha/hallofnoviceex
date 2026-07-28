@@ -40,7 +40,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
               <span className="type-title tracking-wider text-[var(--color-on-surface)] block leading-none">
                 HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
               </span>
-              <span className="type-label normal-case text-[var(--color-on-surface-variant)] block mt-0.5">
+              <span className="type-label normal-case text-[var(--color-secondary)] block mt-0.5">
                 Majestic Battle Academy
               </span>
             </div>

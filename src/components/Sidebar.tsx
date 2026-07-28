@@ -1,5 +1,6 @@
 import React, { memo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { Home, BookOpen, Calendar, UtensilsCrossed, Shield, Moon, Sun, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import logoUrl from '@/assets/logo.png';
@@ -36,12 +37,18 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
       </button>
 
       {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/50"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="lg:hidden fixed inset-0 z-40 bg-black/50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
       <aside className={`
@@ -61,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
               <span className="font-display font-bold tracking-wider text-xs text-[var(--color-on-surface)] block leading-none truncate">
                 HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
               </span>
-              <span className="font-sans text-[10px] tracking-widest text-[var(--color-on-surface-variant)] uppercase block mt-1">
+              <span className="font-sans text-[10px] tracking-widest text-[var(--color-secondary)] uppercase block mt-1">
                 Majestic Battle Academy
               </span>
             </div>

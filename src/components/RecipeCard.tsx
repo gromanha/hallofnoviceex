@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react';
 import { Clock, ChefHat, ArrowRight, ImageOff } from 'lucide-react';
 import { Recipe } from '../types';
+import { getRecipeCategoryColor } from '../lib/colors';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -44,7 +45,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
           </div>
 
           {recipe.category && (
-            <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
+            <div className={`absolute bottom-3 left-3 ${getRecipeCategoryColor(recipe.category).bg} ${getRecipeCategoryColor(recipe.category).text} text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-current/20`}>
               {recipe.category.replace('_', ' & ')}
             </div>
           )}
@@ -55,7 +56,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
         <div className="relative h-28 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-secondary)]/5 flex items-center justify-center">
           <ImageOff className="w-8 h-8 text-[var(--color-on-surface-variant)] opacity-30" />
           {recipe.category && (
-            <div className="absolute bottom-3 left-3 bg-[var(--color-surface)]/90 text-[var(--color-primary)] text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-[var(--color-outline)]/50">
+            <div className={`absolute bottom-3 left-3 ${getRecipeCategoryColor(recipe.category).bg} ${getRecipeCategoryColor(recipe.category).text} text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg backdrop-blur-md border border-current/20`}>
               {recipe.category.replace('_', ' & ')}
             </div>
           )}

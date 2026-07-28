@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { BookOpen, Search, Sparkles, Filter, X, UtensilsCrossed } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
 import { useDebounce } from '../lib/useDebounce';
+import { POST_CATEGORY_COLORS } from '../lib/colors';
 
 export const AcademiaPage: React.FC = () => {
   const navigate = useNavigate();
@@ -108,20 +109,26 @@ export const AcademiaPage: React.FC = () => {
             { id: 'guias', label: 'Combate EX/Savage' },
             { id: 'crafting', label: 'Crafting' },
             { id: 'noticias', label: 'Noticias' },
-          ].map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              aria-pressed={selectedCategory === cat.id}
-              className={`px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
-                selectedCategory === cat.id
-                  ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
-                  : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+          ].map(cat => {
+            const catColor = cat.id !== 'all' ? POST_CATEGORY_COLORS[cat.id] : null;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                aria-pressed={selectedCategory === cat.id}
+                className={`px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
+                  selectedCategory === cat.id
+                    ? catColor
+                      ? `${catColor.bg} ${catColor.text} shadow-md border border-current/20`
+                      : 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+                    : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+                }`}
+              >
+                {catColor && <span className="w-1.5 h-1.5 rounded-full inline-block mr-1" style={{ backgroundColor: catColor.dot }} />}
+                {cat.label}
+              </button>
+            );
+          })}
 
           <span className="w-px h-5 bg-[var(--color-outline)]" />
 
@@ -157,24 +164,40 @@ export const AcademiaPage: React.FC = () => {
       </div>
 
       {/* Lista de Postagens */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(n => (
-            <div key={n} className="h-80 bg-[var(--color-surface)] rounded-2xl shimmer" />
-          ))}
-        </div>
-      ) : posts.length === 0 ? (
-        <div className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
-          <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-30" />
-          <h3 className="type-title text-[var(--color-on-surface)]">Nenhuma publicação encontrada</h3>
-          <p className="type-body text-[var(--color-on-surface-variant)] mt-1">Tente ajustar o termo de busca ou o filtro de categoria.</p>
-        </div>
-      ) : (
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {[1, 2, 3, 4, 5, 6].map(n => (
+              <div key={n} className="h-80 bg-[var(--color-surface)] rounded-2xl shimmer" />
+            ))}
+          </motion.div>
+        ) : posts.length === 0 ? (
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50"
+          >
+            <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-30" />
+            <h3 className="type-title text-[var(--color-on-surface)]">Nenhuma publicação encontrada</h3>
+            <p className="type-body text-[var(--color-on-surface-variant)] mt-1">Tente ajustar o termo de busca ou o filtro de categoria.</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`${selectedCategory}-${debouncedSearchQuery}`}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
         >
           {posts.map(post => (
             <motion.div key={post.id} variants={itemVariants}>
@@ -186,6 +209,7 @@ export const AcademiaPage: React.FC = () => {
           ))}
         </motion.div>
       )}
+      </AnimatePresence>
 
     </main>
   );

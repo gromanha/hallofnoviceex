@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ArrowLeft, Clock, ChefHat, Share2, Check, UtensilsCrossed } from 'lucide-react';
 import { Recipe } from '../types';
 import { apiGet } from '../lib/api';
@@ -89,7 +90,12 @@ export const RecipeDetailPage: React.FC = () => {
   return (
     <article className="max-w-4xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
-      <div className="flex items-center justify-between">
+      <motion.div
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+      >
         <button
           onClick={() => navigate('/receitas')}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
@@ -104,9 +110,14 @@ export const RecipeDetailPage: React.FC = () => {
           {copied ? <Check className="w-4 h-4 text-[var(--color-sage)]" /> : <Share2 className="w-4 h-4" />}
           {copied ? 'Link Copiado!' : 'Compartilhar'}
         </button>
-      </div>
+      </motion.div>
 
-      <div className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 space-y-8">
+      <motion.div
+        className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 space-y-8"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
 
         <header className="space-y-4 text-center">
           {recipe.regional_cuisine && (
@@ -250,7 +261,7 @@ export const RecipeDetailPage: React.FC = () => {
           </div>
         )}
 
-      </div>
+      </motion.div>
     </article>
   );
 };

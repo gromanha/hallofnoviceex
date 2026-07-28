@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ArrowLeft, Calendar, User, Tag, BookOpen, Share2, Check } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
@@ -98,7 +99,12 @@ export const PostDetailPage: React.FC = () => {
   return (
     <article className="max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
-      <div className="flex items-center justify-between">
+      <motion.div
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+      >
         <button
           onClick={() => navigate('/academia')}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl glass border border-[var(--color-outline)]/50 type-body font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
@@ -114,9 +120,14 @@ export const PostDetailPage: React.FC = () => {
           {copied ? <Check className="w-4 h-4 text-[var(--color-sage)]" /> : <Share2 className="w-4 h-4" />}
           {copied ? 'Link Copiado!' : shareError ? 'Copie manualmente o link' : 'Compartilhar'}
         </button>
-      </div>
+      </motion.div>
 
-      <header className="space-y-4">
+      <motion.header
+        className="space-y-4"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
         <div className="type-label text-[var(--color-primary)] inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10">
           {post.category}
         </div>
@@ -141,25 +152,35 @@ export const PostDetailPage: React.FC = () => {
             {formattedDate}
           </span>
         </div>
-      </header>
+      </motion.header>
 
       {post.cover_image && !imgError && (
-        <div className="rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 max-h-[400px]">
+        <motion.div
+          className="rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 max-h-[400px]"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+        >
           <img
             src={post.cover_image}
             alt={post.title}
             className="w-full h-full object-cover"
             onError={() => setImgError(true)}
           />
-        </div>
+        </motion.div>
       )}
 
-      <div className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)]">
+      <motion.div
+        className="glass p-6 sm:p-8 rounded-2xl border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)]"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
         <div
           className="prose max-w-none space-y-4"
           dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
         />
-      </div>
+      </motion.div>
 
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-[var(--color-outline)]/30">

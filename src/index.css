@@ -34,6 +34,7 @@
 }
 
 html {
+  color-scheme: dark;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -184,6 +185,8 @@ body {
 
 /* ── Light Theme Overrides ── */
 [data-theme="light"] {
+  color-scheme: light;
+
   --color-background: #f5f3ef;
   --color-surface: #ffffff;
   --color-surface-alt: #ebe8e3;
@@ -197,6 +200,7 @@ body {
   --color-primary-deep: #b8520f;
   --color-primary-light: rgba(234, 106, 26, 0.1);
   --color-primary-hover: #f07d33;
+  --color-on-primary: #ffffff;
 
   --color-secondary: #a8892e;
   --color-secondary-light: rgba(168, 137, 46, 0.1);
@@ -226,6 +230,16 @@ body {
   --color-copper-light: rgba(168, 137, 46, 0.1);
   --color-crimson: #dc3545;
   --color-crimson-light: rgba(220, 53, 69, 0.1);
+
+  /* ── Recipe Category Colors (Light) ── */
+  --color-cat-breakfast: #d45a0a;
+  --color-cat-appetizers: #8a6e22;
+  --color-cat-breads: #b36206;
+  --color-cat-soups: #c0392b;
+  --color-cat-main: #d45a0a;
+  --color-cat-sides: #1e8449;
+  --color-cat-desserts: #c2185b;
+  --color-cat-drinks: #2874a6;
 
   --color-info: #3a8dc0;
   --color-info-light: rgba(58, 141, 192, 0.1);

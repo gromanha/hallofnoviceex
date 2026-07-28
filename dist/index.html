@@ -37,15 +37,18 @@
         rel="stylesheet"
       />
     </noscript>
-    <script type="module" crossorigin src="/assets/index-BiAEo_xs.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-RIxs37AO.css">
+    <script type="module" crossorigin src="/assets/index-cVmFnZrk.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BpTxCmgJ.css">
   </head>
   <body>
     <script>
       (function() {
         var saved = localStorage.getItem('hon_theme');
-        if (saved === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        } else {
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
         }
       })();
     </script>

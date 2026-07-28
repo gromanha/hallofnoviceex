@@ -335,7 +335,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
                           <input type="text" value={item.unit} onChange={e => updateIngredientItem(si, ii, 'unit', e.target.value)} placeholder="Unidade" className="w-20 px-2 py-1.5 rounded-lg border border-[var(--color-outline-variant)] bg-[var(--color-surface)] text-xs focus:outline-none" />
                           <input type="text" value={item.name} onChange={e => updateIngredientItem(si, ii, 'name', e.target.value)} placeholder="Ingrediente" className="flex-1 px-2 py-1.5 rounded-lg border border-[var(--color-outline-variant)] bg-[var(--color-surface)] text-xs focus:outline-none" />
                           {section.items.length > 1 && (
-                            <button type="button" onClick={() => removeIngredientItem(si, ii)} className="p-1 rounded hover:bg-slate-200 text-slate-400"><X className="w-3 h-3" /></button>
+                            <button type="button" onClick={() => removeIngredientItem(si, ii)} className="p-1 rounded hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"><X className="w-3 h-3" /></button>
                           )}
                         </div>
                       ))}
@@ -367,7 +367,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
                           <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--color-primary)] text-white text-[10px] font-bold flex items-center justify-center">{sti + 1}</span>
                           <input type="text" value={step} onChange={e => updateStep(si, sti, e.target.value)} placeholder="Passo da instrucao..." className="flex-1 px-2 py-1.5 rounded-lg border border-[var(--color-outline-variant)] bg-[var(--color-surface)] text-xs focus:outline-none" />
                           {section.steps.length > 1 && (
-                            <button type="button" onClick={() => removeStep(si, sti)} className="p-1 rounded hover:bg-slate-200 text-slate-400"><X className="w-3 h-3" /></button>
+                            <button type="button" onClick={() => removeStep(si, sti)} className="p-1 rounded hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"><X className="w-3 h-3" /></button>
                           )}
                         </div>
                       ))}

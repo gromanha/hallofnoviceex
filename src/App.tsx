@@ -23,27 +23,19 @@ function AppRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('hon_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem('hon_theme');
-    if (saved === 'dark') {
-      setTheme('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-  }, []);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('hon_theme', theme);
+  }, [theme]);
 
   const handleToggleTheme = useCallback(() => {
-    setTheme(prev => {
-      const next = prev === 'light' ? 'dark' : 'light';
-      localStorage.setItem('hon_theme', next);
-      if (next === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-      return next;
-    });
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
   const handleLogin = async (username: string, password: string) => {

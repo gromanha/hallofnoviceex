@@ -349,7 +349,7 @@ export const CalendarPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span
                     className="type-label px-2.5 py-1 rounded-lg border text-white"
-                    style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.2)' }}
+                    style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.25)' }}
                   >
                     {selectedEvent.month} • Dia {selectedEvent.day}
                   </span>

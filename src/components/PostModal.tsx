@@ -186,7 +186,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                       placeholder="ex: Tratado Completo da Zodiac Weapon"
                       className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                     />
-                    <p className="text-[9px] text-slate-400 mt-1">{title.length}/200</p>
+                    <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">{title.length}/200</p>
                   </div>
 
                   <div>
@@ -220,7 +220,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                     placeholder="Breve resumo da postagem exibido no card de listagem"
                     className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
                   />
-                  <p className="text-[9px] text-slate-400 mt-1">{subtitle.length}/300</p>
+                  <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">{subtitle.length}/300</p>
                 </div>
 
                 {/* Imagem de Capa e Tags */}

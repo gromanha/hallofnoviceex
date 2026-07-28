@@ -333,6 +333,9 @@ app.post('/api/events', async (req, res) => {
     const image = clampStr(b.image, 500);
     const crystal = Boolean(b.crystal);
     const stars = Boolean(b.stars);
+    const is_recurring = Boolean(b.is_recurring);
+    const end_day = b.end_day != null ? Number(b.end_day) : null;
+    const end_month = b.end_month ? clampStr(b.end_month, 20) : null;
 
     if (!month || !day || !time || !title || !type) {
       return res.status(400).json({ error: 'missing_required_fields' });
@@ -349,10 +352,16 @@ app.post('/api/events', async (req, res) => {
     if (!isSafeUrl(image)) {
       return res.status(400).json({ error: 'invalid_image_url' });
     }
+    if (end_month && !isValidMonth(end_month)) {
+      return res.status(400).json({ error: 'invalid_end_month' });
+    }
+    if (end_day && end_month && !isValidDay(end_day, end_month)) {
+      return res.status(400).json({ error: 'invalid_end_day' });
+    }
 
     const payload = {
       month, day, time, title, description, instructor, type, image,
-      crystal, stars, created_by: claims.sub,
+      crystal, stars, is_recurring, end_day, end_month, created_by: claims.sub,
     };
     const { data, error } = await supabaseAdmin
       .from('events')
@@ -396,6 +405,13 @@ app.patch('/api/events', async (req, res) => {
     }
     if (raw.crystal !== undefined) fields.crystal = Boolean(raw.crystal);
     if (raw.stars !== undefined) fields.stars = Boolean(raw.stars);
+    if (raw.is_recurring !== undefined) fields.is_recurring = Boolean(raw.is_recurring);
+    if (raw.end_day !== undefined) fields.end_day = raw.end_day != null ? Number(raw.end_day) : null;
+    if (raw.end_month !== undefined) {
+      const em = raw.end_month ? clampStr(raw.end_month, 20) : null;
+      if (em && !isValidMonth(em)) return res.status(400).json({ error: 'invalid_end_month' });
+      fields.end_month = em;
+    }
     if (raw.mana_progress !== undefined) fields.mana_progress = Math.min(100, Math.max(0, Number(raw.mana_progress) || 0));
     if (raw.spots !== undefined) fields.spots = Number(raw.spots) || null;
     if (raw.rank !== undefined) fields.rank = clampStr(raw.rank, 20);

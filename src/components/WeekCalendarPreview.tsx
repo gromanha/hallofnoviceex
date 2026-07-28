@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ChevronRight, Clock, Wand2, Swords, FlaskConical, BookOpen, Sparkles, Eye, Moon, Star, Layers } from 'lucide-react';
+import { Calendar, ChevronRight, Clock, Wand2, Swords, FlaskConical, BookOpen, Sparkles, Eye, Moon, Star, Layers, RefreshCw } from 'lucide-react';
 import { MagicalEvent, EventTypeItem } from '../types';
 import { apiGet } from '../lib/api';
 
@@ -14,6 +14,12 @@ const MONTH_NAMES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
+
+function getWeekdayOfMonth(monthName: string, day: number, year: number): number {
+  const monthIdx = MONTH_NAMES.indexOf(monthName);
+  if (monthIdx === -1) return 0;
+  return new Date(year, monthIdx, day).getDay();
+}
 
 function getWeekRange(date: Date): { start: Date; end: Date; days: Date[] } {
   const d = new Date(date);
@@ -75,23 +81,54 @@ export const WeekCalendarPreview: React.FC = memo(() => {
     return map;
   }, [eventTypes]);
 
-  const currentMonthName = MONTH_NAMES[today.getMonth()];
-
   const eventsByDay = useMemo(() => {
     const map = new Map<number, MagicalEvent[]>();
+    const year = today.getFullYear();
+
     for (const ev of events) {
-      if (ev.month.toLowerCase() !== currentMonthName.toLowerCase()) continue;
-      const evDate = new Date(today.getFullYear(), today.getMonth(), ev.day);
-      if (evDate >= start && evDate <= end) {
-        const dayKey = evDate.getDay();
-        const list = map.get(dayKey) || [];
-        list.push(ev);
-        list.sort((a, b) => a.time.localeCompare(b.time));
-        map.set(dayKey, list);
+      if (ev.is_recurring) {
+        const evWeekday = getWeekdayOfMonth(ev.month, ev.day, year);
+        for (let i = 0; i < 7; i++) {
+          const dayDate = days[i];
+          if (dayDate.getDay() === evWeekday) {
+            const list = map.get(i) || [];
+            list.push(ev);
+            list.sort((a, b) => a.time.localeCompare(b.time));
+            map.set(i, list);
+          }
+        }
+      } else {
+        const evStartMonthIdx = MONTH_NAMES.indexOf(ev.month);
+        const evEndMonthIdx = MONTH_NAMES.indexOf(ev.end_month || ev.month);
+        if (evStartMonthIdx === -1 || evEndMonthIdx === -1) continue;
+
+        for (let i = 0; i < 7; i++) {
+          const dayDate = days[i];
+          const dayMonthIdx = dayDate.getMonth();
+          const dayNum = dayDate.getDate();
+
+          let matches = false;
+          if (dayMonthIdx === evStartMonthIdx && dayMonthIdx === evEndMonthIdx) {
+            matches = dayNum >= ev.day && dayNum <= (ev.end_day || ev.day);
+          } else if (dayMonthIdx === evStartMonthIdx) {
+            matches = dayNum >= ev.day;
+          } else if (dayMonthIdx === evEndMonthIdx) {
+            matches = dayNum <= (ev.end_day || 31);
+          } else if (dayMonthIdx > evStartMonthIdx && dayMonthIdx < evEndMonthIdx) {
+            matches = true;
+          }
+
+          if (matches) {
+            const list = map.get(i) || [];
+            list.push(ev);
+            list.sort((a, b) => a.time.localeCompare(b.time));
+            map.set(i, list);
+          }
+        }
       }
     }
     return map;
-  }, [events, currentMonthName, start, end, today]);
+  }, [events, days, today]);
 
   const totalEvents = useMemo(() => {
     let count = 0;
@@ -193,6 +230,7 @@ export const WeekCalendarPreview: React.FC = memo(() => {
                           <span className="text-[11px] text-[var(--color-on-surface)] font-medium truncate flex-1">
                             {ev.title}
                           </span>
+                          {ev.is_recurring && <RefreshCw className="w-2.5 h-2.5 shrink-0 opacity-50" />}
                           <span className="flex items-center gap-1 text-[10px] text-[var(--color-on-surface-variant)] shrink-0">
                             <Clock className="w-2.5 h-2.5" />
                             {ev.time}

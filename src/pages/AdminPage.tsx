@@ -37,6 +37,9 @@ type EventFormState = {
   image: string;
   crystal: boolean;
   stars: boolean;
+  is_recurring: boolean;
+  end_day: number | null;
+  end_month: string | null;
 };
 
 const EMPTY_EVENT_FORM: EventFormState = {
@@ -50,6 +53,9 @@ const EMPTY_EVENT_FORM: EventFormState = {
   image: '',
   crystal: false,
   stars: false,
+  is_recurring: false,
+  end_day: null,
+  end_month: null,
 };
 
 type TypeFormState = {
@@ -291,6 +297,9 @@ export const AdminPage: React.FC = () => {
       image: evt.image || '',
       crystal: evt.crystal || false,
       stars: evt.stars || false,
+      is_recurring: evt.is_recurring || false,
+      end_day: evt.end_day ?? null,
+      end_month: evt.end_month ?? null,
     });
     setShowEventForm(true);
   }
@@ -312,6 +321,9 @@ export const AdminPage: React.FC = () => {
         image: eventForm.image,
         crystal: eventForm.crystal,
         stars: eventForm.stars,
+        is_recurring: eventForm.is_recurring,
+        end_day: eventForm.end_day,
+        end_month: eventForm.end_month,
       };
       if (editingEventId) {
         await apiPatch('/api/events', { ...payload, id: editingEventId });
@@ -766,6 +778,8 @@ export const AdminPage: React.FC = () => {
                       <th className="p-4">Título</th>
                       <th className="p-4">Tipo</th>
                       <th className="p-4">Instrutor</th>
+                      <th className="p-4">Recorrente</th>
+                      <th className="p-4">Duração</th>
                       <th className="p-4 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -791,6 +805,16 @@ export const AdminPage: React.FC = () => {
                           </span>
                         </td>
                         <td className="p-4 text-[var(--color-on-surface-variant)]">{evt.instructor || '—'}</td>
+                        <td className="p-4">
+                          {evt.is_recurring ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] type-caption">
+                              <RefreshCw className="w-3 h-3" /> Sim
+                            </span>
+                          ) : '—'}
+                        </td>
+                        <td className="p-4 text-[var(--color-on-surface-variant)] type-caption">
+                          {evt.end_day ? `Até ${evt.end_day} de ${evt.end_month || evt.month}` : '1 dia'}
+                        </td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
@@ -1185,6 +1209,41 @@ export const AdminPage: React.FC = () => {
                   <input type="checkbox" checked={eventForm.stars} onChange={e => setEventField('stars', e.target.checked)} className="accent-[var(--color-primary)] rounded" />
                   Estrelas
                 </label>
+              </div>
+
+              <div className="p-3 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)]/50 space-y-3">
+                <label className="flex items-center gap-2 text-xs cursor-pointer font-bold">
+                  <input type="checkbox" checked={eventForm.is_recurring} onChange={e => setEventField('is_recurring', e.target.checked)} className="accent-[var(--color-primary)] rounded" />
+                  <RefreshCw className="w-3 h-3 text-[var(--color-primary)]" />
+                  Evento fixo (toda semana neste dia)
+                </label>
+                {eventForm.is_recurring && (
+                  <p className="text-[9px] text-[var(--color-on-surface-variant)] pl-5">
+                    O evento aparecerá em todas as semanas do mês que tenham o dia da semana correspondente.
+                  </p>
+                )}
+
+                <div className="border-t border-[var(--color-outline-variant)] pt-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)] mb-2">Duração do evento</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[9px] text-[var(--color-on-surface-variant)] mb-1">Mês final (opcional)</label>
+                      <select value={eventForm.end_month || ''} onChange={e => setEventField('end_month', e.target.value || null)} className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30">
+                        <option value="">Mesmo mês</option>
+                        {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-[var(--color-on-surface-variant)] mb-1">Dia final (opcional)</label>
+                      <input type="number" min={1} max={31} value={eventForm.end_day ?? ''} onChange={e => setEventField('end_day', e.target.value ? Number(e.target.value) : null)} placeholder="—" className="w-full bg-[var(--color-background)] border border-[var(--color-outline-variant)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30" />
+                    </div>
+                  </div>
+                  {(eventForm.end_day || eventForm.end_month) && (
+                    <p className="text-[9px] text-[var(--color-on-surface-variant)] mt-1">
+                      O evento será exibido do dia {eventForm.day}/{eventForm.month} até {(eventForm.end_day || eventForm.day)}/{eventForm.end_month || eventForm.month}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-[var(--color-outline-variant)]">

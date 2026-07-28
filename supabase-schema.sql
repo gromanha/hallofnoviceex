@@ -30,6 +30,9 @@ CREATE TABLE IF NOT EXISTS events (
   mana_progress INTEGER DEFAULT 0,
   spots         INTEGER,
   rank          TEXT,
+  is_recurring  BOOLEAN DEFAULT false,
+  end_day       INTEGER,
+  end_month     TEXT,
   created_by    UUID REFERENCES admins(id),
   created_at    TIMESTAMPTZ DEFAULT now(),
   updated_at    TIMESTAMPTZ
@@ -155,7 +158,12 @@ SELECT * FROM (VALUES
 ) AS v(key, label, icon, sort_order)
 WHERE NOT EXISTS (SELECT 1 FROM recipe_categories LIMIT 1);
 
--- 7. Habilitar RLS (Row Level Security)
+-- 7. Adicionar campos para eventos recorrentes e multi-dia (execute se ja existir a tabela)
+ALTER TABLE events ADD COLUMN IF NOT EXISTS is_recurring BOOLEAN DEFAULT false;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS end_day INTEGER;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS end_month TEXT;
+
+-- 8. Habilitar RLS (Row Level Security)
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE event_types ENABLE ROW LEVEL SECURITY;

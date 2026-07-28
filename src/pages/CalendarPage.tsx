@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock,
-  Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar
+  Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar, RefreshCw
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventTypeItem } from '../types';
 import { apiGet } from '../lib/api';
@@ -49,6 +49,39 @@ function buildRealMonths(startYear: number, startMonth: number, count = 12): Mon
 }
 
 const TODAY = new Date();
+
+function getWeekdayOfMonth(monthName: string, day: number, year: number): number {
+  const monthIdx = REAL_MONTH_NAMES.indexOf(monthName);
+  if (monthIdx === -1) return 0;
+  return new Date(year, monthIdx, day).getDay();
+}
+
+function eventMatchesMonth(event: MagicalEvent, monthName: string, year: number): boolean {
+  const evMonth = event.month.toLowerCase();
+  const curMonth = monthName.toLowerCase();
+
+  if (event.is_recurring) {
+    const evWeekday = getWeekdayOfMonth(event.month, event.day, year);
+    const monthIdx = REAL_MONTH_NAMES.indexOf(monthName);
+    if (monthIdx === -1) return false;
+    const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      if (new Date(year, monthIdx, d).getDay() === evWeekday) return true;
+    }
+    return false;
+  }
+
+  if (event.end_day || event.end_month) {
+    const curMonthIdx = REAL_MONTH_NAMES.indexOf(monthName);
+    const evStartMonthIdx = REAL_MONTH_NAMES.indexOf(event.month);
+    const evEndMonthIdx = REAL_MONTH_NAMES.indexOf(event.end_month || event.month);
+    if (curMonthIdx === -1 || evStartMonthIdx === -1 || evEndMonthIdx === -1) return false;
+    if (curMonthIdx < evStartMonthIdx || curMonthIdx > evEndMonthIdx) return false;
+    return true;
+  }
+
+  return evMonth === curMonth;
+}
 
 export const CalendarPage: React.FC = () => {
   const navigate = useNavigate();
@@ -97,8 +130,9 @@ export const CalendarPage: React.FC = () => {
   }, [eventTypes]);
 
   const monthEvents = useMemo(() => {
-    return events.filter(e => e.month.toLowerCase() === currentMonth.name.toLowerCase());
-  }, [events, currentMonth.name]);
+    const year = Number(currentMonth.cycle);
+    return events.filter(e => eventMatchesMonth(e, currentMonth.name, year));
+  }, [events, currentMonth.name, currentMonth.cycle]);
 
   const filteredEvents = useMemo(() => {
     if (selectedType === 'all') return monthEvents;
@@ -107,13 +141,51 @@ export const CalendarPage: React.FC = () => {
 
   const eventsByDay = useMemo(() => {
     const map = new Map<number, MagicalEvent[]>();
+    const year = Number(currentMonth.cycle);
+    const monthIdx = REAL_MONTH_NAMES.indexOf(currentMonth.name);
+    if (monthIdx === -1) return map;
+    const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+
     for (const ev of filteredEvents) {
-      const list = map.get(ev.day) || [];
-      list.push(ev);
-      map.set(ev.day, list);
+      if (ev.is_recurring) {
+        const evWeekday = getWeekdayOfMonth(ev.month, ev.day, year);
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (new Date(year, monthIdx, d).getDay() === evWeekday) {
+            const list = map.get(d) || [];
+            list.push(ev);
+            map.set(d, list);
+          }
+        }
+      } else {
+        let startDay = ev.day;
+        let endDay = ev.end_day || ev.day;
+
+        const evStartMonthIdx = REAL_MONTH_NAMES.indexOf(ev.month);
+        const evEndMonthIdx = REAL_MONTH_NAMES.indexOf(ev.end_month || ev.month);
+
+        if (evStartMonthIdx !== monthIdx && evEndMonthIdx !== monthIdx) continue;
+
+        if (evStartMonthIdx === monthIdx && evEndMonthIdx === monthIdx) {
+          // same month
+        } else if (evStartMonthIdx === monthIdx) {
+          endDay = daysInMonth;
+        } else if (evEndMonthIdx === monthIdx) {
+          startDay = 1;
+        } else {
+          startDay = 1;
+          endDay = daysInMonth;
+        }
+
+        for (let d = startDay; d <= endDay && d <= daysInMonth; d++) {
+          if (d < 1) continue;
+          const list = map.get(d) || [];
+          list.push(ev);
+          map.set(d, list);
+        }
+      }
     }
     return map;
-  }, [filteredEvents]);
+  }, [filteredEvents, currentMonth.name, currentMonth.cycle]);
 
   const nextMonth = () => { setMonthDirection(1); setMonthIndex(i => Math.min(months.length - 1, i + 1)); };
   const prevMonth = () => { setMonthDirection(-1); setMonthIndex(i => Math.max(0, i - 1)); };
@@ -294,6 +366,7 @@ export const CalendarPage: React.FC = () => {
                           className="w-full text-left py-1.5 px-1.5 rounded-lg text-white type-caption font-medium truncate flex items-center gap-1 transition-transform hover:scale-[1.02]"
                           style={{ backgroundColor: tInfo?.color || 'var(--color-primary)' }}
                         >
+                          {ev.is_recurring && <RefreshCw className="w-2.5 h-2.5 shrink-0 opacity-80" />}
                           <span className="truncate flex-1">{ev.title}</span>
                         </button>
                       );
@@ -347,20 +420,34 @@ export const CalendarPage: React.FC = () => {
 
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span
-                    className="type-label px-2.5 py-1 rounded-lg border text-white"
-                    style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.25)' }}
-                  >
-                    {selectedEvent.month} • Dia {selectedEvent.day}
-                  </span>
-                  <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
-                    aria-label="Fechar detalhes do evento"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                   <span
+                     className="type-label px-2.5 py-1 rounded-lg border text-white"
+                     style={{ backgroundColor: typeMap.get(selectedEvent.type)?.color || 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.25)' }}
+                   >
+                     {selectedEvent.month} • Dia {selectedEvent.day}
+                   </span>
+                   <button
+                     onClick={() => setSelectedEvent(null)}
+                     className="p-1 rounded-lg hover:bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]"
+                     aria-label="Fechar detalhes do evento"
+                   >
+                     <X className="w-4 h-4" />
+                   </button>
+                 </div>
+
+                 {selectedEvent.is_recurring && (
+                   <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 w-fit">
+                     <RefreshCw className="w-3 h-3" />
+                     Evento fixo — toda semana
+                   </span>
+                 )}
+
+                 {selectedEvent.end_day && (
+                   <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] border border-[var(--color-secondary)]/20 w-fit">
+                     <Calendar className="w-3 h-3" />
+                     Até {selectedEvent.end_day} de {selectedEvent.end_month || selectedEvent.month}
+                   </span>
+                 )}
 
                 <h2 className="type-title text-[var(--color-on-surface)]">
                   {selectedEvent.title}

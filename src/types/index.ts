@@ -25,6 +25,9 @@ export interface MagicalEvent {
   mana_progress?: number;
   spots?: number;
   rank?: string;
+  is_recurring?: boolean;
+  end_day?: number | null;
+  end_month?: string | null;
 }
 
 export interface MonthData {

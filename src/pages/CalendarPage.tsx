@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  BookOpen, Sparkles, ChevronLeft, ChevronRight, X, Clock,
+  BookOpen, Sparkles, ChevronLeft, ChevronRight, Clock,
   Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar, RefreshCw
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventTypeItem } from '../types';
@@ -407,34 +407,19 @@ export const CalendarPage: React.FC = () => {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               {selectedEvent.image && !eventImgError && (
-                <div className="h-56 bg-[var(--color-surface)] relative">
+                <div className="h-56 bg-[var(--color-surface)]">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
                     className="w-full h-full object-contain"
                     onError={() => setEventImgError(true)}
                   />
-                  <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="absolute top-3 right-3 p-2 rounded-lg bg-[var(--color-background)]/60 backdrop-blur-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
-                    aria-label="Fechar detalhes do evento"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
                 </div>
               )}
 
-              {!selectedEvent.image || eventImgError && (
-                <div className="h-16 bg-[var(--color-surface)] relative">
-                  <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="absolute top-3 right-3 p-2 rounded-lg bg-[var(--color-background)]/60 backdrop-blur-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
-                    aria-label="Fechar detalhes do evento"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+              {!selectedEvent.image || eventImgError ? (
+                <div className="h-16 bg-[var(--color-surface)]" />
+              ) : null}
 
               <div className="p-6 pt-4 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -444,10 +429,15 @@ export const CalendarPage: React.FC = () => {
                   >
                     {selectedEvent.month} • Dia {selectedEvent.day}
                   </span>
-                  {selectedEvent.is_recurring && (
+                  {selectedEvent.is_recurring ? (
                     <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 w-fit">
                       <RefreshCw className="w-3 h-3" />
                       Evento fixo — toda semana
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 type-caption px-2.5 py-1 rounded-lg bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] border border-[var(--color-outline)]/30 w-fit">
+                      <Clock className="w-3 h-3" />
+                      Evento único
                     </span>
                   )}
                   {selectedEvent.end_day && (

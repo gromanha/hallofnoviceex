@@ -119,7 +119,7 @@ export const CalendarPage: React.FC = () => {
   useEscapeKey(() => setSelectedEvent(null), !!selectedEvent);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header do Calendário */}
       <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 flex flex-col md:flex-row items-center justify-between gap-6">

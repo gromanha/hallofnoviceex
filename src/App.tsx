@@ -53,8 +53,6 @@ function AppRoutes() {
     navigate('/admin');
   };
 
-  const isHomePage = location.pathname === '/';
-
   return (
     <>
       <a
@@ -66,25 +64,7 @@ function AppRoutes() {
       <Navbar onOpenLogin={() => setIsLoginOpen(true)} theme={theme} onToggleTheme={handleToggleTheme} />
 
       <main id="main-content" className="flex-1" tabIndex={-1}>
-        {isHomePage ? (
-          <DashboardLayout theme={theme} onToggleTheme={handleToggleTheme}>
-            <Suspense fallback={<PageLoader />}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={location.pathname}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <Routes location={location}>
-                    <Route path="/" element={<HomePage />} />
-                  </Routes>
-                </motion.div>
-              </AnimatePresence>
-            </Suspense>
-          </DashboardLayout>
-        ) : (
+        <DashboardLayout theme={theme} onToggleTheme={handleToggleTheme}>
           <Suspense fallback={<PageLoader />}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -95,6 +75,7 @@ function AppRoutes() {
                 transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Routes location={location}>
+                  <Route path="/" element={<HomePage />} />
                   <Route path="/academia" element={<AcademiaPage />} />
                   <Route path="/post/:slug" element={<PostDetailPage />} />
                   <Route path="/calendario" element={<CalendarPage />} />
@@ -113,7 +94,7 @@ function AppRoutes() {
               </motion.div>
             </AnimatePresence>
           </Suspense>
-        )}
+        </DashboardLayout>
       </main>
 
       <Footer />

@@ -60,7 +60,7 @@ export const PostDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 space-y-6">
+      <div className="max-w-4xl px-4 py-16 space-y-6">
         <div className="h-8 bg-[var(--color-surface)] rounded-xl w-3/4 shimmer" />
         <div className="h-64 bg-[var(--color-surface)] rounded-2xl shimmer" />
         <div className="space-y-3">
@@ -73,7 +73,7 @@ export const PostDetailPage: React.FC = () => {
 
   if (notFound || !post) {
     return (
-      <div className="max-w-xl mx-auto text-center py-20 px-4 space-y-4">
+      <div className="max-w-xl text-center py-20 px-4 space-y-4">
         <BookOpen className="w-16 h-16 text-[var(--color-on-surface-variant)] mx-auto opacity-30" />
         <h2 className="font-display font-bold text-xl text-[var(--color-on-surface)]">Postagem não encontrada</h2>
         <p className="text-xs text-[var(--color-on-surface-variant)]">A publicação solicitada não existe ou foi removida pelo autor.</p>
@@ -96,7 +96,7 @@ export const PostDetailPage: React.FC = () => {
     : '';
 
   return (
-    <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <article className="max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       <div className="flex items-center justify-between">
         <button

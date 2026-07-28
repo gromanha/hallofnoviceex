@@ -68,7 +68,7 @@ export const RecipesPage: React.FC = () => {
   }, [selectedCategory, debouncedSearch]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
       {/* Header */}
       <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 relative overflow-hidden text-center space-y-4">

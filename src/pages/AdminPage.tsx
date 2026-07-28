@@ -425,7 +425,7 @@ export const AdminPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
       {/* Header do Painel Admin */}
       <div className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary-deep)] to-[var(--color-primary-deep)] rounded-3xl p-8 text-white border-2 border-[var(--color-secondary)] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">

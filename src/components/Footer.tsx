@@ -4,7 +4,7 @@ import logoUrl from '@/assets/logo.png';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#121921] text-[var(--color-on-surface-variant)] border-t-4 border-[var(--color-secondary)] pt-12 pb-8">
+    <footer className="bg-[var(--color-background)] text-[var(--color-on-surface-variant)] border-t-4 border-[var(--color-secondary)] pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           
@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
                 HALL OF THE NOVICE <span className="text-[var(--color-secondary)]">EX</span>
               </span>
             </div>
-            <p className="text-sm text-slate-400 leading-relaxed mb-4">
+            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed mb-4">
               Comunidade brasileira de Final Fantasy XIV focada em ensino sem toxicidade, imersão temática acadêmica em Sharlayan e produção de guias de alta didática.
             </p>
             <p className="text-xs text-[var(--color-secondary)] font-serif italic">
@@ -32,10 +32,10 @@ export const Footer: React.FC = () => {
               <MapPin className="w-4 h-4 text-[var(--color-secondary)]" />
               Campus Físico (FC House)
             </h3>
-            <ul className="text-sm text-slate-400 space-y-2">
-              <li><strong className="text-slate-200">Mundo:</strong> Behemoth (Primal)</li>
-              <li><strong className="text-slate-200">Local:</strong> Mist — Ward 19, Plot 35</li>
-              <li><strong className="text-slate-200">Instalações:</strong> Grande Biblioteca, Salas Táticas, Refeitório & Observatório</li>
+            <ul className="text-sm text-[var(--color-on-surface-variant)] space-y-2">
+              <li><strong className="text-[var(--color-on-surface)]">Mundo:</strong> Behemoth (Primal)</li>
+              <li><strong className="text-[var(--color-on-surface)]">Local:</strong> Mist — Ward 19, Plot 35</li>
+              <li><strong className="text-[var(--color-on-surface)]">Instalações:</strong> Grande Biblioteca, Salas Táticas, Refeitório & Observatório</li>
             </ul>
           </div>
 
@@ -45,7 +45,7 @@ export const Footer: React.FC = () => {
               <BookOpen className="w-4 h-4 text-[var(--color-secondary)]" />
               Matrícula Digital
             </h3>
-            <p className="text-sm text-slate-400 mb-4">
+            <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
               Junte-se a nós pelo Discord oficial para participar dos eventos, learning parties e matricular seu personagem.
             </p>
             <a
@@ -61,7 +61,7 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        <div className="border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
+        <div className="border-t border-[var(--color-outline-variant)] pt-6 text-center text-xs text-[var(--color-on-surface-variant)]">
           <p>© 2026 Hall of the Novice EX. Desenvolvido para a comunidade de Final Fantasy XIV.</p>
           <p className="mt-1">Todos os direitos de imagem e marca pertencem à Square Enix Co., Ltd.</p>
         </div>

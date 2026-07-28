@@ -8,9 +8,9 @@ interface RecipeCardProps {
 }
 
 const DIFFICULTY_COLORS = {
-  Easy: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  Medium: 'bg-amber-100 text-amber-700 border-amber-200',
-  Hard: 'bg-red-100 text-red-700 border-red-200',
+  Easy: 'bg-[var(--color-sage-light)] text-[var(--color-sage)] border-[var(--color-sage)]/30',
+  Medium: 'bg-[var(--color-amber-light)] text-[var(--color-amber)] border-[var(--color-amber)]/30',
+  Hard: 'bg-[var(--color-crimson-light)] text-[var(--color-crimson)] border-[var(--color-crimson)]/30',
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) => {
@@ -50,7 +50,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
 
       {recipe.cover_image && imgError && (
         <div className="relative h-32 bg-gradient-to-r from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 flex items-center justify-center">
-          <ImageOff className="w-8 h-8 text-slate-400" />
+          <ImageOff className="w-8 h-8 text-[var(--color-on-surface-variant)]" />
           {recipe.category && (
             <div className="absolute bottom-3 left-3 bg-[var(--color-primary)]/90 text-white text-xs font-semibold uppercase px-3 py-1 rounded-lg backdrop-blur-md border border-white/10">
               {recipe.category.replace('_', ' & ')}

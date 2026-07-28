@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS event_types (
   id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   key        TEXT NOT NULL UNIQUE,       -- slug: 'spells', 'alchemy', etc.
   label      TEXT NOT NULL,              -- display: 'Spells (Magias)'
-  color      TEXT DEFAULT '#1a3a5f',     -- cor do indicador (hex)
+  color      TEXT DEFAULT '#1B4F7E',     -- cor do indicador (hex)
   icon       TEXT DEFAULT 'Wand2',       -- nome do icone Lucide
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now()
@@ -68,11 +68,11 @@ CREATE TABLE IF NOT EXISTS posts (
 -- Seed: tipos padrao de eventos (so insere se a tabela estiver vazia)
 INSERT INTO event_types (key, label, color, icon, sort_order)
 SELECT * FROM (VALUES
-  ('spells',  'Spells (Magias)',     '#1a3a5f', 'Wand2',          0),
-  ('tactics', 'Tactics (Táticas)',   '#735c00', 'Swords',         1),
-  ('alchemy', 'Alquimia (Alchemy)',  '#059669', 'FlaskConical',   2),
-  ('ritual',  'Ritual Sagrado',      '#7e22ce', 'Sparkles',       3),
-  ('other',   'Outros',              '#1a3a5f', 'BookOpen',       4)
+  ('spells',  'Spells (Magias)',     '#1B4F7E', 'Wand2',          0),
+  ('tactics', 'Tactics (Táticas)',   '#8B7420', 'Swords',         1),
+  ('alchemy', 'Alquimia (Alchemy)',  '#5D9B5A', 'FlaskConical',   2),
+  ('ritual',  'Ritual Sagrado',      '#7B6FA0', 'Sparkles',       3),
+  ('other',   'Outros',              '#1B4F7E', 'BookOpen',       4)
 ) AS v(key, label, color, icon, sort_order)
 WHERE NOT EXISTS (SELECT 1 FROM event_types LIMIT 1);
 

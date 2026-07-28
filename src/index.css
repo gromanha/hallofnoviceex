@@ -72,96 +72,96 @@ body {
   --font-caps: "Space Grotesk", sans-serif;
   --font-cinzel: "Cinzel", serif;
 
-  --color-primary: #1D6A6A;
-  --color-primary-deep: #124949;
-  --color-primary-light: #E8F4F4;
+  --color-primary: #1B4F7E;
+  --color-primary-deep: #143D64;
+  --color-primary-light: #E1EDF7;
   --color-on-primary: #ffffff;
 
-  --color-secondary: #D4AF37;
-  --color-secondary-light: #F5E6B8;
-  --color-secondary-accent: #E5C158;
-  --color-on-secondary: #124949;
-  --color-on-secondary-deep: #735C00;
+  --color-secondary: #C9A84C;
+  --color-secondary-light: #F0E5C4;
+  --color-secondary-accent: #D4B85C;
+  --color-on-secondary: #143D64;
+  --color-on-secondary-deep: #8B7420;
 
-  --color-primary-hover: #2A8A8A;
-  --color-error: #BA1A1A;
-  --color-error-light: #FFDAD6;
+  --color-primary-hover: #2566A0;
+  --color-error: #C0392B;
+  --color-error-light: #FADBD8;
 
-  --color-tertiary: #9B8BB4;
-  --color-tertiary-light: #EDE8F3;
+  --color-tertiary: #7B6FA0;
+  --color-tertiary-light: #E8E4F0;
   --color-on-tertiary: #ffffff;
 
-  --color-background: #FAF6ED;
+  --color-background: #F5F0E6;
   --color-surface: #FFFFFF;
-  --color-surface-alt: #F6F3EA;
-  --color-on-background: #3E4A56;
-  --color-on-surface: #3E4A56;
-  --color-on-surface-variant: #6B7A8A;
-  --color-outline: #6B7A8A;
-  --color-outline-variant: rgba(29, 106, 106, 0.1);
+  --color-surface-alt: #F0ECE0;
+  --color-on-background: #2C3E50;
+  --color-on-surface: #2C3E50;
+  --color-on-surface-variant: #5A6B7D;
+  --color-outline: #5A6B7D;
+  --color-outline-variant: rgba(27, 79, 126, 0.1);
 
-  --color-crystal: #5ECFCF;
-  --color-crystal-light: #D4F5F5;
-  --color-rose: #C46B7D;
-  --color-rose-light: #F4E3E7;
-  --color-sage: #6B8F71;
-  --color-sage-light: #E3EDE5;
+  --color-crystal: #5DADE2;
+  --color-crystal-light: #D6EAF8;
+  --color-rose: #C0616E;
+  --color-rose-light: #F2D7DA;
+  --color-sage: #5D9B5A;
+  --color-sage-light: #D5EDDA;
 
-  --color-indigo: #2D3A6E;
-  --color-indigo-light: #E8EAF6;
-  --color-amber: #B8650E;
-  --color-amber-light: #FFF3E0;
-  --color-copper: #8B5E3C;
-  --color-copper-light: #F5E6D3;
-  --color-crimson: #9B1B30;
-  --color-crimson-light: #FCE4EC;
+  --color-indigo: #2C3E7E;
+  --color-indigo-light: #D5D9EF;
+  --color-amber: #D4760E;
+  --color-amber-light: #FDEBD0;
+  --color-copper: #7D6648;
+  --color-copper-light: #EDE0D0;
+  --color-crimson: #922B21;
+  --color-crimson-light: #F5B7B1;
 }
 
 /* ── Eorzean Nightfall — Dark Mode ── */
 :root[data-theme="dark"] {
-  --color-primary: #4ECDC4;
-  --color-primary-deep: #38A89D;
-  --color-primary-light: rgba(78, 205, 196, 0.1);
-  --color-on-primary: #121921;
+  --color-primary: #5DADE2;
+  --color-primary-deep: #3498DB;
+  --color-primary-light: rgba(93, 173, 226, 0.1);
+  --color-on-primary: #0D1B2A;
 
-  --color-secondary: #E8C547;
-  --color-secondary-light: rgba(232, 197, 71, 0.12);
-  --color-secondary-accent: #F0D060;
-  --color-on-secondary: #121921;
-  --color-on-secondary-deep: #F0D060;
+  --color-secondary: #D4A84C;
+  --color-secondary-light: rgba(212, 168, 76, 0.12);
+  --color-secondary-accent: #E0BE6C;
+  --color-on-secondary: #0D1B2A;
+  --color-on-secondary-deep: #E0BE6C;
 
-  --color-primary-hover: #5EDDD5;
-  --color-error: #FFB4AB;
-  --color-error-light: rgba(255, 180, 171, 0.1);
+  --color-primary-hover: #6CB4E8;
+  --color-error: #EC7063;
+  --color-error-light: rgba(236, 112, 99, 0.1);
 
-  --color-tertiary: #B8A9D4;
-  --color-tertiary-light: rgba(184, 169, 212, 0.1);
-  --color-on-tertiary: #121921;
+  --color-tertiary: #A294C4;
+  --color-tertiary-light: rgba(162, 148, 196, 0.1);
+  --color-on-tertiary: #0D1B2A;
 
-  --color-background: #121921;
-  --color-surface: #18222C;
-  --color-surface-alt: #1E2B37;
-  --color-on-background: #E2E8F0;
-  --color-on-surface: #E2E8F0;
-  --color-on-surface-variant: #94A3B8;
-  --color-outline: #94A3B8;
-  --color-outline-variant: rgba(229, 193, 88, 0.1);
+  --color-background: #0D1B2A;
+  --color-surface: #152238;
+  --color-surface-alt: #1A2A40;
+  --color-on-background: #D6E4F0;
+  --color-on-surface: #D6E4F0;
+  --color-on-surface-variant: #8BA4C0;
+  --color-outline: #8BA4C0;
+  --color-outline-variant: rgba(212, 168, 76, 0.1);
 
-  --color-crystal: #7EEEE5;
-  --color-crystal-light: rgba(126, 238, 229, 0.1);
-  --color-rose: #E88B9A;
-  --color-rose-light: rgba(232, 139, 154, 0.1);
-  --color-sage: #7FB888;
-  --color-sage-light: rgba(127, 184, 136, 0.1);
+  --color-crystal: #7FBFE0;
+  --color-crystal-light: rgba(127, 191, 224, 0.1);
+  --color-rose: #D4736E;
+  --color-rose-light: rgba(212, 115, 110, 0.1);
+  --color-sage: #6AAF68;
+  --color-sage-light: rgba(106, 175, 104, 0.1);
 
-  --color-indigo: #7986CB;
-  --color-indigo-light: rgba(121, 134, 203, 0.1);
-  --color-amber: #FFB74D;
-  --color-amber-light: rgba(255, 183, 77, 0.1);
-  --color-copper: #BC8F6F;
-  --color-copper-light: rgba(188, 143, 111, 0.1);
-  --color-crimson: #EF5350;
-  --color-crimson-light: rgba(239, 83, 80, 0.1);
+  --color-indigo: #7B8FD4;
+  --color-indigo-light: rgba(123, 143, 212, 0.1);
+  --color-amber: #E8A54D;
+  --color-amber-light: rgba(232, 165, 77, 0.1);
+  --color-copper: #A88B6B;
+  --color-copper-light: rgba(168, 139, 107, 0.1);
+  --color-crimson: #D4524E;
+  --color-crimson-light: rgba(212, 82, 78, 0.1);
 }
 
 
@@ -222,10 +222,10 @@ img {
 
 /* Recipe Parchment Card */
 .parchment-recipe {
-  background: linear-gradient(135deg, #f5f0e1 0%, #ede6d3 100%);
+  background: linear-gradient(135deg, var(--color-background) 0%, var(--color-surface-alt) 100%);
   border: 2px solid var(--color-secondary);
   border-radius: 1rem;
-  box-shadow: inset 0 0 60px rgba(139, 94, 60, 0.08);
+  box-shadow: inset 0 0 60px rgba(125, 102, 72, 0.08);
 }
 
 :root[data-theme="dark"] .parchment-recipe {

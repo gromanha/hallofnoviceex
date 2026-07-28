@@ -5,9 +5,9 @@ import { Recipe } from '../types';
 import { apiGet } from '../lib/api';
 
 const DIFFICULTY_BADGE: Record<string, string> = {
-  Easy: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  Medium: 'bg-amber-100 text-amber-700 border-amber-200',
-  Hard: 'bg-red-100 text-red-700 border-red-200',
+  Easy: 'bg-[var(--color-sage-light)] text-[var(--color-sage)] border-[var(--color-sage)]/30',
+  Medium: 'bg-[var(--color-amber-light)] text-[var(--color-amber)] border-[var(--color-amber)]/30',
+  Hard: 'bg-[var(--color-crimson-light)] text-[var(--color-crimson)] border-[var(--color-crimson)]/30',
 };
 
 export const RecipeDetailPage: React.FC = () => {
@@ -73,7 +73,7 @@ export const RecipeDetailPage: React.FC = () => {
   if (notFound || !recipe) {
     return (
       <div className="max-w-xl mx-auto text-center py-20 px-4 space-y-4">
-        <ChefHat className="w-16 h-16 text-slate-400 mx-auto" />
+        <ChefHat className="w-16 h-16 text-[var(--color-on-surface-variant)] mx-auto" />
         <h2 className="font-serif font-bold text-2xl text-[var(--color-on-surface)]">Receita nao encontrada</h2>
         <p className="text-sm text-[var(--color-on-surface-variant)]">A receita solicitada nao existe ou foi removida.</p>
         <button
@@ -102,7 +102,7 @@ export const RecipeDetailPage: React.FC = () => {
           onClick={handleShare}
           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-outline-variant)] text-xs font-bold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-all"
         >
-          {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
+          {copied ? <Check className="w-4 h-4 text-[var(--color-sage)]" /> : <Share2 className="w-4 h-4" />}
           {copied ? 'Link Copiado!' : 'Compartilhar'}
         </button>
       </div>

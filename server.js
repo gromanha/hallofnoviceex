@@ -479,7 +479,7 @@ app.post('/api/event-types', async (req, res) => {
       .insert({
         key: slug,
         label,
-        color: isValidHexColor(color) ? color : '#1a3a5f',
+        color: isValidHexColor(color) ? color : '#1B4F7E',
         icon: icon || 'Wand2',
         sort_order: Math.max(0, Math.min(999, sort_order)),
       })

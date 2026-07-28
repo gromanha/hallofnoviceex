@@ -60,7 +60,7 @@ type TypeFormState = {
 const EMPTY_TYPE_FORM: TypeFormState = {
   key: '',
   label: '',
-  color: '#1D6A6A',
+  color: '#1B4F7E',
   icon: 'Wand2',
   sort_order: 0,
 };
@@ -411,7 +411,7 @@ export const AdminPage: React.FC = () => {
           <h1 className="font-serif font-black text-2xl sm:text-4xl text-[var(--color-secondary-light)]">
             Painel Administrativo
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-100/90">
+          <p className="text-xs sm:text-sm text-[var(--color-on-surface)]/90">
             Conectado como <strong className="text-white">{admin.display_name}</strong> (@{admin.username})
           </p>
         </div>
@@ -945,9 +945,9 @@ export const AdminPage: React.FC = () => {
                         </td>
                         <td className="p-4">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
-                            recipe.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-700' :
-                            recipe.difficulty === 'Medium' ? 'bg-amber-100 text-amber-700' :
-                            'bg-red-100 text-red-700'
+                            recipe.difficulty === 'Easy' ? 'bg-[var(--color-sage-light)] text-[var(--color-sage)] border border-[var(--color-sage)]/30' :
+                            recipe.difficulty === 'Medium' ? 'bg-[var(--color-amber-light)] text-[var(--color-amber)] border border-[var(--color-amber)]/30' :
+                            'bg-[var(--color-crimson-light)] text-[var(--color-crimson)] border border-[var(--color-crimson)]/30'
                           }`}>
                             {recipe.difficulty}
                           </span>

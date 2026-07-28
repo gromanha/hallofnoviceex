@@ -1,0 +1,175 @@
+================================================================================
+  PLANO: REDESIGN DA PALETA DE CORES — ESTÉTICA FINAL FANTASY XIV
+================================================================================
+
+CONTEXTO
+--------
+O projeto é um portal web React + TypeScript + Tailwind CSS v4 para uma Free
+Company do FFXIV. A paleta atual usa tons de teal acadêmico (#1D6A6A) e
+dourado (#D4AF37) — inspirada no tema "Sharlayan". A paleta é centralizada no
+src/index.css via bloco @theme {} (Tailwind v4), com dark mode em
+:root[data-theme="dark"]. Existem ~15% de cores hardcoded espalhadas em
+componentes.
+
+================================================================================
+DIREÇÃO ESTÉTICA FFXIV
+================================================================================
+
+Baseado na pesquisa visual do FFXIV (Lodestone, UI themes, paleta do jogo), a
+estética FFXIV se caracteriza por:
+
+  Elemento                    Cor FFXIV Típica               Uso no Jogo
+  ─────────────────────────────────────────────────────────────────────────────
+  Azul Profundo (Hydaelyn)   #1B3A5C ~ #2D4F7E              Fundo de menus
+  Dourado Lodestone           #BFA34C ~ #C9A84C              Hiperlinks, bordas
+  Azul Cristalino             #4C7EE8 ~ #5B9BD5              Links clicáveis
+  Vermelho Combat             #732828 ~ #9B3030              DPS, avisos
+  Verde Support               #346624 ~ #4A8B3F              Tanks, cura
+  Azul Noite                  #1A1A2E ~ #0F1923              Dark mode bg
+  Cinza Nebuloso              #2A2D3A ~ #3A3D4A              Dark mode surfaces
+  Branco Gelo                 #E8EDF4 ~ #F0F4FA              Texto dark mode
+  Parchment                   #F5F0E1 ~ #EDE6D3              Light mode bg
+
+================================================================================
+NOVA PALETA PROPosta
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+LIGHT MODE — "Eorzean Dawn"
+────────────────────────────────────────────────────────────────────────────────
+
+  Variável                    Atual          Nova           Justificativa
+  ─────────────────────────────────────────────────────────────────────────────
+  --color-primary             #1D6A6A        #1B4F7E        Azul Lodestone
+  --color-primary-deep        #124949        #143D64        Azul profundo hover
+  --color-primary-light       #E8F4F4        #E1EDF7        Tinte azul claro
+  --color-primary-hover       #2A8A8A        #2566A0        Hover azul vivo
+  --color-on-primary          #ffffff        #ffffff        Branco (inalterado)
+
+  --color-secondary           #D4AF37        #C9A84C        Dourado Lodestone
+  --color-secondary-light     #F5E6B8        #F0E5C4        Dourado suave
+  --color-secondary-accent    #E5C158        #D4B85C        Dourado hover
+  --color-on-secondary        #124949        #143D64        Texto escuro
+  --color-on-secondary-deep   #735C00        #8B7420        Texto escuro var.
+
+  --color-tertiary            #9B8BB4        #7B6FA0        Lavanda scholarly
+  --color-tertiary-light      #EDE8F3        #E8E4F0        Lavanda tinte
+  --color-on-tertiary         #ffffff        #ffffff        Branco (inalterado)
+
+  --color-background          #FAF6ED        #F5F0E6        Parchment quente
+  --color-surface             #FFFFFF        #FFFFFF        Branco (inalterado)
+  --color-surface-alt         #F6F3EA        #F0ECE0        Superfície alt.
+  --color-on-background       #3E4A56        #2C3E50        Texto azul-cinza
+  --color-on-surface          #3E4A56        #2C3E50        Texto superfície
+  --color-on-surface-variant  #6B7A8A        #5A6B7D        Texto secundário
+  --color-outline             #6B7A8A        #5A6B7D        Bordas
+  --color-outline-variant     rgba(29,..)    rgba(27,..)    Divisor azul-tinted
+
+  --color-error               #BA1A1A        #C0392B        Vermelho vivo
+  --color-error-light         #FFDAD6        #FADBD8        Vermelho suave
+
+  --color-crystal             #5ECFCF        #5DADE2        Azul cristalino
+  --color-crystal-light       #D4F5F5        #D6EAF8        Cristal tinte
+  --color-rose                #C46B7D        #C0616E        Rosa apagado
+  --color-rose-light          #F4E3E7        #F2D7DA        Rosa tinte
+  --color-sage                #6B8F71        #5D9B5A        Verde sage vivo
+  --color-sage-light          #E3EDE5        #D5EDDA        Sage tinte
+  --color-indigo              #2D3A6E        #2C3E7E        Indigo vibrante
+  --color-indigo-light        #E8EAF6        #D5D9EF        Indigo tinte
+  --color-amber               #B8650E        #D4760E        Amber quente
+  --color-amber-light         #FFF3E0        #FDEBD0        Amber tinte
+  --color-copper              #8B5E3C        #7D6648        Copper neutro
+  --color-copper-light        #F5E6D3        #EDE0D0        Copper tinte
+  --color-crimson             #9B1B30        #922B21        Crimson escuro
+  --color-crimson-light       #FCE4EC        #F5B7B1        Crimson tinte
+
+
+────────────────────────────────────────────────────────────────────────────────
+DARK MODE — "Eorzean Nightfall"
+────────────────────────────────────────────────────────────────────────────────
+
+  Variável                    Atual          Nova           Justificativa
+  ─────────────────────────────────────────────────────────────────────────────
+  --color-primary             #4ECDC4        #5DADE2        Azul brillante
+  --color-primary-deep        #38A89D        #3498DB        Azul profundo
+  --color-primary-light       rgba(78,..)    rgba(93,..)    Tinte azul
+  --color-primary-hover       #5EDDD5        #6CB4E8        Hover azul
+  --color-on-primary          #121921        #0D1B2A        Texto escuro
+
+  --color-secondary           #E8C547        #D4A84C        Dourado dark
+  --color-secondary-light     rgba(232,..)   rgba(212,..)   Tinte dourado
+  --color-secondary-accent    #F0D060        #E0BE6C        Dourado hover
+  --color-on-secondary        #121921        #0D1B2A        Texto escuro
+  --color-on-secondary-deep   #F0D060        #E0BE6C        Texto sobre gold
+
+  --color-tertiary            #B8A9D4        #A294C4        Lavanda dark
+  --color-tertiary-light      rgba(184,..)   rgba(162,..)   Tinte lavanda
+  --color-on-tertiary         #121921        #0D1B2A        Texto escuro
+
+  --color-background          #121921        #0D1B2A        Azul-marinha prof.
+  --color-surface             #18222C        #152238        Superfície azul
+  --color-surface-alt         #1E2B37        #1A2A40        Superfície alt.
+  --color-on-background       #E2E8F0        #D6E4F0        Texto claro azul
+  --color-on-surface          #E2E8F0        #D6E4F0        Texto superfície
+  --color-on-surface-variant  #94A3B8        #8BA4C0        Texto secundário
+  --color-outline             #94A3B8        #8BA4C0        Bordas
+  --color-outline-variant     rgba(229,..)   rgba(212,..)   Divisor dourado
+
+  --color-error               #FFB4AB        #EC7063        Erro vermelho
+  --color-error-light         rgba(255,..)   rgba(236,..)   Tinte erro
+
+  --color-crystal             #7EEEE5        #7FBFE0        Cristal azul
+  --color-crystal-light       rgba(126,..)   rgba(127,..)   Tinte cristal
+  --color-rose                #E88B9A        #D4736E        Rosa dark
+  --color-rose-light          rgba(232,..)   rgba(212,..)   Tinte rosa
+  --color-sage                #7FB888        #6AAF68        Sage dark
+  --color-sage-light          rgba(127,..)   rgba(106,..)   Tinte sage
+  --color-indigo              #7986CB        #7B8FD4        Indigo dark
+  --color-indigo-light        rgba(121,..)   rgba(123,..)   Tinte indigo
+  --color-amber               #FFB74D        #E8A54D        Amber dark
+  --color-amber-light         rgba(255,..)   rgba(232,..)   Tinte amber
+  --color-copper              #BC8F6F        #A88B6B        Copper dark
+  --color-copper-light        rgba(188,..)   rgba(168,..)   Tinte copper
+  --color-crimson             #EF5350        #D4524E        Crimson dark
+  --color-crimson-light       rgba(239,..)   rgba(212,..)   Tinte crimson
+
+================================================================================
+ARQUIVOS A ALTERAR
+================================================================================
+
+  #   Arquivo                          Tipo de Alteração
+  ─────────────────────────────────────────────────────────────────────────────
+  1   src/index.css                    PRINCIPAL — Bloco @theme {}, dark mode,
+                                      .parchment-recipe
+  2   src/components/Footer.tsx        Substituir bg-[#121921] por variável CSS
+  3   src/pages/AdminPage.tsx          Substituir #1D6A6A hardcoded
+  4   server.js                        Substituir #1a3a5f por nova cor default
+  5   supabase-schema.sql              Atualizar cores seed data
+  6   DESIGN.md                        Documentar nova paleta
+  7   ~10 componentes com tailwind     Converter slate-*/emerald-*/amber-*/red-*
+                                      para variáveis CSS
+
+================================================================================
+ORDEM DE EXECUÇÃO
+================================================================================
+
+  1. src/index.css — Atualizar bloco @theme {} (light mode) com novos hex
+  2. src/index.css — Atualizar :root[data-theme="dark"] com novos hex
+  3. src/index.css — Atualizar .parchment-recipe gradient
+  4. Hardcoded hex — Footer.tsx, AdminPage.tsx, server.js, supabase-schema.sql
+  5. Tailwind utilities — Converter slate-*, emerald-*, amber-*, red-* nos
+     ~10 arquivos afetados
+  6. DESIGN.md — Atualizar documentação da paleta
+  7. Verificação — Rodar lint/typecheck
+
+================================================================================
+RESULTADO ESPERADO
+================================================================================
+
+  - Tema azul-dourado FFXIV coeso em todo o projeto
+  - Dark mode com tons azul-marinho profundo (como o Clear Blue do jogo)
+  - Light mode com parchment quente + azul Lodestone como cor primária
+  - Todas as cores centralizadas via CSS variables (zero hardcoded)
+  - Consistência total dark/light mode
+
+================================================================================

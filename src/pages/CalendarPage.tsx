@@ -407,14 +407,13 @@ export const CalendarPage: React.FC = () => {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               {selectedEvent.image && !eventImgError && (
-                <div className="h-40 relative bg-[var(--color-surface-alt)]">
+                <div className="h-48 relative overflow-hidden">
                   <img
                     src={selectedEvent.image}
                     alt={selectedEvent.title}
                     className="w-full h-full object-cover"
                     onError={() => setEventImgError(true)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-background)] via-transparent to-transparent" />
                 </div>
               )}
 

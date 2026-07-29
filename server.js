@@ -964,6 +964,279 @@ app.delete('/api/recipes', async (req, res) => {
   }
 });
 
+// ── FFXIV Game Data API ───────────────────────────────────────
+import {
+  getItemById,
+  searchItems,
+  getRecipeById,
+  searchRecipes,
+  getCharacterById,
+  searchQuests,
+  searchDungeons,
+  searchTrials,
+  searchRaids,
+  getMarketPrices,
+  getWikiPage,
+  searchWiki,
+  getCacheStats,
+  WORLDS,
+} from './src/lib/ffxiv-api.js';
+
+// Rate limiting para APIs externas
+const externalApiRateLimit = new Map();
+const EXTERNAL_RATE_LIMIT = 60; // req/min por IP
+const EXTERNAL_RATE_WINDOW = 60 * 1000; // 1 minuto
+
+function checkExternalRateLimit(ip) {
+  const now = Date.now();
+  const record = externalApiRateLimit.get(ip);
+
+  if (!record || now - record.windowStart > EXTERNAL_RATE_WINDOW) {
+    externalApiRateLimit.set(ip, { windowStart: now, count: 1 });
+    return true;
+  }
+
+  if (record.count >= EXTERNAL_RATE_LIMIT) {
+    return false;
+  }
+
+  record.count++;
+  return true;
+}
+
+// Middleware de rate limiting para APIs externas
+function externalRateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress;
+  if (!checkExternalRateLimit(ip)) {
+    return res.status(429).json({
+      error: 'rate_limit_exceeded',
+      message: 'Too many requests to external APIs. Please try again later.',
+    });
+  }
+  next();
+}
+
+// ── Rotas: Itens ───────────────────────────────────────────────
+app.get('/api/ffxiv/items', externalRateLimit, async (req, res) => {
+  try {
+    const { search, limit = 20 } = req.query;
+
+    if (!search || search.length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+
+    const result = await searchItems(search, Math.min(Number(limit), 50));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] items search error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.get('/api/ffxiv/items/:id', externalRateLimit, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid item ID' });
+    }
+
+    const result = await getItemById(Number(id));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] item detail error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Receitas ────────────────────────────────────────────
+app.get('/api/ffxiv/recipes', externalRateLimit, async (req, res) => {
+  try {
+    const { search, limit = 20 } = req.query;
+
+    if (!search || search.length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+
+    const result = await searchRecipes(search, Math.min(Number(limit), 50));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] recipes search error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.get('/api/ffxiv/recipes/:id', externalRateLimit, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid recipe ID' });
+    }
+
+    const result = await getRecipeById(Number(id));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] recipe detail error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Personagens ─────────────────────────────────────────
+app.get('/api/ffxiv/characters/:id', externalRateLimit, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid character ID' });
+    }
+
+    const result = await getCharacterById(Number(id));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] character error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Quests ──────────────────────────────────────────────
+app.get('/api/ffxiv/quests', externalRateLimit, async (req, res) => {
+  try {
+    const { search, limit = 20 } = req.query;
+
+    if (!search || search.length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+
+    const result = await searchQuests(search, Math.min(Number(limit), 50));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] quests search error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Dungeons/Trials/Raids ──────────────────────────────
+app.get('/api/ffxiv/instances', externalRateLimit, async (req, res) => {
+  try {
+    const { search, type, limit = 20 } = req.query;
+
+    if (!search || search.length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+
+    let result;
+    switch (type?.toLowerCase()) {
+      case 'trial':
+        result = await searchTrials(search, Math.min(Number(limit), 50));
+        break;
+      case 'raid':
+        result = await searchRaids(search, Math.min(Number(limit), 50));
+        break;
+      case 'dungeon':
+      default:
+        result = await searchDungeons(search, Math.min(Number(limit), 50));
+        break;
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] instances search error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Market Board ────────────────────────────────────────
+app.get('/api/ffxiv/market/:itemId', externalRateLimit, async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { world = 'Excalibur' } = req.query;
+
+    if (!itemId || isNaN(Number(itemId))) {
+      return res.status(400).json({ error: 'Invalid item ID' });
+    }
+
+    if (!WORLDS.includes(world)) {
+      return res.status(400).json({
+        error: 'Invalid world',
+        available_worlds: WORLDS.slice(0, 10),
+      });
+    }
+
+    const result = await getMarketPrices(world, Number(itemId));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] market error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.get('/api/ffxiv/market', externalRateLimit, async (req, res) => {
+  try {
+    const { items, world = 'Excalibur' } = req.query;
+
+    if (!items) {
+      return res.status(400).json({ error: 'Items parameter required (comma-separated IDs)' });
+    }
+
+    const itemIds = items.split(',').map(Number).filter(n => !isNaN(n));
+    if (itemIds.length === 0) {
+      return res.status(400).json({ error: 'No valid item IDs provided' });
+    }
+
+    if (!WORLDS.includes(world)) {
+      return res.status(400).json({
+        error: 'Invalid world',
+        available_worlds: WORLDS.slice(0, 10),
+      });
+    }
+
+    const result = await getMarketPrices(world, itemIds);
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] market batch error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Wiki ────────────────────────────────────────────────
+app.get('/api/ffxiv/wiki/search', externalRateLimit, async (req, res) => {
+  try {
+    const { q, limit = 10 } = req.query;
+
+    if (!q || q.length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+
+    const result = await searchWiki(q, Math.min(Number(limit), 50));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] wiki search error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.get('/api/ffxiv/wiki/:title', externalRateLimit, async (req, res) => {
+  try {
+    const { title } = req.params;
+    if (!title) {
+      return res.status(400).json({ error: 'Page title required' });
+    }
+
+    const result = await getWikiPage(decodeURIComponent(title));
+    res.json(result);
+  } catch (err) {
+    console.error('[ffxiv] wiki page error', err);
+    res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Rotas: Utilidades ──────────────────────────────────────────
+app.get('/api/ffxiv/worlds', (req, res) => {
+  res.json({ worlds: WORLDS });
+});
+
+app.get('/api/ffxiv/cache/stats', (req, res) => {
+  res.json(getCacheStats());
+});
+
 // ── Catch-all ──────────────────────────────────────────────────
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {

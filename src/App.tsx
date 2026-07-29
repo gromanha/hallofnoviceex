@@ -17,6 +17,7 @@ const CalendarPage = React.lazy(() => import('./pages/CalendarPage').then(m => (
 const AdminPage = React.lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
 const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then(m => ({ default: m.RecipesPage })));
 const RecipeDetailPage = React.lazy(() => import('./pages/RecipeDetailPage').then(m => ({ default: m.RecipeDetailPage })));
+const GameDataPage = React.lazy(() => import('./pages/GameDataPage').then(m => ({ default: m.GameDataPage })));
 
 function AppRoutes() {
   const { admin, onLogin, onLogout } = useAuth();
@@ -70,6 +71,7 @@ function AppRoutes() {
                   <Route path="/calendario" element={<CalendarPage />} />
                   <Route path="/receitas" element={<RecipesPage />} />
                   <Route path="/receitas/:slug" element={<RecipeDetailPage />} />
+                  <Route path="/game-data" element={<GameDataPage />} />
                   <Route
                     path="/admin"
                     element={

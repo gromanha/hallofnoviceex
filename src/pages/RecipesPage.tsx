@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChefHat, Search, Filter, X, UtensilsCrossed } from 'lucide-react';
+import { ChefHat, Search, Filter, X, UtensilsCrossed, Globe, ExternalLink } from 'lucide-react';
 import { Recipe, RecipeCategory } from '../types';
 import { apiGet } from '../lib/api';
 import { RecipeCard } from '../components/RecipeCard';
@@ -89,6 +89,17 @@ export const RecipesPage: React.FC = () => {
           <p className="type-body text-[var(--color-on-surface-variant)] max-w-2xl mx-auto mt-2">
             Receitas inspiradas no cookbook oficial de Final Fantasy XIV. Do Cafe da Manha de Limsa Lominsa as Sobremesas de Ishgard.
           </p>
+
+          <div className="mt-4">
+            <a
+              href="/game-data"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[var(--color-outline)]/30 text-[var(--color-secondary)] hover:border-[var(--color-secondary)]/50 transition-all type-body"
+            >
+              <Globe className="w-4 h-4" />
+              Explorar dados do jogo
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
         </div>
       </div>
 

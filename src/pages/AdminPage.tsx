@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
-  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed, Copy, Download,
+  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed, Copy, Download, FileJson,
 } from 'lucide-react';
 import { Post, MagicalEvent, EventTypeItem, Recipe } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { PostModal } from '../components/PostModal';
 import { RecipeModal } from '../components/RecipeModal';
 import { ImportWikiModal } from '../components/ImportWikiModal';
+import { ImportLocalModal } from '../components/ImportLocalModal';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
@@ -94,6 +95,7 @@ export const AdminPage: React.FC = () => {
   const [selectedPost, setSelectedPost] = useState<Partial<Post> | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isImportLocalModalOpen, setIsImportLocalModalOpen] = useState(false);
 
   // ── States for Calendar Events Manager ──
   const [events, setEvents] = useState<MagicalEvent[]>([]);
@@ -595,6 +597,13 @@ export const AdminPage: React.FC = () => {
                 className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-sage)] hover:bg-[var(--color-sage)]/80 text-white type-label normal-case font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
               >
                 <Download className="w-4 h-4" /> Importar da Wiki
+              </button>
+
+              <button
+                onClick={() => setIsImportLocalModalOpen(true)}
+                className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-[var(--color-amber)] hover:bg-[var(--color-amber)]/80 text-white type-label normal-case font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
+              >
+                <FileJson className="w-4 h-4" /> Importar JSON Local
               </button>
             </div>
 
@@ -1440,6 +1449,13 @@ export const AdminPage: React.FC = () => {
       <ImportWikiModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
+        onImported={() => loadPosts()}
+      />
+
+      {/* Modal de Importação JSON Local */}
+      <ImportLocalModal
+        isOpen={isImportLocalModalOpen}
+        onClose={() => setIsImportLocalModalOpen(false)}
         onImported={() => loadPosts()}
       />
 

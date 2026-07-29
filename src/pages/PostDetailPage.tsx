@@ -177,7 +177,7 @@ export const PostDetailPage: React.FC = () => {
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <div
-          className="prose max-w-none space-y-4"
+          className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
         />
       </motion.div>

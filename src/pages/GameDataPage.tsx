@@ -6,7 +6,6 @@ import {
   Scroll,
   Sword,
   Users,
-  TrendingUp,
   ExternalLink,
   Loader2,
   AlertCircle,
@@ -24,21 +23,98 @@ import { useDebounce } from '../lib/useDebounce';
 // ── Types ──────────────────────────────────────────────────────
 type TabType = 'items' | 'recipes' | 'quests' | 'instances' | 'wiki';
 
-interface SearchResult {
-  ID?: number;
-  id?: number;
-  Name?: string;
-  name?: string;
-  Name_en?: string;
-  Icon?: string;
-  LevelItem?: number;
-  LevelRecipe?: number;
-  LevelQuest?: number;
-  ItemKind?: { Name?: string };
-  ClassJob?: { Name?: string };
-  title?: string;
+interface XIVAPIItem {
+  row_id: number;
+  sheet: string;
+  score?: number;
+  fields: {
+    Name?: string;
+    Icon?: { id: number; path: string; path_hr1: string } | string;
+    LevelItem?: { value: number; sheet: string; row_id: number; fields: unknown } | number;
+    LevelQuest?: number;
+    ItemKind?: { fields?: { Name?: string } };
+    ClassJob?: { fields?: { Name?: string } };
+    Description?: string;
+    Expansion?: { fields?: { Name?: string } };
+    Level?: number;
+    InstanceContentType?: { fields?: { Name?: string } };
+    [key: string]: unknown;
+  };
+}
+
+interface WikiResult {
+  title: string;
+  snippet: string;
+  pageid: number;
+}
+
+type NormalizedResult = {
+  id: number;
+  name: string;
+  icon: string | null;
+  level: string | null;
+  category: string | null;
+  description?: string;
+  wikiUrl: string;
   snippet?: string;
-  pageid?: number;
+};
+
+// ── Helper: normalizar resultado da XIVAPI ────────────────────
+function normalizeXIVAPIResult(item: XIVAPIItem): NormalizedResult {
+  const fields = item.fields || {};
+  const name = fields.Name || 'Desconhecido';
+
+  let icon: string | null = null;
+  if (fields.Icon) {
+    if (typeof fields.Icon === 'string') {
+      icon = fields.Icon;
+    } else if (fields.Icon.path_hr1) {
+      icon = `https://xivapi.com/img${fields.Icon.path_hr1}`;
+    }
+  }
+
+  let level: string | null = null;
+  if (fields.LevelItem) {
+    if (typeof fields.LevelItem === 'number') {
+      level = `iLvl ${fields.LevelItem}`;
+    } else if (fields.LevelItem.value) {
+      level = `iLvl ${fields.LevelItem.value}`;
+    }
+  }
+  if (fields.LevelQuest) level = `Lvl ${fields.LevelQuest}`;
+  if (fields.Level) level = `Lvl ${fields.Level}`;
+
+  let category: string | null = null;
+  if (fields.ItemKind?.fields?.Name) category = fields.ItemKind.fields.Name;
+  if (fields.ClassJob?.fields?.Name) category = fields.ClassJob.fields.Name;
+  if (fields.InstanceContentType?.fields?.Name) category = fields.InstanceContentType.fields.Name;
+  if (fields.Expansion?.fields?.Name) category = fields.Expansion.fields.Name;
+
+  const wikiName = name.replace(/\s+/g, '_');
+
+  return {
+    id: item.row_id,
+    name,
+    icon,
+    level,
+    category,
+    description: typeof fields.Description === 'string' ? fields.Description : undefined,
+    wikiUrl: `https://ffxiv.consolegameswiki.com/wiki/${encodeURIComponent(wikiName)}`,
+  };
+}
+
+// ── Helper: normalizar resultado da wiki ───────────────────────
+function normalizeWikiResult(item: WikiResult): NormalizedResult {
+  const wikiName = item.title.replace(/\s+/g, '_');
+  return {
+    id: item.pageid,
+    name: item.title,
+    icon: null,
+    level: null,
+    category: 'Wiki',
+    snippet: item.snippet,
+    wikiUrl: `https://ffxiv.consolegameswiki.com/wiki/${encodeURIComponent(wikiName)}`,
+  };
 }
 
 // ── Tabs config ────────────────────────────────────────────────
@@ -51,35 +127,7 @@ const TABS: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
 ];
 
 // ── Component: Result Card ─────────────────────────────────────
-function ResultCard({ result, type }: { result: SearchResult; type: TabType }) {
-  const getId = () => result.ID || result.id || result.pageid;
-  const getName = () => result.Name || result.name || result.title || 'Desconhecido';
-  const getIcon = () => result.Icon;
-
-  const getLevel = () => {
-    switch (type) {
-      case 'items':
-        return result.LevelItem ? `iLvl ${result.LevelItem}` : null;
-      case 'recipes':
-        return result.LevelRecipe ? `Lvl ${result.LevelRecipe}` : null;
-      case 'quests':
-        return result.LevelQuest ? `Lvl ${result.LevelQuest}` : null;
-      default:
-        return null;
-    }
-  };
-
-  const getCategory = () => {
-    if (type === 'items' && result.ItemKind?.Name) return result.ItemKind.Name;
-    if (type === 'recipes' && result.ClassJob?.Name) return result.ClassJob.Name;
-    return null;
-  };
-
-  const getWikiUrl = () => {
-    const name = getName().replace(/\s+/g, '_');
-    return `https://ffxiv.consolegameswiki.com/wiki/${encodeURIComponent(name)}`;
-  };
-
+function ResultCard({ result }: { result: NormalizedResult }) {
   return (
     <motion.div
       layout
@@ -90,10 +138,10 @@ function ResultCard({ result, type }: { result: SearchResult; type: TabType }) {
     >
       <div className="flex items-start gap-4">
         {/* Icon */}
-        {getIcon() && (
+        {result.icon && (
           <div className="w-12 h-12 rounded-lg bg-[var(--color-surface)] flex items-center justify-center overflow-hidden flex-shrink-0">
             <img
-              src={getIcon()}
+              src={result.icon}
               alt=""
               className="w-full h-full object-contain"
               onError={(e) => {
@@ -107,25 +155,19 @@ function ResultCard({ result, type }: { result: SearchResult; type: TabType }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="type-body-semibold text-[var(--color-on-surface)] truncate">
-              {getName()}
+              {result.name}
             </h3>
-            {getLevel() && (
+            {result.level && (
               <span className="type-label-xs px-2 py-0.5 rounded-full bg-[var(--color-secondary)]/10 text-[var(--color-secondary)]">
-                {getLevel()}
+                {result.level}
               </span>
             )}
-            {getCategory() && (
+            {result.category && (
               <span className="type-label-xs px-2 py-0.5 rounded-full bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)]">
-                {getCategory()}
+                {result.category}
               </span>
             )}
           </div>
-
-          {result.Name_en && result.Name_en !== result.Name && (
-            <p className="type-caption text-[var(--color-on-surface-variant)] mt-1">
-              {result.Name_en}
-            </p>
-          )}
 
           {result.snippet && (
             <p
@@ -138,7 +180,7 @@ function ResultCard({ result, type }: { result: SearchResult; type: TabType }) {
         {/* Actions */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <a
-            href={getWikiUrl()}
+            href={result.wikiUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 rounded-lg hover:bg-[var(--color-surface)] transition-colors"
@@ -201,19 +243,19 @@ export const GameDataPage: React.FC = () => {
   const instancesResult = useSearchInstances(debouncedQuery, 'dungeon', { enabled: activeTab === 'instances' });
   const wikiResult = useSearchWiki(debouncedQuery, { enabled: activeTab === 'wiki' });
 
-  // Obter resultados da tab ativa
-  const getCurrentResults = (): SearchResult[] => {
+  // Obter resultados da tab ativa (normalizados)
+  const getCurrentResults = (): NormalizedResult[] => {
     switch (activeTab) {
       case 'items':
-        return itemsResult.data?.Results || [];
+        return (itemsResult.data?.results || []).map(normalizeXIVAPIResult);
       case 'recipes':
-        return recipesResult.data?.Results || [];
+        return (recipesResult.data?.results || []).map(normalizeXIVAPIResult);
       case 'quests':
-        return questsResult.data?.Results || [];
+        return (questsResult.data?.results || []).map(normalizeXIVAPIResult);
       case 'instances':
-        return instancesResult.data?.Results || [];
+        return (instancesResult.data?.results || []).map(normalizeXIVAPIResult);
       case 'wiki':
-        return wikiResult.data?.query?.search || [];
+        return (wikiResult.data?.query?.search || []).map(normalizeWikiResult);
       default:
         return [];
     }
@@ -327,9 +369,8 @@ export const GameDataPage: React.FC = () => {
             <AnimatePresence mode="popLayout">
               {results.map((result) => (
                 <ResultCard
-                  key={result.ID || result.id || result.pageid}
+                  key={result.id}
                   result={result}
-                  type={activeTab}
                 />
               ))}
             </AnimatePresence>

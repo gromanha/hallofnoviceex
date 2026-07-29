@@ -1,21 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from './useDebounce';
 
 // ── Types ──────────────────────────────────────────────────────
 interface XIVAPIResponse<T = unknown> {
-  Results?: Array<{
-    ID: number;
-    Name: string;
-    Name_en?: string;
-    Icon?: string;
-    [key: string]: unknown;
+  results?: Array<{
+    row_id: number;
+    sheet: string;
+    fields: T;
+    score?: number;
   }>;
-  Pagination?: {
-    Page: number;
-    PageNext?: number;
-    PagePrev?: number;
-    ResultsTotal: number;
-  };
+  next?: string;
 }
 
 interface MarketResponse {
@@ -56,6 +50,30 @@ interface UseFFXIVOptions {
   limit?: number;
 }
 
+// ── Helper: fetch JSON seguro ──────────────────────────────────
+async function safeFetchJSON(url: string, signal?: AbortSignal) {
+  const response = await fetch(url, { signal });
+
+  const contentType = response.headers.get('content-type') || '';
+  const text = await response.text();
+
+  if (!response.ok) {
+    let msg = `HTTP ${response.status}`;
+    try {
+      const errJson = JSON.parse(text);
+      if (errJson.error) msg = errJson.error;
+      if (errJson.message) msg += `: ${errJson.message}`;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  if (!contentType.includes('application/json')) {
+    throw new Error('Resposta não é JSON válida');
+  }
+
+  return JSON.parse(text);
+}
+
 // ── Hook: Busca genérica ──────────────────────────────────────
 function useFFXIVSearch<T>(
   endpoint: string,
@@ -82,19 +100,15 @@ function useFFXIVSearch<T>(
       setError(null);
 
       try {
-        const url = new URL(`/api/ffxiv/${endpoint}`, window.location.origin);
-        url.searchParams.set('search', debouncedQuery);
-        url.searchParams.set('limit', String(limit));
-
-        const response = await fetch(url.toString(), {
-          signal: controller.signal,
+        const params = new URLSearchParams({
+          search: debouncedQuery,
+          limit: String(limit),
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/${endpoint}?${params.toString()}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -132,15 +146,10 @@ export function useFFXIVItem(itemId: number | null) {
       setError(null);
 
       try {
-        const response = await fetch(`/api/ffxiv/items/${itemId}`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/items/${itemId}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -178,15 +187,10 @@ export function useFFXIVRecipe(recipeId: number | null) {
       setError(null);
 
       try {
-        const response = await fetch(`/api/ffxiv/recipes/${recipeId}`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/recipes/${recipeId}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -224,18 +228,11 @@ export function useMarketPrice(itemId: number | null, world = 'Excalibur') {
       setError(null);
 
       try {
-        const url = new URL(`/api/ffxiv/market/${itemId}`, window.location.origin);
-        url.searchParams.set('world', world);
-
-        const response = await fetch(url.toString(), {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const params = new URLSearchParams({ world });
+        const result = await safeFetchJSON(
+          `/api/ffxiv/market/${itemId}?${params.toString()}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -295,20 +292,16 @@ export function useSearchInstances(
       setError(null);
 
       try {
-        const url = new URL('/api/ffxiv/instances', window.location.origin);
-        url.searchParams.set('search', debouncedQuery);
-        url.searchParams.set('type', type);
-        url.searchParams.set('limit', String(limit));
-
-        const response = await fetch(url.toString(), {
-          signal: controller.signal,
+        const params = new URLSearchParams({
+          search: debouncedQuery,
+          type,
+          limit: String(limit),
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/instances?${params.toString()}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -349,19 +342,15 @@ export function useSearchWiki(query: string, options?: UseFFXIVOptions) {
       setError(null);
 
       try {
-        const url = new URL('/api/ffxiv/wiki/search', window.location.origin);
-        url.searchParams.set('q', debouncedQuery);
-        url.searchParams.set('limit', String(limit));
-
-        const response = await fetch(url.toString(), {
-          signal: controller.signal,
+        const params = new URLSearchParams({
+          q: debouncedQuery,
+          limit: String(limit),
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/wiki/search?${params.toString()}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -399,16 +388,10 @@ export function useWikiPage(title: string | null) {
       setError(null);
 
       try {
-        const url = `/api/ffxiv/wiki/${encodeURIComponent(title)}`;
-        const response = await fetch(url, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/wiki/${encodeURIComponent(title)}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -436,11 +419,8 @@ export function useFFXIVWorlds() {
     async function fetchWorlds() {
       setLoading(true);
       try {
-        const response = await fetch('/api/ffxiv/worlds');
-        if (response.ok) {
-          const result = await response.json();
-          setWorlds(result.worlds || []);
-        }
+        const result = await safeFetchJSON('/api/ffxiv/worlds');
+        setWorlds(result.worlds || []);
       } catch {
         // Silently fail
       } finally {
@@ -473,15 +453,10 @@ export function useFFXIVCharacter(characterId: number | null) {
       setError(null);
 
       try {
-        const response = await fetch(`/api/ffxiv/characters/${characterId}`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = await safeFetchJSON(
+          `/api/ffxiv/characters/${characterId}`,
+          controller.signal
+        );
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {

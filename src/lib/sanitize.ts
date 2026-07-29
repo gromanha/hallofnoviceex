@@ -20,6 +20,7 @@ const ALLOWED_ATTRS = [
   'style', 'align', 'valign',
   'id', 'name',
   'loading', 'onerror',
+  'srcset', 'typeof',
 ]
 
 // Custom renderer for marked
@@ -116,9 +117,8 @@ function renderHtml(html: string): string {
     ],
     ALLOWED_ATTR: [
       ...ALLOWED_ATTRS,
-      'typeof', 'data-mw', 'data-parsoid',
+      'srcset', 'typeof', 'data-mw', 'data-parsoid',
     ],
-    // Keep relative wiki links working
     ALLOW_DATA_ATTR: false,
   })
 

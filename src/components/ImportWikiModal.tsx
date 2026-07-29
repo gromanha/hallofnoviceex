@@ -12,40 +12,33 @@ const WIKI_BASE = 'https://ffxiv.consolegameswiki.com';
 function cleanWikiHtml(html: string): string {
   let cleaned = html;
 
-  // Remove TOC
-  cleaned = cleaned.replace(/<div id="toc"[\s\S]*?<\/div>\s*<\/div>/gi, '');
-  cleaned = cleaned.replace(/<div class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  // Remove TOC — match the full TOC block including its parent wrapper
+  cleaned = cleaned.replace(/<div[^>]*id="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div[^>]*class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  // Broader TOC removal — catch any remaining TOC structure
+  cleaned = cleaned.replace(/<div[^>]*class="toc"[^>]*>[\s\S]*?<\/div>/gi, '');
 
   // Remove scripts and styles
   cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, '');
   cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, '');
+  cleaned = cleaned.replace(/<link[^>]*>/gi, '');
 
-  // Remove edit section links
+  // Remove edit section links (multiple patterns)
+  cleaned = cleaned.replace(/<span class="mw-editsection">[\s\S]*?<\/span>/gi, '');
   cleaned = cleaned.replace(/<span class="mw-editsection"[^>]*>[\s\S]*?<\/span>/gi, '');
 
   // Remove navigation elements
-  cleaned = cleaned.replace(/<div class="noprint[\s\S]*?<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="noprint">[\s\S]*?<\/div>/gi, '');
 
   // Remove hatnote boxes
-  cleaned = cleaned.replace(/<div class="hatnote"[^>]*>[\s\S]*?<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="hatnote">[\s\S]*?<\/div>/gi, '');
 
-  // Fix heading wrappers
-  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\1[^>]*>([\s\S]*?)<\/h\1>\s*<\/div>/gi,
-    (_, level, content) => `<h${level}>${content}</h${level}>`
-  );
+  // Remove mw-jump links
+  cleaned = cleaned.replace(/<a class="mw-jump-link"[^>]*>[\s\S]*?<\/a>/gi, '');
 
-  // Fix relative image URLs → absolute
-  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
-  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
-
-  // Fix relative link URLs → absolute
-  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
-
-  // Remove mw-jump link
-  cleaned = cleaned.replace(/<a class="mw-jump"[^>]*>[\s\S]*?<\/a>/gi, '');
-
-  // Remove content wrapper divs
+  // Remove content wrapper divs (but keep their children)
   cleaned = cleaned.replace(/<div id="mw-content-text"[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<div class="mw-content-ltr mw-parser-output"[^>]*>/gi, '');
   cleaned = cleaned.replace(/<div class="mw-parser-output">/gi, '');
 
   // Remove category links
@@ -54,16 +47,49 @@ function cleanWikiHtml(html: string): string {
   // Remove print footer
   cleaned = cleaned.replace(/<div id="printfooter"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Remove data attributes
+  // Remove indicator divs
+  cleaned = cleaned.replace(/<div class="mw-indicators?">[\s\S]*?<\/div>/gi, '');
+
+  // Fix heading wrappers: <div class="mw-heading mw-heading2"><h2>Text</h2></div> → <h2>Text</h2>
+  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\d[^>]*>([\s\S]*?)<\/h\d>\s*<\/div>/gi,
+    (_, level, content) => `<h${level}>${content}</h${level}>`
+  );
+
+  // Remove data attributes (typeof, data-mw, data-parsoid, etc.)
+  cleaned = cleaned.replace(/\s*typeof="mw:File"/gi, '');
   cleaned = cleaned.replace(/\s*typeof="mw:Extension[^"]*"/gi, '');
   cleaned = cleaned.replace(/\s*data-mw[^=]*="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-width="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-height="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-type="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*decoding="async"/gi, '');
+
+  // Fix relative image URLs → absolute
+  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
+  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
+
+  // Fix relative link URLs → absolute
+  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
+  cleaned = cleaned.replace(/href="\/mediawiki\//g, `href="${WIKI_BASE}/mediawiki/`);
+
+  // Fix srcset — make URLs absolute
+  cleaned = cleaned.replace(/srcset="([^"]*?)"/g, (match, val) => {
+    const fixed = val.replace(/\/mediawiki\//g, `${WIKI_BASE}/mediawiki/`);
+    return `srcset="${fixed}"`;
+  });
 
   // Remove empty span tags
   cleaned = cleaned.replace(/<span(?: [^>]*)?>(\s*)<\/span>/gi, '$1');
 
+  // Remove empty div tags
+  cleaned = cleaned.replace(/<div(?: [^>]*)?>(\s*)<\/div>/gi, '$1');
+
   // Fix center tags
   cleaned = cleaned.replace(/<center>/gi, '<div style="text-align:center">');
   cleaned = cleaned.replace(/<\/center>/gi, '</div>');
+
+  // Remove HTML comments
+  cleaned = cleaned.replace(/<!--[\s\S]*?-->/gi, '');
 
   // Clean up whitespace
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n');

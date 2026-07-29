@@ -29,56 +29,74 @@ function isHtmlContent(content) {
   return tagCount >= 3;
 }
 
+// Use Unicode Private Use Area characters as placeholders — Google Translate won't modify them
+const PH_START = '\uE000';
+const PH_END = '\uE001';
+
 function extractHtmlBlocks(html) {
   const parts = [];
   let idx = 0;
   let result = html;
 
-  // Protect <img> tags
-  result = result.replace(/<img[^>]*>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
-    parts.push({ key, value: match });
-    return key;
-  });
-
-  // Protect <a> tags
-  result = result.replace(/<a [^>]*>[\s\S]*?<\/a>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
-    parts.push({ key, value: match });
-    return key;
-  });
-
-  // Protect <table> blocks
+  // Protect <table> blocks (do first — they contain nested tags)
   result = result.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    const key = `${PH_START}T${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <figure> blocks (images with captions)
+  result = result.replace(/<figure[\s\S]*?<\/figure>/gi, (match) => {
+    const key = `${PH_START}F${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <blockquote> blocks
+  result = result.replace(/<blockquote[\s\S]*?<\/blockquote>/gi, (match) => {
+    const key = `${PH_START}Q${idx++}${PH_END}`;
     parts.push({ key, value: match });
     return key;
   });
 
   // Protect <pre> blocks
   result = result.replace(/<pre[\s\S]*?<\/pre>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    const key = `${PH_START}P${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <h1>-<h6> tags
+  result = result.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi, (match) => {
+    const key = `${PH_START}H${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <img> tags
+  result = result.replace(/<img[^>]*>/gi, (match) => {
+    const key = `${PH_START}I${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <a> tags (links)
+  result = result.replace(/<a [^>]*>[\s\S]*?<\/a>/gi, (match) => {
+    const key = `${PH_START}A${idx++}${PH_END}`;
     parts.push({ key, value: match });
     return key;
   });
 
   // Protect <code> blocks
   result = result.replace(/<code[\s\S]*?<\/code>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    const key = `${PH_START}C${idx++}${PH_END}`;
     parts.push({ key, value: match });
     return key;
   });
 
-  // Protect heading tags
-  result = result.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
-    parts.push({ key, value: match });
-    return key;
-  });
-
-  // Protect blockquote tags
-  result = result.replace(/<blockquote[\s\S]*?<\/blockquote>/gi, (match) => {
-    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+  // Protect <span class="icon-label-container"> blocks
+  result = result.replace(/<span class="icon-label-container[^"]*">[\s\S]*?<\/span>/gi, (match) => {
+    const key = `${PH_START}S${idx++}${PH_END}`;
     parts.push({ key, value: match });
     return key;
   });

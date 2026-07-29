@@ -962,22 +962,6 @@ img[height="16"] {
   box-shadow: none;
 }
 
-/* ── Wiki HTML Import: Icon Label Containers ── */
-.icon-label-container {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  vertical-align: middle;
-}
-
-.icon-label-container img {
-  display: inline-block;
-  vertical-align: middle;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-}
-
 /* ── Wiki HTML Import: Quotation Boxes ── */
 .quotation-box,
 blockquote.quotation-box {
@@ -1088,6 +1072,93 @@ img[alt*="Icon"] {
 
 .navbox-content {
   padding: 0.5em 1em;
+}
+
+/* ── Wiki HTML Import: Item Tables (stdt__table_v2) ── */
+table.item,
+table.stdt__table_v2 {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.9em;
+  border: 1px solid var(--color-outline);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+table.item th,
+table.stdt__table_v2 th {
+  background: var(--color-surface-alt);
+  text-align: left;
+  font-weight: 600;
+  padding: 0.75em 1em;
+  border-bottom: 2px solid var(--color-outline);
+  color: var(--color-on-surface);
+  white-space: nowrap;
+}
+
+table.item td,
+table.stdt__table_v2 td {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid var(--color-outline);
+  color: var(--color-on-surface);
+  vertical-align: top;
+}
+
+table.item tbody tr:hover,
+table.stdt__table_v2 tbody tr:hover {
+  background: var(--color-primary-light);
+}
+
+/* ── Wiki HTML Import: Icon Label Containers ── */
+.icon-label-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.icon-label-container img {
+  display: inline-block;
+  vertical-align: middle;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ── Wiki HTML Import: Plainlinks ── */
+.plainlinks a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.plainlinks a:hover {
+  text-decoration: underline;
+}
+
+/* ── Wiki HTML Import: Standard Frame Icons ── */
+.standard-frame-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.standard-frame-icon img {
+  display: inline-block;
+  vertical-align: middle;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ── Wiki HTML Import: Float Right Containers ── */
+div[style*="float:right"],
+div[style*="float: right"] {
+  float: right;
+  clear: right;
+  margin-bottom: 0.5em;
+  padding: 0.5em 0 0.8em 1.4em;
+  max-width: 20em;
 }
 
 /* ── Reduced Motion ── */

@@ -350,7 +350,6 @@ export default async function handler(req, res) {
       is_pinned: false,
       status: status === 'draft' ? 'draft' : 'published',
       published_at: new Date().toISOString(),
-      source_url: clampStr(url.trim(), 500),
     };
 
     const { data, error } = await getSupabaseAdmin().from('posts').insert(payload).select().single();

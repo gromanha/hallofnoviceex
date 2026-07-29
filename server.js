@@ -904,21 +904,20 @@ app.post('/api/posts/import', importRateLimit, async (req, res) => {
 
     // 6. Insert post
     sendStep('save', 'Salvando no Supabase', 'running');
-    const payload = {
-      title: clampStr(title, 200),
-      slug,
-      subtitle: clampStr(subtitle, 500),
-      content: enriched,
-      category: clampStr(detectedCategory, 50),
-      author_name: claims.name || 'Corpo Docente',
-      author_id: claims.sub,
-      cover_image: clampStr(cover_image, 500),
-      tags: Array.isArray(tags) ? tags : [],
-      is_pinned: false,
-      status: status === 'draft' ? 'draft' : 'published',
-      published_at: new Date().toISOString(),
-      source_url: clampStr(url.trim(), 500),
-    };
+      const payload = {
+        title: clampStr(title, 200),
+        slug,
+        subtitle: clampStr(subtitle, 500),
+        content: enriched,
+        category: clampStr(detectedCategory, 50),
+        author_name: claims.name || 'Corpo Docente',
+        author_id: claims.sub,
+        cover_image: clampStr(cover_image, 500),
+        tags: Array.isArray(tags) ? tags : [],
+        is_pinned: false,
+        status: status === 'draft' ? 'draft' : 'published',
+        published_at: new Date().toISOString(),
+      };
 
     try {
       const { data, error } = await supabaseAdmin.from('posts').insert(payload).select().single();

@@ -3,7 +3,115 @@ import { requireAdmin } from './lib/auth.js';
 import { getSupabaseAdmin } from './lib/supabase.js';
 import { getWikiPage, searchItems, searchQuests } from './lib/ffxiv.js';
 
-// ── Translation helpers (inlined from src/lib/translate.js) ──
+// ── Translation helpers (HTML-preserving) ──
+
+function splitIntoChunks(text, maxLen = 4500) {
+  if (text.length <= maxLen) return [text];
+  const chunks = [];
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  let current = '';
+  for (const sentence of sentences) {
+    if ((current + ' ' + sentence).length > maxLen && current) {
+      chunks.push(current.trim());
+      current = sentence;
+    } else {
+      current = current ? current + ' ' + sentence : sentence;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  return chunks;
+}
+
+function isHtmlContent(content) {
+  const trimmed = content.trim();
+  if (/^<(div|p|h[1-6]|table|ul|ol|blockquote|figure|span|img|pre|dl)\b/i.test(trimmed)) return true;
+  const tagCount = (trimmed.match(/<\/?[a-z][\s\S]*?>/gi) || []).length;
+  return tagCount >= 3;
+}
+
+function extractHtmlBlocks(html) {
+  const parts = [];
+  let idx = 0;
+  let result = html;
+
+  // Protect <img> tags
+  result = result.replace(/<img[^>]*>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <a> tags
+  result = result.replace(/<a [^>]*>[\s\S]*?<\/a>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <table> blocks
+  result = result.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <pre> blocks
+  result = result.replace(/<pre[\s\S]*?<\/pre>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <code> blocks
+  result = result.replace(/<code[\s\S]*?<\/code>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect heading tags
+  result = result.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect blockquote tags
+  result = result.replace(/<blockquote[\s\S]*?<\/blockquote>/gi, (match) => {
+    const key = `\u00A7\u00A7HTMLBLOCK_${idx++}\u00A7\u00A7`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  return { text: result, parts };
+}
+
+function restoreHtmlParts(text, parts) {
+  let result = text;
+  for (const part of parts) {
+    result = result.replace(part.key, part.value);
+  }
+  return result;
+}
+
+async function translateHtmlPreserving(html, from = 'en', to = 'pt') {
+  if (!html || typeof html !== 'string') return '';
+  const { text, parts } = extractHtmlBlocks(html);
+  const chunks = splitIntoChunks(text);
+  const translatedChunks = [];
+  for (const chunk of chunks) {
+    try {
+      const res = await translate(chunk, { from, to });
+      translatedChunks.push(res.text);
+    } catch (err) {
+      console.error('[translate] Chunk failed:', err.message);
+      translatedChunks.push(chunk);
+    }
+  }
+  return restoreHtmlParts(translatedChunks.join(' '), parts);
+}
+
+// ── Legacy markdown translation (kept for fallback) ──
 
 function extractBlocks(text) {
   const blocks = [];
@@ -40,23 +148,6 @@ function restoreBlocks(text, blocks) {
   return result;
 }
 
-function splitIntoChunks(text, maxLen = 4500) {
-  if (text.length <= maxLen) return [text];
-  const chunks = [];
-  const sentences = text.split(/(?<=[.!?])\s+/);
-  let current = '';
-  for (const sentence of sentences) {
-    if ((current + ' ' + sentence).length > maxLen && current) {
-      chunks.push(current.trim());
-      current = sentence;
-    } else {
-      current = current ? current + ' ' + sentence : sentence;
-    }
-  }
-  if (current.trim()) chunks.push(current.trim());
-  return chunks;
-}
-
 async function translateMarkdown(text, from = 'en', to = 'pt') {
   if (!text || typeof text !== 'string') return '';
   const { text: sanitized, blocks } = extractBlocks(text);
@@ -74,28 +165,11 @@ async function translateMarkdown(text, from = 'en', to = 'pt') {
   return restoreBlocks(translatedChunks.join(' '), blocks);
 }
 
-// ── Icon enrichment helpers (inlined from src/lib/icon-enricher.js) ──
+// ── Icon enrichment helpers (HTML-aware) ──
 
 const MAX_TERMS = 20;
 const DELAY_MS = 100;
 const MIN_WORDS = 2;
-const WIKI_LINK_RE = /\[([^\]]+)\]\(\/wiki\/[^)]+\)/g;
-const WIKI_BRACKET_RE = /\[\[([^\]]+)\]\]/g;
-const COMPOUND_RE = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
-
-function extractCandidateTerms(markdown) {
-  const terms = new Set();
-  let match;
-  const re1 = new RegExp(WIKI_LINK_RE.source, 'g');
-  while ((match = re1.exec(markdown)) !== null) terms.add(match[1].trim());
-  const re2 = new RegExp(WIKI_BRACKET_RE.source, 'g');
-  while ((match = re2.exec(markdown)) !== null) terms.add(match[1].trim());
-  const re3 = new RegExp(COMPOUND_RE.source, 'g');
-  while ((match = re3.exec(markdown)) !== null) terms.add(match[1].trim());
-  return [...terms]
-    .filter((t) => t.split(/\s+/).length >= MIN_WORDS)
-    .slice(0, MAX_TERMS);
-}
 
 async function searchTerm(term) {
   try {
@@ -121,9 +195,42 @@ async function searchTerm(term) {
   }
 }
 
-async function enrichWithIcons(markdownContent) {
-  const terms = extractCandidateTerms(markdownContent);
-  if (terms.length === 0) return { content: markdownContent, found: 0, total: 0 };
+function extractCandidateTermsFromHtml(html) {
+  const terms = new Set();
+  let match;
+
+  // Extract link text: <a href="/wiki/...">Term</a> or <a href="https://...wiki...">Term</a>
+  const wikiLinkRe = /<a [^>]*href="[^"]*(?:\/wiki\/|consolegameswiki\.com\/wiki\/)[^"]*"[^>]*>([^<]+)<\/a>/gi;
+  while ((match = wikiLinkRe.exec(html)) !== null) terms.add(match[1].trim());
+
+  // Compound capitalized words in text (strip tags first)
+  const textContent = html.replace(/<[^>]+>/g, ' ');
+  const compoundRe = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
+  while ((match = compoundRe.exec(textContent)) !== null) terms.add(match[1].trim());
+
+  return [...terms]
+    .filter((t) => t.split(/\s+/).length >= MIN_WORDS)
+    .slice(0, MAX_TERMS);
+}
+
+function extractCandidateTermsFromMarkdown(markdown) {
+  const terms = new Set();
+  let match;
+  const re1 = /\[([^\]]+)\]\(\/wiki\/[^)]+\)/g;
+  while ((match = re1.exec(markdown)) !== null) terms.add(match[1].trim());
+  const re2 = /\[\[([^\]]+)\]\]/g;
+  while ((match = re2.exec(markdown)) !== null) terms.add(match[1].trim());
+  const re3 = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
+  while ((match = re3.exec(markdown)) !== null) terms.add(match[1].trim());
+  return [...terms]
+    .filter((t) => t.split(/\s+/).length >= MIN_WORDS)
+    .slice(0, MAX_TERMS);
+}
+
+async function enrichWithIconsHtml(htmlContent) {
+  const terms = extractCandidateTermsFromHtml(htmlContent);
+  if (terms.length === 0) return { content: htmlContent, found: 0, total: 0 };
+
   const iconMap = new Map();
   let found = 0;
   for (let i = 0; i < terms.length; i++) {
@@ -136,6 +243,37 @@ async function enrichWithIcons(markdownContent) {
     }
     if (i < terms.length - 1) await new Promise((r) => setTimeout(r, DELAY_MS));
   }
+
+  let enriched = htmlContent;
+  const sortedTerms = [...iconMap.entries()].sort((a, b) => b[0].length - a[0].length);
+  for (const [term, { iconUrl }] of sortedTerms) {
+    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Insert icon before term text in HTML (only in text nodes, not inside tags)
+    enriched = enriched.replace(
+      new RegExp(`(?<!<[^>]*)\\b(${escapedTerm})\\b`, 'g'),
+      `<img src="${iconUrl}" alt="${term}" width="20" height="20" style="vertical-align:middle;margin-right:4px;border:none;box-shadow:none;" /> $1`
+    );
+  }
+  return { content: enriched, found, total: terms.length };
+}
+
+async function enrichWithIconsMarkdown(markdownContent) {
+  const terms = extractCandidateTermsFromMarkdown(markdownContent);
+  if (terms.length === 0) return { content: markdownContent, found: 0, total: 0 };
+
+  const iconMap = new Map();
+  let found = 0;
+  for (let i = 0; i < terms.length; i++) {
+    const term = terms[i];
+    const result = await searchTerm(term);
+    if (result) {
+      const iconUrl = result.icon.startsWith('http') ? result.icon : `https://v2.xivapi.com${result.icon}`;
+      iconMap.set(term, { name: result.name, iconUrl, type: result.type });
+      found++;
+    }
+    if (i < terms.length - 1) await new Promise((r) => setTimeout(r, DELAY_MS));
+  }
+
   let enriched = markdownContent;
   const sortedTerms = [...iconMap.entries()].sort((a, b) => b[0].length - a[0].length);
   for (const [term, { iconUrl }] of sortedTerms) {
@@ -279,11 +417,16 @@ export default async function handler(req, res) {
 
     addStep('wiki_fetch', 'Buscando página na Wiki', 'success', `Obtido: "${pageTitle}" (${rawContent.length} caracteres)`);
 
-    // 2. Translate
+    // 2. Translate (auto-detect HTML vs markdown)
     addStep('translate', 'Traduzindo para PT-BR', 'running');
+    const contentIsHtml = isHtmlContent(rawContent);
     let translated;
     try {
-      translated = await translateMarkdown(rawContent, 'en', 'pt');
+      if (contentIsHtml) {
+        translated = await translateHtmlPreserving(rawContent, 'en', 'pt');
+      } else {
+        translated = await translateMarkdown(rawContent, 'en', 'pt');
+      }
       addStep('translate', 'Traduzindo para PT-BR', 'success', `${translated.length} caracteres traduzidos`);
     } catch (err) {
       addStep('translate', 'Traduzindo para PT-BR', 'error', err.message);
@@ -297,7 +440,9 @@ export default async function handler(req, res) {
     if (enrichIcons) {
       addStep('enrich', 'Buscando ícones na XIVAPI', 'running');
       try {
-        const result = await enrichWithIcons(translated);
+        const result = contentIsHtml
+          ? await enrichWithIconsHtml(translated)
+          : await enrichWithIconsMarkdown(translated);
         enriched = result.content;
         iconStats = { found: result.found, total: result.total };
         const detail = result.total > 0 ? `${result.found}/${result.total} termos encontrados` : 'Nenhum termo encontrado na XIVAPI';
@@ -309,17 +454,39 @@ export default async function handler(req, res) {
       addStep('enrich', 'Buscando ícones na XIVAPI', 'skip', 'Desabilitado pelo usuário');
     }
 
-    // 4. Metadata
+    // 4. Metadata (HTML-aware)
     addStep('metadata', 'Extraindo metadados', 'running');
-    const lines = translated.split('\n').filter((l) => l.trim());
     let title = pageTitle;
-    for (const line of lines) {
-      const h1 = line.match(/^#\s+(.+)/);
-      if (h1) { title = h1[1].trim().slice(0, 200); break; }
+    let subtitle = '';
+    let cover_image = '';
+
+    if (contentIsHtml) {
+      // Extract title from <h1>
+      const h1Match = enriched.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+      if (h1Match) title = h1Match[1].replace(/<[^>]+>/g, '').trim().slice(0, 200);
+
+      // Extract subtitle from first <p> with substantial text
+      const pMatches = enriched.match(/<p[^>]*>([\s\S]*?)<\/p>/gi) || [];
+      for (const p of pMatches) {
+        const text = p.replace(/<[^>]+>/g, '').trim();
+        if (text.length > 10) { subtitle = text.slice(0, 300); break; }
+      }
+
+      // Extract cover image from first <img>
+      const imgMatch = enriched.match(/<img [^>]*src="([^"]+)"/i);
+      cover_image = imgMatch ? imgMatch[1] : '';
+    } else {
+      // Legacy markdown extraction
+      const lines = translated.split('\n').filter((l) => l.trim());
+      for (const line of lines) {
+        const h1 = line.match(/^#\s+(.+)/);
+        if (h1) { title = h1[1].trim().slice(0, 200); break; }
+      }
+      subtitle = lines.find((l) => !l.startsWith('#') && l.trim().length > 10)?.trim().slice(0, 300) || '';
+      const imgMatch = enriched.match(/!\[.*?\]\((.*?)\)/);
+      cover_image = imgMatch ? imgMatch[1] : '';
     }
-    const subtitle = lines.find((l) => !l.startsWith('#') && l.trim().length > 10)?.trim().slice(0, 300) || '';
-    const imgMatch = enriched.match(/!\[.*?\]\((.*?)\)/);
-    const cover_image = imgMatch ? imgMatch[1] : '';
+
     const detectedCategory = category || detectCategoryFromUrl(urlMatch[1]);
     addStep('metadata', 'Extraindo metadados', 'success', `Título: "${title}" | Categoria: ${detectedCategory}`);
 

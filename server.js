@@ -804,8 +804,22 @@ app.post('/api/posts/import', importRateLimit, async (req, res) => {
         const pages = wikiData?.query?.pages || {};
         const page = Object.values(pages)[0];
         if (page && page.missing === undefined) {
-          rawContent = page.extract || '';
+          const wikitext = page.revisions?.[0]?.slots?.main?.['*'] || '';
           pageTitle = page.title || wikiTitle;
+          if (wikitext) {
+            // Basic wikitext cleanup for server fallback
+            rawContent = wikitext
+              .replace(/\{\{[^}]*\|([^}]*)\}\}/g, (_, inner) => inner.split('|')[0] || '')
+              .replace(/\{\{[^}]+\}\}/g, '')
+              .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '$2')
+              .replace(/\[\[([^\]]+)\]\]/g, '$1')
+              .replace(/'{3}(.+?)'{3}/g, '**$1**')
+              .replace(/'{2}(.+?)'{2}/g, '*$1*')
+              .replace(/<ref[^>]*>.*?<\/ref>/g, '')
+              .replace(/<ref[^>]*\/>/g, '')
+              .replace(/<[^>]+>/g, '')
+              .trim();
+          }
         }
       } catch {
         // Ignore — will fail on empty check below

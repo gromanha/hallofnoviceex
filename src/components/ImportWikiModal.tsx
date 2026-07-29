@@ -6,6 +6,64 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { useEscapeKey } from '../lib/useEscapeKey';
 
+// ── Wikitext → Markdown converter (basic) ──
+function wikitextToMarkdown(wikitext: string): string {
+  let md = wikitext;
+
+  // Remove common templates that don't translate well
+  md = md.replace(/\{\{(?:Dawntrail expansion content|TOCRIGHT|Relic Weapons Table\|dt|Relic Weapons Heading|End Game Progression|Occult Crescent nav\|state=collapsed)\}\}/gi, '');
+
+  // Convert headings: == Heading == → ## Heading
+  md = md.replace(/^(={1,6})\s*(.+?)\s*\1\s*$/gm, (_, eq, title) => {
+    const level = eq.length;
+    return `${'#'.repeat(level)} ${title}`;
+  });
+
+  // Convert bold/italic
+  md = md.replace(/'{5}(.+?)'{5}/g, '**_$1_**');  // bold+italic
+  md = md.replace(/'{3}(.+?)'{3}/g, '**$1**');    // bold
+  md = md.replace(/'{2}(.+?)'{2}/g, '*$1*');      // italic
+
+  // Convert internal links: [[Page|Text]] → Text  or  [[Page]] → Page
+  md = md.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '$2');
+  md = md.replace(/\[\[([^\]]+)\]\]/g, '$1');
+
+  // Convert external links: [http://url text] → [text](http://url)
+  md = md.replace(/\[https?:\/\/([^\s]+)\s+([^\]]+)\]/g, '[$2](https://$1)');
+  md = md.replace(/\[https?:\/\/([^\]]+)\]/g, '[$1](https://$1)');
+
+  // Convert images: [[File:Name.png|thumb|caption]] → ![](Name.png)
+  md = md.replace(/\[\[File:([^|\]]+)\|[^\]]*\]\]/g, '![]($1)');
+
+  // Remove templates: {{template|param}} → param value or empty
+  md = md.replace(/\{\{[^}]*\|([^}]*)\}\}/g, (_, inner) => {
+    // For item icon templates, extract the item name
+    const parts = inner.split('|');
+    return parts[0] || '';
+  });
+  md = md.replace(/\{\{[^}]+\}\}/g, '');
+
+  // Convert wiki tables to a simpler format
+  md = md.replace(/\{\{STDT[^}]*\}\}/g, '');
+  md = md.replace(/^\|-\s*$/gm, '---');
+  md = md.replace(/^\!\s*(.+)$/gm, '**$1**');
+
+  // Convert references
+  md = md.replace(/<ref>[^<]*<\/ref>/g, '');
+  md = md.replace(/<ref[^>]*\/>/g, '');
+
+  // Remove HTML tags
+  md = md.replace(/<[^>]+>/g, '');
+
+  // Clean up multiple blank lines
+  md = md.replace(/\n{3,}/g, '\n\n');
+
+  // Trim
+  md = md.trim();
+
+  return md;
+}
+
 type StepStatus = 'pending' | 'running' | 'success' | 'error' | 'skip';
 
 interface LogStep {
@@ -216,16 +274,16 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
       let pageTitle = wikiTitle;
 
       try {
+        // Use revisions API — ConsoleGamesWiki doesn't support TextExtracts extension
         const wikiParams = new URLSearchParams({
           action: 'query',
           titles: wikiTitle,
-          prop: 'extracts|pageimages|info',
-          exintro: 'true',
-          explaintext: 'true',
-          pithumbsize: '300',
-          inprop: 'url',
+          prop: 'revisions',
+          rvprop: 'content',
+          rvslots: 'main',
           format: 'json',
           origin: '*',
+          rvlimit: '1',
         });
 
         const wikiRes = await fetch(`${WIKI_API}?${wikiParams}`, { signal: controller.signal });
@@ -239,11 +297,18 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
           throw new Error(`Página não encontrada: ${wikiTitle}`);
         }
 
-        rawContent = page.extract || '';
+        const wikitext = page.revisions?.[0]?.slots?.main?.['*'] || '';
         pageTitle = page.title || wikiTitle;
 
-        if (!rawContent.trim()) {
+        if (!wikitext.trim()) {
           throw new Error('Página da wiki sem conteúdo');
+        }
+
+        // Convert wikitext to markdown-like text
+        rawContent = wikitextToMarkdown(wikitext);
+
+        if (!rawContent.trim()) {
+          throw new Error('Página da wiki sem conteúdo após conversão');
         }
 
         updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'success',

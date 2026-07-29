@@ -218,11 +218,10 @@ export async function fetchWiki(action = 'query', params = {}) {
 export async function getWikiPage(title) {
   return fetchWiki('query', {
     titles: title,
-    prop: 'extracts|pageimages|info',
-    exintro: true,
-    explaintext: true,
-    pithumbsize: 300,
-    inprop: 'url',
+    prop: 'revisions',
+    rvprop: 'content',
+    rvslots: 'main',
+    rvlimit: '1',
   });
 }
 

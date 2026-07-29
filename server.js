@@ -753,7 +753,7 @@ app.post('/api/posts/import', importRateLimit, async (req, res) => {
   const { translateMarkdown } = await import('./src/lib/translate.js');
   const { enrichWithIcons } = await import('./src/lib/icon-enricher.js');
 
-  const { url, category, tags = [], status = 'published', enrichIcons = true } = req.body || {};
+  const { url, rawContent: clientContent, pageTitle: clientTitle, category, tags = [], status = 'published', enrichIcons = true } = req.body || {};
 
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'url_required' });
@@ -792,33 +792,28 @@ app.post('/api/posts/import', importRateLimit, async (req, res) => {
   }, IMPORT_TIMEOUT);
 
   try {
-    // 1. Fetch wiki page
+    // 1. Wiki content (prefer client-provided, fallback to server fetch)
     sendStep('wiki_fetch', 'Buscando página na Wiki', 'running');
-    let wikiData;
-    try {
-      wikiData = await getWikiPage(wikiTitle);
-    } catch (err) {
-      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', err.message);
-      clearTimeout(timeoutId);
-      sendEvent('done', { ok: false });
-      return res.end();
-    }
 
-    const pages = wikiData?.query?.pages || {};
-    const page = Object.values(pages)[0];
-
-    if (!page || page.missing !== undefined) {
-      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', `Página não encontrada: ${wikiTitle}`);
-      clearTimeout(timeoutId);
-      sendEvent('done', { ok: false });
-      return res.end();
-    }
-
-    const rawContent = page.extract || '';
-    const pageTitle = page.title || wikiTitle;
+    let rawContent = clientContent || '';
+    let pageTitle = clientTitle || wikiTitle;
 
     if (!rawContent.trim()) {
-      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', 'Página da wiki sem conteúdo');
+      try {
+        const wikiData = await getWikiPage(wikiTitle);
+        const pages = wikiData?.query?.pages || {};
+        const page = Object.values(pages)[0];
+        if (page && page.missing === undefined) {
+          rawContent = page.extract || '';
+          pageTitle = page.title || wikiTitle;
+        }
+      } catch {
+        // Ignore — will fail on empty check below
+      }
+    }
+
+    if (!rawContent.trim()) {
+      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', clientContent ? 'Conteúdo vazio recebido do cliente' : `Página não encontrada: ${wikiTitle}`);
       clearTimeout(timeoutId);
       sendEvent('done', { ok: false });
       return res.end();

@@ -218,7 +218,7 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'import_rate_limit', message: 'Max 5 imports per hour' });
   }
 
-  const { url, category, tags = [], status = 'published', enrichIcons = true } = req.body || {};
+  const { url, rawContent: clientContent, pageTitle: clientTitle, category, tags = [], status = 'published', enrichIcons = true } = req.body || {};
 
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'url_required' });
@@ -238,29 +238,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Fetch wiki page
+    // 1. Wiki content (provided by client — server can't reach ConsoleGamesWiki from Vercel IPs)
     addStep('wiki_fetch', 'Buscando página na Wiki', 'running');
-    let wikiData;
-    try {
-      wikiData = await getWikiPage(wikiTitle);
-    } catch (err) {
-      addStep('wiki_fetch', 'Buscando página na Wiki', 'error', err.message);
-      return res.status(500).json({ error: 'import_failed', steps });
+
+    let rawContent = clientContent || '';
+    let pageTitle = clientTitle || wikiTitle;
+
+    // Fallback: try server-side fetch if client didn't provide content
+    if (!rawContent.trim()) {
+      try {
+        const wikiData = await getWikiPage(wikiTitle);
+        const pages = wikiData?.query?.pages || {};
+        const page = Object.values(pages)[0];
+        if (page && page.missing === undefined) {
+          rawContent = page.extract || '';
+          pageTitle = page.title || wikiTitle;
+        }
+      } catch {
+        // Ignore — will fail on empty check below
+      }
     }
-
-    const pages = wikiData?.query?.pages || {};
-    const page = Object.values(pages)[0];
-
-    if (!page || page.missing !== undefined) {
-      addStep('wiki_fetch', 'Buscando página na Wiki', 'error', `Página não encontrada: ${wikiTitle}`);
-      return res.status(404).json({ error: 'wiki_page_not_found', steps });
-    }
-
-    const rawContent = page.extract || '';
-    const pageTitle = page.title || wikiTitle;
 
     if (!rawContent.trim()) {
-      addStep('wiki_fetch', 'Buscando página na Wiki', 'error', 'Página da wiki sem conteúdo');
+      addStep('wiki_fetch', 'Buscando página na Wiki', 'error', clientContent ? 'Conteúdo vazio recebido do cliente' : `Página não encontrada: ${wikiTitle}`);
       return res.status(400).json({ error: 'wiki_page_empty', steps });
     }
 

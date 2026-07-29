@@ -123,7 +123,7 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
 
   const initSteps = useCallback(() => {
     const ids = ['wiki_fetch', 'translate', 'enrich', 'metadata', 'slug', 'save'];
-    const labels = ['Buscando página na Wiki', 'Traduzindo para PT-BR', 'Buscando ícones na XIVAPI', 'Extraindo metadados', 'Gerando slug', 'Salvando no Supabase'];
+    const labels = ['Buscando página na Wiki (cliente)', 'Traduzindo para PT-BR', 'Buscando ícones na XIVAPI', 'Extraindo metadados', 'Gerando slug', 'Salvando no Supabase'];
     setSteps(ids.map((id, i) => ({
       id, label: labels[i], status: 'pending' as StepStatus, detail: null, ts: Date.now(),
     })));
@@ -188,6 +188,8 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
     }
   }, [updateStep, onImported]);
 
+  const WIKI_API = 'https://ffxiv.consolegameswiki.com/mediawiki/api.php';
+
   const runImport = useCallback(async (importStatus: 'published' | 'draft') => {
     if (!url.trim() || isRunning) return;
 
@@ -204,12 +206,64 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
     abortRef.current = controller;
 
     try {
+      // Step 1: Fetch wiki page CLIENT-SIDE (CORS allowed via origin=*)
+      updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'running', null);
+
+      const urlMatch = url.trim().match(/\/wiki\/(.+)$/);
+      const wikiTitle = urlMatch ? decodeURIComponent(urlMatch[1]).replace(/_/g, ' ') : url.trim();
+
+      let rawContent = '';
+      let pageTitle = wikiTitle;
+
+      try {
+        const wikiParams = new URLSearchParams({
+          action: 'query',
+          titles: wikiTitle,
+          prop: 'extracts|pageimages|info',
+          exintro: 'true',
+          explaintext: 'true',
+          pithumbsize: '300',
+          inprop: 'url',
+          format: 'json',
+          origin: '*',
+        });
+
+        const wikiRes = await fetch(`${WIKI_API}?${wikiParams}`, { signal: controller.signal });
+        if (!wikiRes.ok) throw new Error(`Wiki API: HTTP ${wikiRes.status}`);
+
+        const wikiData = await wikiRes.json();
+        const pages = wikiData?.query?.pages || {};
+        const page = Object.values(pages)[0] as any;
+
+        if (!page || page.missing !== undefined) {
+          throw new Error(`Página não encontrada: ${wikiTitle}`);
+        }
+
+        rawContent = page.extract || '';
+        pageTitle = page.title || wikiTitle;
+
+        if (!rawContent.trim()) {
+          throw new Error('Página da wiki sem conteúdo');
+        }
+
+        updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'success',
+          `Obtido: "${pageTitle}" (${rawContent.length} caracteres)`);
+      } catch (err: any) {
+        updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'error', err.message);
+        setIsDone(true);
+        setIsRunning(false);
+        return;
+      }
+
+      // Step 2-6: Send to server for translate + enrich + save
       const res = await fetch('/api/posts/import', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: url.trim(),
+          rawContent,
+          pageTitle,
           category: category || undefined,
           tags: tagsStr ? tagsStr.split(',').map((t) => t.trim()).filter(Boolean) : [],
           status: importStatus,
@@ -221,7 +275,6 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
       const contentType = res.headers.get('content-type') || '';
 
       if (!res.ok) {
-        // Try to parse error with steps
         const body = await res.json().catch(() => null);
         if (body?.steps) {
           for (const s of body.steps) updateStep(s.id, s.label, s.status, s.detail);
@@ -230,11 +283,17 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
       }
 
       if (contentType.includes('text/event-stream')) {
-        // Local Express — SSE stream
         await handleSSEResponse(res);
       } else {
-        // Vercel serverless — single JSON with steps[]
         const data: ImportResult = await res.json();
+        // Server returns its own wiki_fetch step — merge with client's
+        if (data.steps) {
+          const serverWikiStep = data.steps.find((s) => s.id === 'wiki_fetch');
+          if (serverWikiStep) {
+            // Keep client's wiki_fetch result, skip server's
+            data.steps = data.steps.filter((s) => s.id !== 'wiki_fetch');
+          }
+        }
         await handleVercelResponse(data);
       }
     } catch (err: any) {

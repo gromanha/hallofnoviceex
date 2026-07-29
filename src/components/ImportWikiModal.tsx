@@ -6,62 +6,69 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { useEscapeKey } from '../lib/useEscapeKey';
 
-// ── Wikitext → Markdown converter (basic) ──
-function wikitextToMarkdown(wikitext: string): string {
-  let md = wikitext;
+const WIKI_BASE = 'https://ffxiv.consolegameswiki.com';
 
-  // Remove common templates that don't translate well
-  md = md.replace(/\{\{(?:Dawntrail expansion content|TOCRIGHT|Relic Weapons Table\|dt|Relic Weapons Heading|End Game Progression|Occult Crescent nav\|state=collapsed)\}\}/gi, '');
+// ── HTML Cleaner — remove ads, TOC, scripts, fix URLs ──
+function cleanWikiHtml(html: string): string {
+  let cleaned = html;
 
-  // Convert headings: == Heading == → ## Heading
-  md = md.replace(/^(={1,6})\s*(.+?)\s*\1\s*$/gm, (_, eq, title) => {
-    const level = eq.length;
-    return `${'#'.repeat(level)} ${title}`;
-  });
+  // Remove TOC
+  cleaned = cleaned.replace(/<div id="toc"[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
 
-  // Convert bold/italic
-  md = md.replace(/'{5}(.+?)'{5}/g, '**_$1_**');  // bold+italic
-  md = md.replace(/'{3}(.+?)'{3}/g, '**$1**');    // bold
-  md = md.replace(/'{2}(.+?)'{2}/g, '*$1*');      // italic
+  // Remove scripts and styles
+  cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, '');
+  cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, '');
 
-  // Convert internal links: [[Page|Text]] → Text  or  [[Page]] → Page
-  md = md.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '$2');
-  md = md.replace(/\[\[([^\]]+)\]\]/g, '$1');
+  // Remove edit section links
+  cleaned = cleaned.replace(/<span class="mw-editsection"[^>]*>[\s\S]*?<\/span>/gi, '');
 
-  // Convert external links: [http://url text] → [text](http://url)
-  md = md.replace(/\[https?:\/\/([^\s]+)\s+([^\]]+)\]/g, '[$2](https://$1)');
-  md = md.replace(/\[https?:\/\/([^\]]+)\]/g, '[$1](https://$1)');
+  // Remove navigation elements
+  cleaned = cleaned.replace(/<div class="noprint[\s\S]*?<\/div>/gi, '');
 
-  // Convert images: [[File:Name.png|thumb|caption]] → ![](Name.png)
-  md = md.replace(/\[\[File:([^|\]]+)\|[^\]]*\]\]/g, '![]($1)');
+  // Remove hatnote boxes
+  cleaned = cleaned.replace(/<div class="hatnote"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Remove templates: {{template|param}} → param value or empty
-  md = md.replace(/\{\{[^}]*\|([^}]*)\}\}/g, (_, inner) => {
-    // For item icon templates, extract the item name
-    const parts = inner.split('|');
-    return parts[0] || '';
-  });
-  md = md.replace(/\{\{[^}]+\}\}/g, '');
+  // Fix heading wrappers
+  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\1[^>]*>([\s\S]*?)<\/h\1>\s*<\/div>/gi,
+    (_, level, content) => `<h${level}>${content}</h${level}>`
+  );
 
-  // Convert wiki tables to a simpler format
-  md = md.replace(/\{\{STDT[^}]*\}\}/g, '');
-  md = md.replace(/^\|-\s*$/gm, '---');
-  md = md.replace(/^\!\s*(.+)$/gm, '**$1**');
+  // Fix relative image URLs → absolute
+  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
+  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
 
-  // Convert references
-  md = md.replace(/<ref>[^<]*<\/ref>/g, '');
-  md = md.replace(/<ref[^>]*\/>/g, '');
+  // Fix relative link URLs → absolute
+  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
 
-  // Remove HTML tags
-  md = md.replace(/<[^>]+>/g, '');
+  // Remove mw-jump link
+  cleaned = cleaned.replace(/<a class="mw-jump"[^>]*>[\s\S]*?<\/a>/gi, '');
 
-  // Clean up multiple blank lines
-  md = md.replace(/\n{3,}/g, '\n\n');
+  // Remove content wrapper divs
+  cleaned = cleaned.replace(/<div id="mw-content-text"[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<div class="mw-parser-output">/gi, '');
 
-  // Trim
-  md = md.trim();
+  // Remove category links
+  cleaned = cleaned.replace(/<div id="catlinks"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  return md;
+  // Remove print footer
+  cleaned = cleaned.replace(/<div id="printfooter"[^>]*>[\s\S]*?<\/div>/gi, '');
+
+  // Remove data attributes
+  cleaned = cleaned.replace(/\s*typeof="mw:Extension[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-mw[^=]*="[^"]*"/gi, '');
+
+  // Remove empty span tags
+  cleaned = cleaned.replace(/<span(?: [^>]*)?>(\s*)<\/span>/gi, '$1');
+
+  // Fix center tags
+  cleaned = cleaned.replace(/<center>/gi, '<div style="text-align:center">');
+  cleaned = cleaned.replace(/<\/center>/gi, '</div>');
+
+  // Clean up whitespace
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+  return cleaned.trim();
 }
 
 type StepStatus = 'pending' | 'running' | 'success' | 'error' | 'skip';
@@ -181,7 +188,7 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
 
   const initSteps = useCallback(() => {
     const ids = ['wiki_fetch', 'translate', 'enrich', 'metadata', 'slug', 'save'];
-    const labels = ['Buscando página na Wiki (cliente)', 'Traduzindo para PT-BR', 'Buscando ícones na XIVAPI', 'Extraindo metadados', 'Gerando slug', 'Salvando no Supabase'];
+    const labels = ['Buscando HTML da Wiki (cliente)', 'Traduzindo para PT-BR', 'Buscando ícones na XIVAPI', 'Extraindo metadados', 'Gerando slug', 'Salvando no Supabase'];
     setSteps(ids.map((id, i) => ({
       id, label: labels[i], status: 'pending' as StepStatus, detail: null, ts: Date.now(),
     })));
@@ -264,8 +271,8 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
     abortRef.current = controller;
 
     try {
-      // Step 1: Fetch wiki page CLIENT-SIDE (CORS allowed via origin=*)
-      updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'running', null);
+      // Step 1: Fetch wiki page CLIENT-SIDE as rendered HTML (CORS allowed via origin=*)
+      updateStep('wiki_fetch', 'Buscando HTML da Wiki (cliente)', 'running', null);
 
       const urlMatch = url.trim().match(/\/wiki\/(.+)$/);
       const wikiTitle = urlMatch ? decodeURIComponent(urlMatch[1]).replace(/_/g, ' ') : url.trim();
@@ -274,47 +281,42 @@ export const ImportWikiModal: React.FC<ImportWikiModalProps> = ({ isOpen, onClos
       let pageTitle = wikiTitle;
 
       try {
-        // Use revisions API — ConsoleGamesWiki doesn't support TextExtracts extension
+        // Use action=parse to get rendered HTML (preserves images, tables, icons)
         const wikiParams = new URLSearchParams({
-          action: 'query',
-          titles: wikiTitle,
-          prop: 'revisions',
-          rvprop: 'content',
-          rvslots: 'main',
+          action: 'parse',
+          page: wikiTitle,
+          prop: 'text',
           format: 'json',
           origin: '*',
-          rvlimit: '1',
         });
 
         const wikiRes = await fetch(`${WIKI_API}?${wikiParams}`, { signal: controller.signal });
         if (!wikiRes.ok) throw new Error(`Wiki API: HTTP ${wikiRes.status}`);
 
         const wikiData = await wikiRes.json();
-        const pages = wikiData?.query?.pages || {};
-        const page = Object.values(pages)[0] as any;
 
-        if (!page || page.missing !== undefined) {
-          throw new Error(`Página não encontrada: ${wikiTitle}`);
+        if (wikiData.error) {
+          throw new Error(`Wiki API: ${wikiData.error.info || JSON.stringify(wikiData.error)}`);
         }
 
-        const wikitext = page.revisions?.[0]?.slots?.main?.['*'] || '';
-        pageTitle = page.title || wikiTitle;
+        const pageHtml = wikiData?.parse?.text?.['*'] || '';
+        pageTitle = wikiData?.parse?.title || wikiTitle;
 
-        if (!wikitext.trim()) {
+        if (!pageHtml.trim()) {
           throw new Error('Página da wiki sem conteúdo');
         }
 
-        // Convert wikitext to markdown-like text
-        rawContent = wikitextToMarkdown(wikitext);
+        // Clean HTML (remove ads, TOC, scripts, fix URLs)
+        rawContent = cleanWikiHtml(pageHtml);
 
         if (!rawContent.trim()) {
-          throw new Error('Página da wiki sem conteúdo após conversão');
+          throw new Error('Página da wiki sem conteúdo após limpeza');
         }
 
         updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'success',
-          `Obtido: "${pageTitle}" (${rawContent.length} caracteres)`);
+          `Obtido: "${pageTitle}" (${rawContent.length} caracteres de HTML)`);
       } catch (err: any) {
-        updateStep('wiki_fetch', 'Buscando página na Wiki (cliente)', 'error', err.message);
+        updateStep('wiki_fetch', 'Buscando HTML da Wiki (cliente)', 'error', err.message);
         setIsDone(true);
         setIsRunning(false);
         return;

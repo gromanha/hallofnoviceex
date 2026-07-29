@@ -19,6 +19,7 @@ const ALLOWED_ATTRS = [
   'colspan', 'rowspan', 'scope', 'width', 'height',
   'style', 'align', 'valign',
   'id', 'name',
+  'loading', 'onerror',
 ]
 
 // Custom renderer for marked
@@ -26,7 +27,7 @@ const renderer = new marked.Renderer()
 
 // Improve table rendering
 renderer.table = function({ header, rows }: { header: any[]; rows: any[][] }) {
-  let html = '<div class="wiki-table-wrapper"><table>'
+  let html = '<div class="wiki-table-wrapper"><table class="wiki-table">'
   
   if (header && header.length > 0) {
     html += '<thead><tr>'
@@ -58,7 +59,7 @@ renderer.table = function({ header, rows }: { header: any[]; rows: any[][] }) {
 renderer.image = function({ href, title, text }: { href: string; title: string | null; text: string }) {
   const titleAttr = title ? ` title="${title}"` : ''
   const alt = text || ''
-  return `<figure class="wiki-image"><img src="${href}" alt="${alt}"${titleAttr} loading="lazy" onerror="this.style.display='none'" />${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`
+  return `<figure class="wiki-image"><img src="${href}" alt="${alt}"${titleAttr} loading="lazy" onerror="this.parentElement.style.display='none'" />${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`
 }
 
 // Configure marked options
@@ -68,7 +69,66 @@ marked.setOptions({
   gfm: true,
 })
 
+function isHtmlContent(content: string): boolean {
+  const trimmed = content.trim()
+  // If it starts with a known HTML tag, treat as HTML
+  if (/^<(div|p|h[1-6]|table|ul|ol|blockquote|figure|span|img|pre|dl)\b/i.test(trimmed)) {
+    return true
+  }
+  // If it contains multiple HTML tags, treat as HTML
+  const tagCount = (trimmed.match(/<\/?[a-z][\s\S]*?>/gi) || []).length
+  if (tagCount >= 3) return true
+  return false
+}
+
+/**
+ * Sanitize and render content — detects HTML vs markdown automatically.
+ * HTML content is sanitized directly with DOMPurify.
+ * Markdown content goes through marked.parse() first.
+ */
 export function renderMarkdown(content: string): string {
+  if (!content || typeof content !== 'string') return ''
+
+  // Detect if content is already HTML (from wiki import)
+  if (isHtmlContent(content)) {
+    return renderHtml(content)
+  }
+
+  return renderMarkdownText(content)
+}
+
+/**
+ * Render raw HTML content from wiki — sanitize only, no markdown parsing.
+ */
+function renderHtml(html: string): string {
+  // Pre-process: fix common wiki artifacts
+  let processed = html
+
+  // Fix relative URLs that might have slipped through
+  processed = processed.replace(/src="\/mediawiki\//g, 'src="https://ffxiv.consolegameswiki.com/mediawiki/')
+  processed = processed.replace(/href="\/wiki\//g, 'href="https://ffxiv.consolegameswiki.com/wiki/')
+
+  // Sanitize with DOMPurify — allow wiki-specific tags and attributes
+  const sanitized = DOMPurify.sanitize(processed, {
+    ALLOWED_TAGS: [
+      ...ALLOWED_TAGS,
+      'section', 'article', 'header', 'footer', 'nav', 'aside',
+    ],
+    ALLOWED_ATTR: [
+      ...ALLOWED_ATTRS,
+      'typeof', 'data-mw', 'data-parsoid',
+    ],
+    // Keep relative wiki links working
+    ALLOW_DATA_ATTR: false,
+  })
+
+  return sanitized
+}
+
+/**
+ * Render markdown text through marked + DOMPurify.
+ */
+function renderMarkdownText(content: string): string {
   // Pre-process: fix common wiki artifacts
   let processed = content
   
@@ -78,7 +138,6 @@ export function renderMarkdown(content: string): string {
   processed = processed.replace(/\[([^\]]*\.gif)\)/g, '![]($1)')
   
   // Fix table syntax that might not have been converted
-  // Convert simple pipe tables to proper markdown tables
   const lines = processed.split('\n')
   const tableLines: string[] = []
   let inTable = false
@@ -87,7 +146,6 @@ export function renderMarkdown(content: string): string {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
     
-    // Detect table start (line with pipes at start and end)
     if (line.trim().startsWith('|') && line.trim().endsWith('|') && !line.includes('---TABLE')) {
       if (!inTable) {
         inTable = true
@@ -95,7 +153,6 @@ export function renderMarkdown(content: string): string {
       }
       tableLines.push(line)
     } else if (inTable) {
-      // Process accumulated table lines
       if (tableLines.length > 0) {
         result.push(processTableLines(tableLines))
       }
@@ -107,7 +164,6 @@ export function renderMarkdown(content: string): string {
     }
   }
   
-  // Handle table at end of content
   if (inTable && tableLines.length > 0) {
     result.push(processTableLines(tableLines))
   }
@@ -136,7 +192,6 @@ export function renderMarkdown(content: string): string {
 function processTableLines(lines: string[]): string {
   if (lines.length < 2) return lines.join('\n')
   
-  // Filter out separator lines and process content
   const contentLines = lines.filter(line => {
     const trimmed = line.trim()
     return trimmed && !trimmed.match(/^\|[\s\-:]+\|$/)
@@ -144,7 +199,6 @@ function processTableLines(lines: string[]): string {
   
   if (contentLines.length === 0) return ''
   
-  // First line is header
   const header = contentLines[0]
     .replace(/^\|/, '')
     .replace(/\|$/, '')
@@ -153,11 +207,8 @@ function processTableLines(lines: string[]): string {
     .join(' | ')
   
   const result = [header]
-  
-  // Add separator
   result.push(header.replace(/\*\*/g, '').replace(/[^|]/g, '-'))
   
-  // Add data rows
   for (let i = 1; i < contentLines.length; i++) {
     const row = contentLines[i]
       .replace(/^\|/, '')

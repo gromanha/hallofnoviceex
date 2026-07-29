@@ -3,7 +3,7 @@
 /**
  * CLI Wiki Importer Local
  * 
- * Busca wiki, traduz, enriquece com ícones e salva no Supabase
+ * Busca wiki (HTML parseado), traduz, enriquece com ícones e salva no Supabase
  * ou exporta JSON localmente.
  * 
  * Uso:
@@ -75,31 +75,30 @@ function parseArgs(argv) {
 }
 
 // ============================================================
-// Wiki Fetcher (MediaWiki Revisions API)
+// Wiki Fetcher (MediaWiki Parse API — HTML renderizado)
 // ============================================================
 
 const WIKI_API = 'https://ffxiv.consolegameswiki.com/mediawiki/api.php';
+const WIKI_BASE = 'https://ffxiv.consolegameswiki.com';
 
-async function fetchWikiPage(url) {
-  // Extract page title from URL
+function extractTitle(url) {
   const match = url.match(/\/wiki\/(.+?)(?:\?|$|#)/);
   if (!match) {
     throw new Error('URL inválida. Use: https://ffxiv.consolegameswiki.com/wiki/Page_Title');
   }
+  return decodeURIComponent(match[1]);
+}
 
-  const title = decodeURIComponent(match[1]);
-  console.log(`[wiki] Buscando página: ${title}`);
+async function fetchWikiHtml(url) {
+  const title = extractTitle(url);
+  console.log(`[wiki] Buscando página (HTML parseado): ${title}`);
 
-  // Fetch raw wikitext via revisions API
   const params = new URLSearchParams({
-    action: 'query',
-    titles: title,
-    prop: 'revisions',
-    rvprop: 'content',
-    rvslots: 'main',
+    action: 'parse',
+    page: title,
+    prop: 'text',
     format: 'json',
-    formatversion: '2',
-    rvlimit: '1',
+    origin: '*',
   });
 
   const response = await fetch(`${WIKI_API}?${params}`, {
@@ -114,175 +113,148 @@ async function fetchWikiPage(url) {
   }
 
   const data = await response.json();
-  const pages = data.query?.pages || [];
 
-  if (pages.length === 0 || pages[0].missing) {
-    throw new Error(`Página não encontrada: ${title}`);
+  if (data.error) {
+    throw new Error(`Wiki API error: ${data.error.info || JSON.stringify(data.error)}`);
   }
 
-  const page = pages[0];
-  const content = page.revisions?.[0]?.slots?.main?.content || '';
+  const html = data.parse?.text?.['*'];
+  const pageTitle = data.parse?.title || title;
 
-  if (!content) {
-    throw new Error('Conteúdo da página vazio');
+  if (!html) {
+    throw new Error('HTML parseado vazio');
   }
 
-  console.log(`[wiki] OK — ${content.length} caracteres de wikitext`);
-  return { title: page.title, content };
+  console.log(`[wiki] OK — ${html.length} caracteres de HTML renderizado`);
+  return { title: pageTitle, html };
 }
 
 // ============================================================
-// Wikitext → Markdown Converter (Improved)
+// HTML Cleaner
 // ============================================================
 
-function wikitextToMarkdown(wikitext) {
-  let md = wikitext;
+function cleanWikiHtml(html) {
+  let cleaned = html;
 
-  // Step 1: Remove complex templates {{...|...}} (multiline, nested)
-  md = md.replace(/\{\{[^{}]*\}\}/g, '');
-  md = md.replace(/\{\{[\s\S]*?\}\}/g, '');
+  // Remove TOC (table of contents)
+  cleaned = cleaned.replace(/<div id="toc"[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
 
-  // Step 2: Remove HTML comments
-  md = md.replace(/<!--[\s\S]*?-->/g, '');
+  // Remove scripts and styles
+  cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, '');
+  cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, '');
 
-  // Step 3: Remove ref tags
-  md = md.replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, '');
-  md = md.replace(/<ref[^>]*\/>/gi, '');
-  md = md.replace(/<\/?references[^>]*>/gi, '');
+  // Remove edit section links
+  cleaned = cleaned.replace(/<span class="mw-editsection"[^>]*>[\s\S]*?<\/span>/gi, '');
 
-  // Step 4: Convert images BEFORE links (to avoid conflicts)
-  // [[File:Name.png|thumb|right|350px|Caption]] or [[File:Name.png|Caption]]
-  md = md.replace(/\[\[File:([^|\]]+)(?:\|([^|\]]*))?(?:\|([^|\]]*))?(?:\|([^|\]]*))?\]\]/g, (_, file, opt1, opt2, opt3) => {
-    // Find caption (last non-size, non-thumb/right/left/center option)
-    const opts = [opt1, opt2, opt3].filter(Boolean);
-    let caption = '';
-    let width = '';
-    for (const opt of opts) {
-      if (/^\d+px$/.test(opt)) {
-        width = opt;
-      } else if (!/^(thumb|right|left|center|frameless|frame|border)$/i.test(opt)) {
-        caption = opt;
-      }
-    }
-    const url = `https://ffxiv.consolegameswiki.com/wiki/Special:Filepath/${file}`;
-    const title = width ? ` title="${width}"` : '';
-    return `![${caption}](${url}${title})`;
+  // Remove navigation elements
+  cleaned = cleaned.replace(/<div class="noprint[\s\S]*?<\/div>/gi, '');
+
+  // Remove hatnote boxes
+  cleaned = cleaned.replace(/<div class="hatnote"[^>]*>[\s\S]*?<\/div>/gi, '');
+
+  // Remove sidebar/portlets
+  cleaned = cleaned.replace(/<div id="mw-panel[\s\S]*?<\/div>\s*<\/div>/gi, '');
+
+  // Remove "mw-heading" wrapper class but keep content (convert to standard headings)
+  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>/gi, (_, level) => `<h${level}>`);
+  cleaned = cleaned.replace(/<\/div>\s*(?=\s*<\/div>|<div class="mw-heading|$)/gi, (match) => {
+    // Only close headings
+    return match;
   });
 
-  // Step 5: Convert internal links [[Page|Text]] or [[Page]]
-  // Handle nested brackets and complex cases
-  md = md.replace(/\[\[([^[\]]+)\|([^\]]+)\]\]/g, (_, page, text) => {
-    // Clean up page name (remove any leftover wiki syntax)
-    const cleanPage = page.replace(/\[\[|\]\]/g, '').trim();
-    const cleanText = text.replace(/\[\[|\]\]/g, '').trim();
-    return `[${cleanText}](/wiki/${encodeURIComponent(cleanPage)})`;
-  });
-  md = md.replace(/\[\[([^\]]+)\]\]/g, (_, page) => {
-    const cleanPage = page.replace(/\[\[|\]\]/g, '').trim();
-    return `[${cleanPage}](/wiki/${encodeURIComponent(cleanPage)})`;
-  });
+  // Fix heading closing tags — match mw-heading blocks properly
+  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\1[^>]*>([\s\S]*?)<\/h\1>\s*<\/div>/gi,
+    (_, level, content) => `<h${level}>${content}</h${level}>`
+  );
 
-  // Step 6: Convert external links [http://url text] or [URL text]
-  md = md.replace(/\[(https?:\/\/[^\s]+)\s+([^\]]+)\]/g, '[$2]($1)');
-  md = md.replace(/\[(https?:\/\/[^\]]+)\]/g, '[$1]($1)');
+  // Remove class attributes from headings (clean up)
+  cleaned = cleaned.replace(/<h(\d)[^>]*>/gi, (_, level) => `<h${level}>`);
 
-  // Step 7: Convert headers: == Heading == → ## Heading
-  md = md.replace(/^={6}\s*(.+?)\s*={6}$/gm, '###### $1');
-  md = md.replace(/^={5}\s*(.+?)\s*={5}$/gm, '##### $1');
-  md = md.replace(/^={4}\s*(.+?)\s*={4}$/gm, '#### $1');
-  md = md.replace(/^={3}\s*(.+?)\s*={3}$/gm, '### $1');
-  md = md.replace(/^={2}\s*(.+?)\s*={2}$/gm, '## $1');
-  md = md.replace(/^={1}\s*(.+?)\s*={1}$/gm, '# $1');
+  // Fix relative image URLs → absolute
+  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
+  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
 
-  // Step 8: Convert bold and italic
-  md = md.replace(/'{5}(.+?)'{5}/g, '***$1***');
-  md = md.replace(/'{3}(.+?)'{3}/g, '**$1**');
-  md = md.replace(/'{2}(.+?)'{2}/g, '*$1*');
+  // Fix relative link URLs → absolute for wiki links (keep internal for SPA)
+  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
 
-  // Step 9: Convert wiki tables to markdown tables
-  // {| class="wikitable" ... → start table
-  md = md.replace(/\{\|[^}]*\}/g, '\n|---TABLE_START---|\n');
-  // |} → end table
-  md = md.replace(/\|\}/g, '\n|---TABLE_END---|\n');
-  // |- → row separator
-  md = md.replace(/^\|\-$/gm, '|---ROW---|');
-  // ! Header → **Header**
-  md = md.replace(/^!\s*(.+)$/gm, (_, text) => `**${text.trim()}**`);
-  // | style="..." | content → content
-  md = md.replace(/^\|\s*style="[^"]*"\s*\|\s*(.+)$/gm, '| $1');
-  // |+ caption → caption
-  md = md.replace(/^\|\+\s*(.+)$/gm, '\n**$1**\n');
+  // Remove "mw-jump" link
+  cleaned = cleaned.replace(/<a class="mw-jump"[^>]*>[\s\S]*?<\/a>/gi, '');
 
-  // Step 10: Convert ordered lists
-  md = md.replace(/^#\s+(.+)$/gm, '1. $1');
-  md = md.replace(/^##\s+(.+)$/gm, '   1. $1');
+  // Remove "mw-content-text" div wrapper but keep content
+  cleaned = cleaned.replace(/<div id="mw-content-text"[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<div class="mw-parser-output">/gi, '');
 
-  // Step 11: Convert unordered lists
-  md = md.replace(/^\*\s+(.+)$/gm, '- $1');
-  md = md.replace(/^\*\*\s+(.+)$/gm, '  - $1');
+  // Remove category links at the bottom
+  cleaned = cleaned.replace(/<div id="catlinks"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Step 12: Remove category links
-  md = md.replace(/\[\[Category:[^\]]*\]\]/g, '');
+  // Remove print footer
+  cleaned = cleaned.replace(/<div id="printfooter"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Step 13: Clean up HTML tags (keep basic ones)
-  md = md.replace(/<centro>/gi, '<div style="text-align:center">');
-  md = md.replace(/<\/centro>/gi, '</div>');
-  md = md.replace(/<br\s*\/?>/gi, '\n');
-  md = md.replace(/<hr\s*\/?>/gi, '\n---\n');
+  // Remove data attributes and typeof (RDFa)
+  cleaned = cleaned.replace(/\s*typeof="mw:Extension[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-mw[^=]*="[^"]*"/gi, '');
 
-  // Step 14: Clean up multiple blank lines
-  md = md.replace(/\n{3,}/g, '\n\n');
+  // Remove empty <span> tags
+  cleaned = cleaned.replace(/<span(?: [^>]*)?>(\s*)<\/span>/gi, '$1');
 
-  // Step 15: Trim
-  md = md.trim();
+  // Remove <center> tags (use style instead)
+  cleaned = cleaned.replace(/<center>/gi, '<div style="text-align:center">');
+  cleaned = cleaned.replace(/<\/center>/gi, '</div>');
 
-  return md;
+  // Clean up excessive whitespace
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+  return cleaned.trim();
 }
 
 // ============================================================
-// Translation (EN → PT-BR)
+// Translation (EN → PT-BR) — HTML-preserving
 // ============================================================
 
-function extractBlocks(text) {
-  const blocks = [];
+function extractTextFromHtml(html) {
+  // Extract text nodes from HTML, preserving tags
+  const textParts = [];
   let idx = 0;
-  let result = text;
 
-  // Preserve images
-  result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match) => {
-    const key = `\u00A7\u00A7BLOCK_${idx++}\u00A7\u00A7`;
-    blocks.push({ key, value: match, type: 'image' });
+  // Replace images with placeholders
+  let processed = html.replace(/<img[^>]*>/gi, (match) => {
+    const key = `\u00A7\u00A7IMG_${idx++}\u00A7\u00A7`;
+    textParts.push({ key, value: match, type: 'image' });
     return key;
   });
 
-  // Preserve fenced code blocks
-  result = result.replace(/(```[\s\S]*?```)/g, (match) => {
-    const key = `\u00A7\u00A7BLOCK_${idx++}\u00A7\u00A7`;
-    blocks.push({ key, value: match, type: 'code' });
+  // Replace code blocks
+  processed = processed.replace(/<pre[^>]*>[\s\S]*?<\/pre>/gi, (match) => {
+    const key = `\u00A7\u00A7PRE_${idx++}\u00A7\u00A7`;
+    textParts.push({ key, value: match, type: 'code' });
     return key;
   });
 
-  // Preserve inline code
-  result = result.replace(/(`[^`]+`)/g, (match) => {
-    const key = `\u00A7\u00A7BLOCK_${idx++}\u00A7\u00A7`;
-    blocks.push({ key, value: match, type: 'inline_code' });
+  processed = processed.replace(/<code[^>]*>[\s\S]*?<\/code>/gi, (match) => {
+    const key = `\u00A7\u00A7CODE_${idx++}\u00A7\u00A7`;
+    textParts.push({ key, value: match, type: 'inline_code' });
     return key;
   });
 
-  // Preserve tables
-  result = result.replace(/^(\|.+\|[ ]*\n)+/gm, (match) => {
-    const key = `\u00A7\u00A7BLOCK_${idx++}\u00A7\u00A7`;
-    blocks.push({ key, value: match, type: 'table' });
+  // Replace links (preserve href)
+  processed = processed.replace(/<a [^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (match, href, text) => {
+    const key = `\u00A7\u00A7LINK_${idx++}\u00A7\u00A7`;
+    textParts.push({ key, value: { href, text }, type: 'link' });
     return key;
   });
 
-  return { text: result, blocks };
+  return { processed, textParts };
 }
 
-function restoreBlocks(text, blocks) {
+function restoreHtmlParts(text, parts) {
   let result = text;
-  for (const block of blocks) {
-    result = result.replace(block.key, block.value);
+  for (const part of parts) {
+    if (part.type === 'link') {
+      result = result.replace(part.key, `<a href="${part.value.href}">${part.value.text}</a>`);
+    } else {
+      result = result.replace(part.key, part.value);
+    }
   }
   return result;
 }
@@ -307,13 +279,13 @@ function splitIntoChunks(text, maxLen = 4500) {
   return chunks;
 }
 
-async function translateMarkdown(text, from = 'en', to = 'pt') {
-  if (!text || typeof text !== 'string') return '';
+async function translateHtmlPreserving(html, from = 'en', to = 'pt') {
+  if (!html || typeof html !== 'string') return '';
 
-  console.log(`[translate] Traduzindo ${text.length} caracteres...`);
+  console.log(`[translate] Traduzindo ${html.length} caracteres de HTML...`);
 
-  const { text: sanitized, blocks } = extractBlocks(text);
-  const chunks = splitIntoChunks(sanitized);
+  const { processed, textParts } = extractTextFromHtml(html);
+  const chunks = splitIntoChunks(processed);
 
   console.log(`[translate] ${chunks.length} pedaços para traduzir`);
 
@@ -331,11 +303,11 @@ async function translateMarkdown(text, from = 'en', to = 'pt') {
   }
 
   const translated = translatedChunks.join(' ');
-  return restoreBlocks(translated, blocks);
+  return restoreHtmlParts(translated, textParts);
 }
 
 // ============================================================
-// Icon Enricher (XIVAPI)
+// Icon Enricher (XIVAPI) — HTML version
 // ============================================================
 
 const XIVAPI_BASE = 'https://v2.xivapi.com';
@@ -346,26 +318,21 @@ function delay(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
-function extractCandidateTerms(markdown) {
+function extractCandidateTermsFromHtml(html) {
   const terms = new Set();
   const MIN_WORDS = 2;
 
-  // Wiki links: [Term](/wiki/...)
-  const wikiLinkRe = /\[([^\]]+)\]\(\/wiki\/[^)]+\)/g;
+  // Extract link text: <a href="/wiki/...">Term</a>
+  const wikiLinkRe = /<a [^>]*href="[^"]*\/wiki\/[^"]*"[^>]*>([^<]+)<\/a>/gi;
   let match;
-  while ((match = wikiLinkRe.exec(markdown)) !== null) {
+  while ((match = wikiLinkRe.exec(html)) !== null) {
     terms.add(match[1].trim());
   }
 
-  // Bracket notation: [[Term]]
-  const bracketRe = /\[\[([^\]]+)\]\]/g;
-  while ((match = bracketRe.exec(markdown)) !== null) {
-    terms.add(match[1].trim());
-  }
-
-  // Compound capitalized words
+  // Compound capitalized words in text
+  const textContent = html.replace(/<[^>]+>/g, ' ');
   const compoundRe = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
-  while ((match = compoundRe.exec(markdown)) !== null) {
+  while ((match = compoundRe.exec(textContent)) !== null) {
     terms.add(match[1].trim());
   }
 
@@ -412,12 +379,12 @@ async function searchTerm(term) {
   }
 }
 
-async function enrichWithIcons(markdownContent) {
-  const terms = extractCandidateTerms(markdownContent);
+async function enrichWithIcons(htmlContent) {
+  const terms = extractCandidateTermsFromHtml(htmlContent);
 
   if (terms.length === 0) {
     console.log('[icons] Nenhum termo candidato encontrado');
-    return { content: markdownContent, found: 0, total: 0 };
+    return { content: htmlContent, found: 0, total: 0 };
   }
 
   console.log(`[icons] ${terms.length} termos para buscar`);
@@ -445,15 +412,16 @@ async function enrichWithIcons(markdownContent) {
     }
   }
 
-  // Replace terms in markdown
-  let enriched = markdownContent;
+  // Add icon images before terms in HTML
+  let enriched = htmlContent;
   const sortedTerms = [...iconMap.entries()].sort((a, b) => b[0].length - a[0].length);
 
   for (const [term, { iconUrl }] of sortedTerms) {
     const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Insert icon image before the term text (in text nodes only)
     enriched = enriched.replace(
-      new RegExp(`(?<!!\\[)\\b${escapedTerm}\\b`, 'g'),
-      (match) => `![${match}](${iconUrl}) **${match}**`
+      new RegExp(`(?<!<[^>]*)\\b(${escapedTerm})\\b`, 'g'),
+      `<img src="${iconUrl}" alt="${term}" width="20" height="20" style="vertical-align:middle;margin-right:4px;border:none;box-shadow:none;" /> $1`
     );
   }
 
@@ -541,7 +509,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('=== Wiki Importer Local ===');
+  console.log('=== Wiki Importer Local (HTML Parseado) ===');
   console.log(`URL: ${flags.url}`);
   console.log(`Draft: ${flags.draft}`);
   console.log(`Icons: ${!flags.noIcons}`);
@@ -549,25 +517,25 @@ async function main() {
   console.log('');
 
   try {
-    // Step 1: Fetch wiki
-    const { title, content: wikitext } = await fetchWikiPage(flags.url);
+    // Step 1: Fetch wiki HTML (action=parse)
+    const { title, html: rawHtml } = await fetchWikiHtml(flags.url);
     console.log('');
 
-    // Step 2: Convert to markdown
-    console.log('[convert] Convertendo wikitext → markdown...');
-    let markdown = wikitextToMarkdown(wikitext);
-    console.log(`[convert] OK — ${markdown.length} caracteres`);
+    // Step 2: Clean HTML
+    console.log('[clean] Limpando HTML da wiki...');
+    let cleanedHtml = cleanWikiHtml(rawHtml);
+    console.log(`[clean] OK — ${cleanedHtml.length} caracteres`);
     console.log('');
 
-    // Step 3: Translate
-    markdown = await translateMarkdown(markdown);
-    console.log(`[translate] OK — ${markdown.length} caracteres após tradução`);
+    // Step 3: Translate (preserving HTML)
+    cleanedHtml = await translateHtmlPreserving(cleanedHtml);
+    console.log(`[translate] OK — ${cleanedHtml.length} caracteres após tradução`);
     console.log('');
 
     // Step 4: Enrich with icons
     if (!flags.noIcons) {
-      const iconResult = await enrichWithIcons(markdown);
-      markdown = iconResult.content;
+      const iconResult = await enrichWithIcons(cleanedHtml);
+      cleanedHtml = iconResult.content;
       console.log('');
     }
 
@@ -579,7 +547,7 @@ async function main() {
       title: title.replace(/_/g, ' '),
       slug,
       subtitle: `Importado de ConsoleGamesWiki`,
-      content: markdown,
+      content: cleanedHtml,
       category,
       cover_image: null,
       tags: flags.tags,

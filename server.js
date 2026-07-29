@@ -5,7 +5,12 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'node:crypto';
 import { createServer } from 'node:http';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // ── Env validation ─────────────────────────────────────────────
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -1237,12 +1242,16 @@ app.get('/api/ffxiv/cache/stats', (req, res) => {
   res.json(getCacheStats());
 });
 
-// ── Catch-all ──────────────────────────────────────────────────
+// ── Static files (SPA) ────────────────────────────────────────
+const DIST_DIR = join(__dirname, 'dist');
+app.use(express.static(DIST_DIR));
+
+// SPA fallback - serve index.html for non-API routes
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'not_found' });
   }
-  next();
+  res.sendFile(join(DIST_DIR, 'index.html'));
 });
 
 app.use((err, _req, res, _next) => {

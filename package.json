@@ -11,15 +11,13 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "start": "node server.js",
-    "wiki-import": "node scripts/wiki-import.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.14",
     "@types/dompurify": "^3.0.5",
-    "@vitalets/google-translate-api": "^9.2.1",
     "@vitejs/plugin-react": "^5.0.4",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",

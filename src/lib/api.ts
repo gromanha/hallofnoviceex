@@ -50,23 +50,3 @@ export const apiPatch = <T = any>(path: string, data?: any) =>
   request(path, { method: 'PATCH', body: JSON.stringify(data ?? {}) }) as Promise<T>;
 export const apiDel = <T = any>(path: string, data?: any) =>
   request(path, { method: 'DELETE', body: data ? JSON.stringify(data) : undefined }) as Promise<T>;
-
-export interface ImportWikiPayload {
-  url: string;
-  category?: string;
-  tags?: string[];
-  status?: 'published' | 'draft';
-  enrichIcons?: boolean;
-}
-
-export interface ImportWikiResult {
-  post: { id: string; slug: string; title: string };
-  meta: {
-    wikiTitle: string;
-    iconStats: { found: number; total: number };
-    translated: boolean;
-  };
-}
-
-export const apiImportWikiPost = (data: ImportWikiPayload) =>
-  apiPost<ImportWikiResult>('/api/posts/import', data);

@@ -6,6 +6,9 @@ const XIVAPI_KEY = process.env.XIVAPI_KEY || '';
 const CACHE_TTL = 30 * 60 * 1000;
 const REQUEST_TIMEOUT = 15000;
 
+// MediaWiki APIs require a descriptive User-Agent (https://www.mediawiki.org/wiki/API:Etiquette#The_User-Agent_header)
+const USER_AGENT = 'HallOfNoviceEX/1.0 (https://github.com/hallofnoviceex; contact@hallofnovice.com)';
+
 const cache = new Map();
 
 function getCacheKey(prefix, params) {
@@ -36,6 +39,10 @@ async function fetchWithTimeout(url, options = {}) {
 
   try {
     const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        ...(options.headers || {}),
+      },
       ...options,
       signal: controller.signal,
     });

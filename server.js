@@ -766,105 +766,180 @@ app.post('/api/posts/import', importRateLimit, async (req, res) => {
 
   const wikiTitle = decodeURIComponent(urlMatch[1]).replace(/_/g, ' ');
 
+  // SSE setup
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders();
+
+  let closed = false;
+  req.on('close', () => { closed = true; });
+
+  function sendEvent(event, data) {
+    if (closed) return;
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  }
+
+  function sendStep(id, label, stepStatus, detail) {
+    sendEvent('step', { id, label, status: stepStatus, detail: detail || null, ts: Date.now() });
+  }
+
+  const timeoutId = setTimeout(() => {
+    sendStep('timeout', 'Timeout', 'error', 'Importação expirou após 30 segundos');
+    sendEvent('done', { ok: false });
+    res.end();
+  }, IMPORT_TIMEOUT);
+
   try {
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('import_timeout')), IMPORT_TIMEOUT)
-    );
+    // 1. Fetch wiki page
+    sendStep('wiki_fetch', 'Buscando página na Wiki', 'running');
+    let wikiData;
+    try {
+      wikiData = await getWikiPage(wikiTitle);
+    } catch (err) {
+      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', err.message);
+      clearTimeout(timeoutId);
+      sendEvent('done', { ok: false });
+      return res.end();
+    }
 
-    const importJob = async () => {
-      // 1. Fetch wiki page
-      const wikiData = await getWikiPage(wikiTitle);
-      const pages = wikiData?.query?.pages || {};
-      const page = Object.values(pages)[0];
+    const pages = wikiData?.query?.pages || {};
+    const page = Object.values(pages)[0];
 
-      if (!page || page.missing !== undefined) {
-        throw new Error('wiki_page_not_found');
-      }
+    if (!page || page.missing !== undefined) {
+      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', `Página não encontrada: ${wikiTitle}`);
+      clearTimeout(timeoutId);
+      sendEvent('done', { ok: false });
+      return res.end();
+    }
 
-      const rawContent = page.extract || '';
-      const pageTitle = page.title || wikiTitle;
+    const rawContent = page.extract || '';
+    const pageTitle = page.title || wikiTitle;
 
-      if (!rawContent.trim()) {
-        throw new Error('wiki_page_empty');
-      }
+    if (!rawContent.trim()) {
+      sendStep('wiki_fetch', 'Buscando página na Wiki', 'error', 'Página da wiki sem conteúdo');
+      clearTimeout(timeoutId);
+      sendEvent('done', { ok: false });
+      return res.end();
+    }
 
-      // 2. Translate to PT-BR
-      const translated = await translateMarkdown(rawContent, 'en', 'pt');
+    sendStep('wiki_fetch', 'Buscando página na Wiki', 'success', `Obtido: "${pageTitle}" (${rawContent.length} caracteres)`);
 
-      // 3. Enrich with icons
-      let enriched = translated;
-      let iconStats = { found: 0, total: 0 };
-      if (enrichIcons) {
-        const result = await enrichWithIcons(translated);
+    // 2. Translate to PT-BR
+    sendStep('translate', 'Traduzindo para PT-BR', 'running');
+    let translated;
+    try {
+      translated = await translateMarkdown(rawContent, 'en', 'pt');
+      sendStep('translate', 'Traduzindo para PT-BR', 'success', `${translated.length} caracteres traduzidos`);
+    } catch (err) {
+      sendStep('translate', 'Traduzindo para PT-BR', 'error', err.message);
+      clearTimeout(timeoutId);
+      sendEvent('done', { ok: false });
+      return res.end();
+    }
+
+    // 3. Enrich with icons
+    let enriched = translated;
+    let iconStats = { found: 0, total: 0 };
+
+    if (enrichIcons) {
+      sendStep('enrich', 'Buscando ícones na XIVAPI', 'running');
+      try {
+        const result = await enrichWithIcons(translated, (progress) => {
+          sendStep('enrich', 'Buscando ícones na XIVAPI', 'running',
+            `Termo ${progress.current}/${progress.total}: "${progress.term}" — ${progress.found} encontrados`);
+        });
         enriched = result.content;
         iconStats = { found: result.found, total: result.total };
+        const detail = result.total > 0
+          ? `${result.found}/${result.total} termos encontrados`
+          : 'Nenhum termo encontrado na XIVAPI';
+        sendStep('enrich', 'Buscando ícones na XIVAPI', 'success', detail);
+      } catch (err) {
+        sendStep('enrich', 'Buscando ícones na XIVAPI', 'error', err.message);
+        // Continue without icons
       }
+    } else {
+      sendStep('enrich', 'Buscando ícones na XIVAPI', 'skip', 'Desabilitado pelo usuário');
+    }
 
-      // 4. Extract metadata
-      const lines = translated.split('\n').filter((l) => l.trim());
-      let title = pageTitle;
-      for (const line of lines) {
-        const h1 = line.match(/^#\s+(.+)/);
-        if (h1) { title = h1[1].trim().slice(0, 200); break; }
-      }
+    // 4. Extract metadata
+    sendStep('metadata', 'Extraindo metadados', 'running');
+    const lines = translated.split('\n').filter((l) => l.trim());
+    let title = pageTitle;
+    for (const line of lines) {
+      const h1 = line.match(/^#\s+(.+)/);
+      if (h1) { title = h1[1].trim().slice(0, 200); break; }
+    }
 
-      const subtitle = lines.find((l) => !l.startsWith('#') && l.trim().length > 10)?.trim().slice(0, 300) || '';
+    const subtitle = lines.find((l) => !l.startsWith('#') && l.trim().length > 10)?.trim().slice(0, 300) || '';
+    const imgMatch = enriched.match(/!\[.*?\]\((.*?)\)/);
+    const cover_image = imgMatch ? imgMatch[1] : '';
+    const detectedCategory = category || detectCategoryFromUrl(urlMatch[1]);
 
-      // Cover image: first image in translated content
-      const imgMatch = enriched.match(/!\[.*?\]\((.*?)\)/);
-      const cover_image = imgMatch ? imgMatch[1] : '';
+    sendStep('metadata', 'Extraindo metadados', 'success',
+      `Título: "${title}" | Categoria: ${detectedCategory}${cover_image ? ' | Cover: sim' : ''}`);
 
-      const detectedCategory = category || detectCategoryFromUrl(urlMatch[1]);
+    // 5. Generate slug
+    sendStep('slug', 'Gerando slug', 'running');
+    let slug = title.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+    if (!slug) slug = `import-${Date.now()}`;
 
-      // 5. Generate slug
-      let slug = title.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-      if (!slug) slug = `import-${Date.now()}`;
+    const { data: existing } = await supabaseAdmin.from('posts').select('id').eq('slug', slug).maybeSingle();
+    if (existing) slug = `${slug}-${Date.now().toString(36)}`;
+    sendStep('slug', 'Gerando slug', 'success', `Slug: ${slug}`);
 
-      const { data: existing } = await supabaseAdmin.from('posts').select('id').eq('slug', slug).maybeSingle();
-      if (existing) slug = `${slug}-${Date.now().toString(36)}`;
+    // 6. Insert post
+    sendStep('save', 'Salvando no Supabase', 'running');
+    const payload = {
+      title: clampStr(title, 200),
+      slug,
+      subtitle: clampStr(subtitle, 500),
+      content: enriched,
+      category: clampStr(detectedCategory, 50),
+      author_name: claims.name || 'Corpo Docente',
+      author_id: claims.sub,
+      cover_image: clampStr(cover_image, 500),
+      tags: Array.isArray(tags) ? tags : [],
+      is_pinned: false,
+      status: status === 'draft' ? 'draft' : 'published',
+      published_at: new Date().toISOString(),
+      source_url: clampStr(url.trim(), 500),
+    };
 
-      // 6. Insert post
-      const payload = {
-        title: clampStr(title, 200),
-        slug,
-        subtitle: clampStr(subtitle, 500),
-        content: enriched,
-        category: clampStr(detectedCategory, 50),
-        author_name: claims.name || 'Corpo Docente',
-        author_id: claims.sub,
-        cover_image: clampStr(cover_image, 500),
-        tags: Array.isArray(tags) ? tags : [],
-        is_pinned: false,
-        status: status === 'draft' ? 'draft' : 'published',
-        published_at: new Date().toISOString(),
-        source_url: clampStr(url.trim(), 500),
-      };
-
+    try {
       const { data, error } = await supabaseAdmin.from('posts').insert(payload).select().single();
       if (error) throw error;
 
-      return {
+      sendStep('save', 'Salvando no Supabase', 'success', `Post criado com ID: ${data.id}`);
+
+      clearTimeout(timeoutId);
+      sendEvent('result', {
         post: data,
         meta: {
           wikiTitle: pageTitle,
           iconStats,
           translated: true,
         },
-      };
-    };
-
-    const result = await Promise.race([importJob(), timeoutPromise]);
-    res.json(result);
+      });
+      sendEvent('done', { ok: true });
+      res.end();
+    } catch (err) {
+      sendStep('save', 'Salvando no Supabase', 'error', err.message);
+      clearTimeout(timeoutId);
+      sendEvent('done', { ok: false });
+      res.end();
+    }
   } catch (err) {
     console.error('[wiki-import] error', err);
-    const message = err.message === 'import_timeout' ? 'Import timed out (30s)' :
-                    err.message === 'wiki_page_not_found' ? 'Wiki page not found' :
-                    err.message === 'wiki_page_empty' ? 'Wiki page has no content' :
-                    safeError(err);
-    res.status(500).json({ error: 'import_failed', message });
+    sendStep('error', 'Erro inesperado', 'error', err.message);
+    clearTimeout(timeoutId);
+    sendEvent('done', { ok: false });
+    res.end();
   }
 });
 

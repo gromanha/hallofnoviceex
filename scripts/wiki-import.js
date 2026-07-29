@@ -99,6 +99,7 @@ async function fetchWikiPage(url) {
     rvslots: 'main',
     format: 'json',
     formatversion: '2',
+    rvlimit: '1',
   });
 
   const response = await fetch(`${WIKI_API}?${params}`, {
@@ -131,19 +132,61 @@ async function fetchWikiPage(url) {
 }
 
 // ============================================================
-// Wikitext → Markdown Converter
+// Wikitext → Markdown Converter (Improved)
 // ============================================================
 
 function wikitextToMarkdown(wikitext) {
   let md = wikitext;
 
-  // Remove templates {{...}} (multiline)
-  md = md.replace(/\{\{[^}]*\}\}/g, '');
+  // Step 1: Remove complex templates {{...|...}} (multiline, nested)
+  md = md.replace(/\{\{[^{}]*\}\}/g, '');
+  md = md.replace(/\{\{[\s\S]*?\}\}/g, '');
 
-  // Remove HTML comments
+  // Step 2: Remove HTML comments
   md = md.replace(/<!--[\s\S]*?-->/g, '');
 
-  // Convert headers
+  // Step 3: Remove ref tags
+  md = md.replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, '');
+  md = md.replace(/<ref[^>]*\/>/gi, '');
+  md = md.replace(/<\/?references[^>]*>/gi, '');
+
+  // Step 4: Convert images BEFORE links (to avoid conflicts)
+  // [[File:Name.png|thumb|right|350px|Caption]] or [[File:Name.png|Caption]]
+  md = md.replace(/\[\[File:([^|\]]+)(?:\|([^|\]]*))?(?:\|([^|\]]*))?(?:\|([^|\]]*))?\]\]/g, (_, file, opt1, opt2, opt3) => {
+    // Find caption (last non-size, non-thumb/right/left/center option)
+    const opts = [opt1, opt2, opt3].filter(Boolean);
+    let caption = '';
+    let width = '';
+    for (const opt of opts) {
+      if (/^\d+px$/.test(opt)) {
+        width = opt;
+      } else if (!/^(thumb|right|left|center|frameless|frame|border)$/i.test(opt)) {
+        caption = opt;
+      }
+    }
+    const url = `https://ffxiv.consolegameswiki.com/wiki/Special:Filepath/${file}`;
+    const title = width ? ` title="${width}"` : '';
+    return `![${caption}](${url}${title})`;
+  });
+
+  // Step 5: Convert internal links [[Page|Text]] or [[Page]]
+  // Handle nested brackets and complex cases
+  md = md.replace(/\[\[([^[\]]+)\|([^\]]+)\]\]/g, (_, page, text) => {
+    // Clean up page name (remove any leftover wiki syntax)
+    const cleanPage = page.replace(/\[\[|\]\]/g, '').trim();
+    const cleanText = text.replace(/\[\[|\]\]/g, '').trim();
+    return `[${cleanText}](/wiki/${encodeURIComponent(cleanPage)})`;
+  });
+  md = md.replace(/\[\[([^\]]+)\]\]/g, (_, page) => {
+    const cleanPage = page.replace(/\[\[|\]\]/g, '').trim();
+    return `[${cleanPage}](/wiki/${encodeURIComponent(cleanPage)})`;
+  });
+
+  // Step 6: Convert external links [http://url text] or [URL text]
+  md = md.replace(/\[(https?:\/\/[^\s]+)\s+([^\]]+)\]/g, '[$2]($1)');
+  md = md.replace(/\[(https?:\/\/[^\]]+)\]/g, '[$1]($1)');
+
+  // Step 7: Convert headers: == Heading == → ## Heading
   md = md.replace(/^={6}\s*(.+?)\s*={6}$/gm, '###### $1');
   md = md.replace(/^={5}\s*(.+?)\s*={5}$/gm, '##### $1');
   md = md.replace(/^={4}\s*(.+?)\s*={4}$/gm, '#### $1');
@@ -151,34 +194,46 @@ function wikitextToMarkdown(wikitext) {
   md = md.replace(/^={2}\s*(.+?)\s*={2}$/gm, '## $1');
   md = md.replace(/^={1}\s*(.+?)\s*={1}$/gm, '# $1');
 
-  // Convert bold and italic
+  // Step 8: Convert bold and italic
   md = md.replace(/'{5}(.+?)'{5}/g, '***$1***');
   md = md.replace(/'{3}(.+?)'{3}/g, '**$1**');
   md = md.replace(/'{2}(.+?)'{2}/g, '*$1*');
 
-  // Convert internal links [[Page|Text]] or [[Page]]
-  md = md.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '[$2](/wiki/$1)');
-  md = md.replace(/\[\[([^\]]+)\]\]/g, '[$1](/wiki/$1)');
+  // Step 9: Convert wiki tables to markdown tables
+  // {| class="wikitable" ... → start table
+  md = md.replace(/\{\|[^}]*\}/g, '\n|---TABLE_START---|\n');
+  // |} → end table
+  md = md.replace(/\|\}/g, '\n|---TABLE_END---|\n');
+  // |- → row separator
+  md = md.replace(/^\|\-$/gm, '|---ROW---|');
+  // ! Header → **Header**
+  md = md.replace(/^!\s*(.+)$/gm, (_, text) => `**${text.trim()}**`);
+  // | style="..." | content → content
+  md = md.replace(/^\|\s*style="[^"]*"\s*\|\s*(.+)$/gm, '| $1');
+  // |+ caption → caption
+  md = md.replace(/^\|\+\s*(.+)$/gm, '\n**$1**\n');
 
-  // Convert external links [URL Text]
-  md = md.replace(/\[([^\s]+)\s+([^\]]+)\]/g, '[$2]($1)');
+  // Step 10: Convert ordered lists
+  md = md.replace(/^#\s+(.+)$/gm, '1. $1');
+  md = md.replace(/^##\s+(.+)$/gm, '   1. $1');
 
-  // Convert images [[File:Image.png|thumb|Caption]]
-  md = md.replace(/\[\[File:([^|\]]+)(?:\|[^\]]+)*\|([^\]]*)?\]\]/g, '![$2](https://ffxiv.consolegameswiki.com/wiki/Special:Filepath/$1)');
+  // Step 11: Convert unordered lists
+  md = md.replace(/^\*\s+(.+)$/gm, '- $1');
+  md = md.replace(/^\*\*\s+(.+)$/gm, '  - $1');
 
-  // Remove category links
+  // Step 12: Remove category links
   md = md.replace(/\[\[Category:[^\]]*\]\]/g, '');
 
-  // Convert tables (basic)
-  md = md.replace(/\{\|([^|]*)\|/g, '|');
-  md = md.replace(/\|\}/g, '|');
-  md = md.replace(/\|-/g, '|---');
-  md = md.replace(/\|([^|]+)/g, '| $1');
+  // Step 13: Clean up HTML tags (keep basic ones)
+  md = md.replace(/<centro>/gi, '<div style="text-align:center">');
+  md = md.replace(/<\/centro>/gi, '</div>');
+  md = md.replace(/<br\s*\/?>/gi, '\n');
+  md = md.replace(/<hr\s*\/?>/gi, '\n---\n');
 
-  // Clean up multiple blank lines
+  // Step 14: Clean up multiple blank lines
   md = md.replace(/\n{3,}/g, '\n\n');
 
-  // Trim
+  // Step 15: Trim
   md = md.trim();
 
   return md;

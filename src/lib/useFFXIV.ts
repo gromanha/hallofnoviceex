@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useDebounce } from './useDebounce';
 
 // ── Types ──────────────────────────────────────────────────────
-interface XIVAPIResponse<T = unknown> {
+interface XIVAPIResponse {
   results?: Array<{
     row_id: number;
     sheet: string;
-    fields: T;
+    fields: Record<string, unknown>;
     score?: number;
   }>;
   next?: string;
@@ -50,11 +50,31 @@ interface UseFFXIVOptions {
   limit?: number;
 }
 
-// ── Helper: fetch JSON seguro ──────────────────────────────────
-async function safeFetchJSON(url: string, signal?: AbortSignal) {
-  const response = await fetch(url, { signal });
+// ── Constantes das APIs externas ───────────────────────────────
+const XIVAPI_BASE = 'https://v2.xivapi.com';
+const UNIVERSALIS_BASE = 'https://universalis.app/api/v2';
+const WIKI_BASE = 'https://ffxiv.consolegameswiki.com/mediawiki/api.php';
 
-  const contentType = response.headers.get('content-type') || '';
+const WORLDS = [
+  'Adamantoise', 'Aegis', 'Alpha', 'Anima', 'Asura',
+  'Atomos', 'Bahamut', 'Balmung', 'Behemoth', 'Belias',
+  'Brynhildr', 'Cactuar', 'Cerberus', 'Chocobo', 'Coeurl',
+  'Crystal', 'Diabolos', 'Durandal', 'Excalibur', 'Exodus',
+  'Faerie', 'Fenrir', 'Famfrit', 'Gilgamesh', 'Goblin',
+  'Hades', 'Hyperion', 'Hyuran', 'Ifrit', 'Ignis',
+  'Instantation', 'Ixion', 'Jenova', 'Kujata', 'Lamia',
+  'Lich', 'Limon', 'Luna', 'Maduin', 'Malboro',
+  'Mandel', 'Masamune', 'Mateus', 'Midgardsormr', 'Moogle',
+  'Odin', 'Omega', 'Phoenix', 'Ragnarok', 'Raiden',
+  'Ramuh', 'Ravana', 'Ribbon', 'Rosalinde', 'Sargatanas',
+  'Shiva', 'Siren', 'Sleipnir', 'Solaris', 'Sophia',
+  'Tonberry', 'Typhon', 'Ultima', 'Ultros', 'Unicorn',
+  'Valefor', 'Yojimbo', 'Zalera', 'Zeromus', 'Zodiark',
+];
+
+// ── Helper: buscar JSON de qualquer URL (CORS) ─────────────────
+async function fetchJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal });
   const text = await response.text();
 
   if (!response.ok) {
@@ -67,21 +87,28 @@ async function safeFetchJSON(url: string, signal?: AbortSignal) {
     throw new Error(msg);
   }
 
-  if (!contentType.includes('application/json')) {
-    throw new Error('Resposta não é JSON válida');
-  }
-
-  return JSON.parse(text);
+  return JSON.parse(text) as T;
 }
 
-// ── Hook: Busca genérica ──────────────────────────────────────
-function useFFXIVSearch<T>(
-  endpoint: string,
+// ── Helper: buscar na XIVAPI v2 ────────────────────────────────
+function xivapiURL(endpoint: string, params: Record<string, string | number> = {}): string {
+  const url = new URL(`${XIVAPI_BASE}${endpoint}`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.set(key, String(value));
+    }
+  });
+  return url.toString();
+}
+
+// ── Hook: Busca genérica (XIVAPI) ──────────────────────────────
+function useFFXIVSearch(
+  buildURL: (query: string, limit: number) => string,
   query: string,
   options: UseFFXIVOptions = {}
 ) {
   const { enabled = true, limit = 20 } = options;
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<XIVAPIResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,15 +127,8 @@ function useFFXIVSearch<T>(
       setError(null);
 
       try {
-        const params = new URLSearchParams({
-          search: debouncedQuery,
-          limit: String(limit),
-        });
-
-        const result = await safeFetchJSON(
-          `/api/ffxiv/${endpoint}?${params.toString()}`,
-          controller.signal
-        );
+        const url = buildURL(debouncedQuery, Math.min(limit, 50));
+        const result = await fetchJSON<XIVAPIResponse>(url, controller.signal);
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -122,151 +142,57 @@ function useFFXIVSearch<T>(
     fetchData();
 
     return () => controller.abort();
-  }, [endpoint, debouncedQuery, limit, enabled]);
+  }, [debouncedQuery, limit, enabled, buildURL]);
 
   return { data, loading, error };
 }
 
-// ── Hook: Item por ID ─────────────────────────────────────────
-export function useFFXIVItem(itemId: number | null) {
-  const [data, setData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!itemId) {
-      setData(null);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function fetchItem() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const result = await safeFetchJSON(
-          `/api/ffxiv/items/${itemId}`,
-          controller.signal
-        );
-        setData(result);
-      } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchItem();
-
-    return () => controller.abort();
-  }, [itemId]);
-
-  return { data, loading, error };
+// ── Buscar itens ───────────────────────────────────────────────
+function buildItemURL(query: string, limit: number): string {
+  return xivapiURL('/api/search', {
+    sheets: 'Item',
+    query: `Name~"${query}"`,
+    fields: 'Name,LevelItem,ItemKind.Name,Icon',
+    limit,
+  });
 }
 
-// ── Hook: Receita por ID ──────────────────────────────────────
-export function useFFXIVRecipe(recipeId: number | null) {
-  const [data, setData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!recipeId) {
-      setData(null);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function fetchRecipe() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const result = await safeFetchJSON(
-          `/api/ffxiv/recipes/${recipeId}`,
-          controller.signal
-        );
-        setData(result);
-      } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchRecipe();
-
-    return () => controller.abort();
-  }, [recipeId]);
-
-  return { data, loading, error };
-}
-
-// ── Hook: Preço Market Board ──────────────────────────────────
-export function useMarketPrice(itemId: number | null, world = 'Excalibur') {
-  const [data, setData] = useState<MarketResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!itemId) {
-      setData(null);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function fetchMarket() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const params = new URLSearchParams({ world });
-        const result = await safeFetchJSON(
-          `/api/ffxiv/market/${itemId}?${params.toString()}`,
-          controller.signal
-        );
-        setData(result);
-      } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMarket();
-
-    return () => controller.abort();
-  }, [itemId, world]);
-
-  return { data, loading, error };
-}
-
-// ── Hook: Buscar itens ────────────────────────────────────────
 export function useSearchItems(query: string, options?: UseFFXIVOptions) {
-  return useFFXIVSearch<XIVAPIResponse>('items', query, options);
+  const buildURL = useStableCallback(buildItemURL);
+  return useFFXIVSearch(buildURL, query, options);
 }
 
-// ── Hook: Buscar receitas ─────────────────────────────────────
+// ── Buscar receitas ────────────────────────────────────────────
+function buildRecipeURL(query: string, limit: number): string {
+  return xivapiURL('/api/search', {
+    sheets: 'Item',
+    query: `Name~"${query}" ItemUICategory.Name="Culinary"`,
+    fields: 'Name,LevelItem,ItemKind.Name,Icon',
+    limit,
+  });
+}
+
 export function useSearchRecipes(query: string, options?: UseFFXIVOptions) {
-  return useFFXIVSearch<XIVAPIResponse>('recipes', query, options);
+  const buildURL = useStableCallback(buildRecipeURL);
+  return useFFXIVSearch(buildURL, query, options);
 }
 
-// ── Hook: Buscar quests ───────────────────────────────────────
+// ── Buscar quests ──────────────────────────────────────────────
+function buildQuestURL(query: string, limit: number): string {
+  return xivapiURL('/api/search', {
+    sheets: 'Quest',
+    query: `Name~"${query}"`,
+    fields: 'Name,Description,LevelQuest,Expansion.Name,Icon',
+    limit,
+  });
+}
+
 export function useSearchQuests(query: string, options?: UseFFXIVOptions) {
-  return useFFXIVSearch<XIVAPIResponse>('quests', query, options);
+  const buildURL = useStableCallback(buildQuestURL);
+  return useFFXIVSearch(buildURL, query, options);
 }
 
-// ── Hook: Buscar instâncias ───────────────────────────────────
+// ── Buscar instâncias ──────────────────────────────────────────
 export function useSearchInstances(
   query: string,
   type: 'dungeon' | 'trial' | 'raid' = 'dungeon',
@@ -292,16 +218,14 @@ export function useSearchInstances(
       setError(null);
 
       try {
-        const params = new URLSearchParams({
-          search: debouncedQuery,
-          type,
-          limit: String(limit),
+        const url = xivapiURL('/api/search', {
+          sheets: 'InstanceContent',
+          query: `Name~"${debouncedQuery}"`,
+          fields: 'Name,Description,Level,InstanceContentType.Name,Icon',
+          limit: Math.min(limit, 50),
         });
 
-        const result = await safeFetchJSON(
-          `/api/ffxiv/instances?${params.toString()}`,
-          controller.signal
-        );
+        const result = await fetchJSON<XIVAPIResponse>(url, controller.signal);
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -320,7 +244,128 @@ export function useSearchInstances(
   return { data, loading, error };
 }
 
-// ── Hook: Buscar na wiki ──────────────────────────────────────
+// ── Item por ID ────────────────────────────────────────────────
+export function useFFXIVItem(itemId: number | null) {
+  const [data, setData] = useState<unknown>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!itemId) {
+      setData(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function fetchItem() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const url = xivapiURL(`/api/sheet/Item/${itemId}`, {
+          fields: 'Name,Description,LevelItem,LevelEquip,ItemKind,ItemSearchCategory,Icon,PriceMid,PriceLow',
+        });
+        const result = await fetchJSON<unknown>(url, controller.signal);
+        setData(result);
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchItem();
+
+    return () => controller.abort();
+  }, [itemId]);
+
+  return { data, loading, error };
+}
+
+// ── Receita por ID ─────────────────────────────────────────────
+export function useFFXIVRecipe(recipeId: number | null) {
+  const [data, setData] = useState<unknown>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!recipeId) {
+      setData(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function fetchRecipe() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const url = xivapiURL(`/api/sheet/Item/${recipeId}`, {
+          fields: 'Name,Description,LevelItem,ItemKind,Icon',
+        });
+        const result = await fetchJSON<unknown>(url, controller.signal);
+        setData(result);
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRecipe();
+
+    return () => controller.abort();
+  }, [recipeId]);
+
+  return { data, loading, error };
+}
+
+// ── Preço Market Board (Universalis) ───────────────────────────
+export function useMarketPrice(itemId: number | null, world = 'Excalibur') {
+  const [data, setData] = useState<MarketResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!itemId) {
+      setData(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function fetchMarket() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const url = `${UNIVERSALIS_BASE}/${world}/${itemId}`;
+        const result = await fetchJSON<MarketResponse>(url, controller.signal);
+        setData(result);
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMarket();
+
+    return () => controller.abort();
+  }, [itemId, world]);
+
+  return { data, loading, error };
+}
+
+// ── Buscar na wiki ─────────────────────────────────────────────
 export function useSearchWiki(query: string, options?: UseFFXIVOptions) {
   const [data, setData] = useState<WikiSearchResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -342,15 +387,15 @@ export function useSearchWiki(query: string, options?: UseFFXIVOptions) {
       setError(null);
 
       try {
-        const params = new URLSearchParams({
-          q: debouncedQuery,
-          limit: String(limit),
-        });
+        const url = new URL(WIKI_BASE);
+        url.searchParams.set('action', 'query');
+        url.searchParams.set('list', 'search');
+        url.searchParams.set('srsearch', debouncedQuery);
+        url.searchParams.set('srlimit', String(Math.min(limit, 50)));
+        url.searchParams.set('format', 'json');
+        url.searchParams.set('origin', '*');
 
-        const result = await safeFetchJSON(
-          `/api/ffxiv/wiki/search?${params.toString()}`,
-          controller.signal
-        );
+        const result = await fetchJSON<WikiSearchResult>(url.toString(), controller.signal);
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -369,7 +414,7 @@ export function useSearchWiki(query: string, options?: UseFFXIVOptions) {
   return { data, loading, error };
 }
 
-// ── Hook: Página da wiki ──────────────────────────────────────
+// ── Página da wiki ─────────────────────────────────────────────
 export function useWikiPage(title: string | null) {
   const [data, setData] = useState<WikiPageResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -388,10 +433,18 @@ export function useWikiPage(title: string | null) {
       setError(null);
 
       try {
-        const result = await safeFetchJSON(
-          `/api/ffxiv/wiki/${encodeURIComponent(title)}`,
-          controller.signal
-        );
+        const url = new URL(WIKI_BASE);
+        url.searchParams.set('action', 'query');
+        url.searchParams.set('titles', title);
+        url.searchParams.set('prop', 'extracts|pageimages|info');
+        url.searchParams.set('exintro', 'true');
+        url.searchParams.set('explaintext', 'true');
+        url.searchParams.set('pithumbsize', '300');
+        url.searchParams.set('inprop', 'url');
+        url.searchParams.set('format', 'json');
+        url.searchParams.set('origin', '*');
+
+        const result = await fetchJSON<WikiPageResult>(url.toString(), controller.signal);
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -410,31 +463,19 @@ export function useWikiPage(title: string | null) {
   return { data, loading, error };
 }
 
-// ── Hook: Mundos disponíveis ──────────────────────────────────
+// ── Mundos disponíveis ──────────────────────────────────────────
 export function useFFXIVWorlds() {
   const [worlds, setWorlds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchWorlds() {
-      setLoading(true);
-      try {
-        const result = await safeFetchJSON('/api/ffxiv/worlds');
-        setWorlds(result.worlds || []);
-      } catch {
-        // Silently fail
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchWorlds();
+    setWorlds(WORLDS);
   }, []);
 
   return { worlds, loading };
 }
 
-// ── Hook: Personagem ──────────────────────────────────────────
+// ── Personagem ──────────────────────────────────────────────────
 export function useFFXIVCharacter(characterId: number | null) {
   const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
@@ -453,10 +494,10 @@ export function useFFXIVCharacter(characterId: number | null) {
       setError(null);
 
       try {
-        const result = await safeFetchJSON(
-          `/api/ffxiv/characters/${characterId}`,
-          controller.signal
-        );
+        const url = xivapiURL(`/character/${characterId}`, {
+          data: 'profile',
+        });
+        const result = await fetchJSON<unknown>(url, controller.signal);
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
@@ -473,4 +514,13 @@ export function useFFXIVCharacter(characterId: number | null) {
   }, [characterId]);
 
   return { data, loading, error };
+}
+
+// ── Helper: manter callback estável ────────────────────────────
+function useStableCallback<T extends (...args: never[]) => unknown>(fn: T): T {
+  const fnRef = useRef(fn);
+  fnRef.current = fn;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const stableFn = useMemo(() => ((...args: never[]) => fnRef.current(...args)) as T, []);
+  return stableFn;
 }

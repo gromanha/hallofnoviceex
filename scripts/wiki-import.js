@@ -130,131 +130,180 @@ async function fetchWikiHtml(url) {
 }
 
 // ============================================================
-// HTML Cleaner
+// HTML Cleaner (corrigido — matching cliente ImportWikiModal)
 // ============================================================
 
 function cleanWikiHtml(html) {
   let cleaned = html;
 
-  // Remove TOC (table of contents)
-  cleaned = cleaned.replace(/<div id="toc"[\s\S]*?<\/div>\s*<\/div>/gi, '');
-  cleaned = cleaned.replace(/<div class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  // Remove TOC — match the full TOC block including its parent wrapper
+  cleaned = cleaned.replace(/<div[^>]*id="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div[^>]*class="toc"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  // Broader TOC removal — catch any remaining TOC structure
+  cleaned = cleaned.replace(/<div[^>]*class="toc"[^>]*>[\s\S]*?<\/div>/gi, '');
 
   // Remove scripts and styles
   cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, '');
   cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, '');
+  cleaned = cleaned.replace(/<link[^>]*>/gi, '');
 
-  // Remove edit section links
+  // Remove edit section links (multiple patterns)
+  cleaned = cleaned.replace(/<span class="mw-editsection">[\s\S]*?<\/span>/gi, '');
   cleaned = cleaned.replace(/<span class="mw-editsection"[^>]*>[\s\S]*?<\/span>/gi, '');
 
   // Remove navigation elements
-  cleaned = cleaned.replace(/<div class="noprint[\s\S]*?<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="noprint">[\s\S]*?<\/div>/gi, '');
 
   // Remove hatnote boxes
-  cleaned = cleaned.replace(/<div class="hatnote"[^>]*>[\s\S]*?<\/div>/gi, '');
+  cleaned = cleaned.replace(/<div class="hatnote">[\s\S]*?<\/div>/gi, '');
 
-  // Remove sidebar/portlets
-  cleaned = cleaned.replace(/<div id="mw-panel[\s\S]*?<\/div>\s*<\/div>/gi, '');
+  // Remove mw-jump links
+  cleaned = cleaned.replace(/<a class="mw-jump-link"[^>]*>[\s\S]*?<\/a>/gi, '');
 
-  // Remove "mw-heading" wrapper class but keep content (convert to standard headings)
-  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>/gi, (_, level) => `<h${level}>`);
-  cleaned = cleaned.replace(/<\/div>\s*(?=\s*<\/div>|<div class="mw-heading|$)/gi, (match) => {
-    // Only close headings
-    return match;
-  });
-
-  // Fix heading closing tags — match mw-heading blocks properly
-  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\1[^>]*>([\s\S]*?)<\/h\1>\s*<\/div>/gi,
-    (_, level, content) => `<h${level}>${content}</h${level}>`
-  );
-
-  // Remove class attributes from headings (clean up)
-  cleaned = cleaned.replace(/<h(\d)[^>]*>/gi, (_, level) => `<h${level}>`);
-
-  // Fix relative image URLs → absolute
-  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
-  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
-
-  // Fix relative link URLs → absolute for wiki links (keep internal for SPA)
-  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
-
-  // Remove "mw-jump" link
-  cleaned = cleaned.replace(/<a class="mw-jump"[^>]*>[\s\S]*?<\/a>/gi, '');
-
-  // Remove "mw-content-text" div wrapper but keep content
+  // Remove content wrapper divs (but keep their children)
   cleaned = cleaned.replace(/<div id="mw-content-text"[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<div class="mw-content-ltr mw-parser-output"[^>]*>/gi, '');
   cleaned = cleaned.replace(/<div class="mw-parser-output">/gi, '');
 
-  // Remove category links at the bottom
+  // Remove category links
   cleaned = cleaned.replace(/<div id="catlinks"[^>]*>[\s\S]*?<\/div>/gi, '');
 
   // Remove print footer
   cleaned = cleaned.replace(/<div id="printfooter"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Remove data attributes and typeof (RDFa)
+  // Remove indicator divs
+  cleaned = cleaned.replace(/<div class="mw-indicators?">[\s\S]*?<\/div>/gi, '');
+
+  // Fix heading wrappers: <div class="mw-heading mw-heading2"><h2>Text</h2></div> → <h2>Text</h2>
+  cleaned = cleaned.replace(/<div class="mw-heading mw-heading(\d)"[^>]*>\s*<h\d[^>]*>([\s\S]*?)<\/h\d>\s*<\/div>/gi,
+    (_, level, content) => `<h${level}>${content}</h${level}>`
+  );
+
+  // Remove data attributes (typeof, data-mw, data-parsoid, etc.)
+  cleaned = cleaned.replace(/\s*typeof="mw:File"/gi, '');
   cleaned = cleaned.replace(/\s*typeof="mw:Extension[^"]*"/gi, '');
   cleaned = cleaned.replace(/\s*data-mw[^=]*="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-width="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-height="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*data-file-type="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s*decoding="async"/gi, '');
 
-  // Remove empty <span> tags
+  // Fix relative image URLs → absolute
+  cleaned = cleaned.replace(/src="\/mediawiki\//g, `src="${WIKI_BASE}/mediawiki/`);
+  cleaned = cleaned.replace(/src="\/\/upload\.wikimedia\.org/g, `src="https://upload.wikimedia.org`);
+
+  // Fix relative link URLs → absolute
+  cleaned = cleaned.replace(/href="\/wiki\//g, `href="${WIKI_BASE}/wiki/`);
+  cleaned = cleaned.replace(/href="\/mediawiki\//g, `href="${WIKI_BASE}/mediawiki/`);
+
+  // Fix srcset — make URLs absolute
+  cleaned = cleaned.replace(/srcset="([^"]*?)"/g, (match, val) => {
+    const fixed = val.replace(/\/mediawiki\//g, `${WIKI_BASE}/mediawiki/`);
+    return `srcset="${fixed}"`;
+  });
+
+  // Remove empty span tags
   cleaned = cleaned.replace(/<span(?: [^>]*)?>(\s*)<\/span>/gi, '$1');
 
-  // Remove <center> tags (use style instead)
+  // Remove empty div tags
+  cleaned = cleaned.replace(/<div(?: [^>]*)?>(\s*)<\/div>/gi, '$1');
+
+  // Fix center tags
   cleaned = cleaned.replace(/<center>/gi, '<div style="text-align:center">');
   cleaned = cleaned.replace(/<\/center>/gi, '</div>');
 
-  // Clean up excessive whitespace
+  // Remove HTML comments
+  cleaned = cleaned.replace(/<!--[\s\S]*?-->/gi, '');
+
+  // Clean up whitespace
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
 
   return cleaned.trim();
 }
 
 // ============================================================
-// Translation (EN → PT-BR) — HTML-preserving
+// Translation (EN → PT-BR) — HTML-preserving (Unicode PUA placeholders)
 // ============================================================
 
-function extractTextFromHtml(html) {
-  // Extract text nodes from HTML, preserving tags
-  const textParts = [];
+// Use Unicode Private Use Area characters as placeholders — Google Translate won't modify them
+const PH_START = '\uE000';
+const PH_END = '\uE001';
+
+function extractHtmlBlocks(html) {
+  const parts = [];
   let idx = 0;
+  let result = html;
 
-  // Replace images with placeholders
-  let processed = html.replace(/<img[^>]*>/gi, (match) => {
-    const key = `\u00A7\u00A7IMG_${idx++}\u00A7\u00A7`;
-    textParts.push({ key, value: match, type: 'image' });
+  // Protect <table> blocks (do first — they contain nested tags)
+  result = result.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
+    const key = `${PH_START}T${idx++}${PH_END}`;
+    parts.push({ key, value: match });
     return key;
   });
 
-  // Replace code blocks
-  processed = processed.replace(/<pre[^>]*>[\s\S]*?<\/pre>/gi, (match) => {
-    const key = `\u00A7\u00A7PRE_${idx++}\u00A7\u00A7`;
-    textParts.push({ key, value: match, type: 'code' });
+  // Protect <figure> blocks (images with captions)
+  result = result.replace(/<figure[\s\S]*?<\/figure>/gi, (match) => {
+    const key = `${PH_START}F${idx++}${PH_END}`;
+    parts.push({ key, value: match });
     return key;
   });
 
-  processed = processed.replace(/<code[^>]*>[\s\S]*?<\/code>/gi, (match) => {
-    const key = `\u00A7\u00A7CODE_${idx++}\u00A7\u00A7`;
-    textParts.push({ key, value: match, type: 'inline_code' });
+  // Protect <blockquote> blocks
+  result = result.replace(/<blockquote[\s\S]*?<\/blockquote>/gi, (match) => {
+    const key = `${PH_START}Q${idx++}${PH_END}`;
+    parts.push({ key, value: match });
     return key;
   });
 
-  // Replace links (preserve href)
-  processed = processed.replace(/<a [^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (match, href, text) => {
-    const key = `\u00A7\u00A7LINK_${idx++}\u00A7\u00A7`;
-    textParts.push({ key, value: { href, text }, type: 'link' });
+  // Protect <pre> blocks
+  result = result.replace(/<pre[\s\S]*?<\/pre>/gi, (match) => {
+    const key = `${PH_START}P${idx++}${PH_END}`;
+    parts.push({ key, value: match });
     return key;
   });
 
-  return { processed, textParts };
+  // Protect <h1>-<h6> tags
+  result = result.replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi, (match) => {
+    const key = `${PH_START}H${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <img> tags
+  result = result.replace(/<img[^>]*>/gi, (match) => {
+    const key = `${PH_START}I${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <a> tags (links)
+  result = result.replace(/<a [^>]*>[\s\S]*?<\/a>/gi, (match) => {
+    const key = `${PH_START}A${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <code> blocks
+  result = result.replace(/<code[\s\S]*?<\/code>/gi, (match) => {
+    const key = `${PH_START}C${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  // Protect <span class="icon-label-container"> blocks
+  result = result.replace(/<span class="icon-label-container[^"]*">[\s\S]*?<\/span>/gi, (match) => {
+    const key = `${PH_START}S${idx++}${PH_END}`;
+    parts.push({ key, value: match });
+    return key;
+  });
+
+  return { text: result, parts };
 }
 
 function restoreHtmlParts(text, parts) {
   let result = text;
   for (const part of parts) {
-    if (part.type === 'link') {
-      result = result.replace(part.key, `<a href="${part.value.href}">${part.value.text}</a>`);
-    } else {
-      result = result.replace(part.key, part.value);
-    }
+    result = result.replace(part.key, part.value);
   }
   return result;
 }
@@ -284,8 +333,8 @@ async function translateHtmlPreserving(html, from = 'en', to = 'pt') {
 
   console.log(`[translate] Traduzindo ${html.length} caracteres de HTML...`);
 
-  const { processed, textParts } = extractTextFromHtml(html);
-  const chunks = splitIntoChunks(processed);
+  const { text, parts } = extractHtmlBlocks(html);
+  const chunks = splitIntoChunks(text);
 
   console.log(`[translate] ${chunks.length} pedaços para traduzir`);
 
@@ -303,7 +352,7 @@ async function translateHtmlPreserving(html, from = 'en', to = 'pt') {
   }
 
   const translated = translatedChunks.join(' ');
-  return restoreHtmlParts(translated, textParts);
+  return restoreHtmlParts(translated, parts);
 }
 
 // ============================================================
@@ -313,6 +362,7 @@ async function translateHtmlPreserving(html, from = 'en', to = 'pt') {
 const XIVAPI_BASE = 'https://v2.xivapi.com';
 const MAX_TERMS = 20;
 const DELAY_MS = 100;
+const MIN_WORDS = 2;
 
 function delay(ms) {
   return new Promise(r => setTimeout(r, ms));
@@ -320,21 +370,16 @@ function delay(ms) {
 
 function extractCandidateTermsFromHtml(html) {
   const terms = new Set();
-  const MIN_WORDS = 2;
-
-  // Extract link text: <a href="/wiki/...">Term</a>
-  const wikiLinkRe = /<a [^>]*href="[^"]*\/wiki\/[^"]*"[^>]*>([^<]+)<\/a>/gi;
   let match;
-  while ((match = wikiLinkRe.exec(html)) !== null) {
-    terms.add(match[1].trim());
-  }
 
-  // Compound capitalized words in text
+  // Extract link text: <a href="/wiki/...">Term</a> or <a href="https://...wiki...">Term</a>
+  const wikiLinkRe = /<a [^>]*href="[^"]*(?:\/wiki\/|consolegameswiki\.com\/wiki\/)[^"]*"[^>]*>([^<]+)<\/a>/gi;
+  while ((match = wikiLinkRe.exec(html)) !== null) terms.add(match[1].trim());
+
+  // Compound capitalized words in text (strip tags first)
   const textContent = html.replace(/<[^>]+>/g, ' ');
   const compoundRe = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
-  while ((match = compoundRe.exec(textContent)) !== null) {
-    terms.add(match[1].trim());
-  }
+  while ((match = compoundRe.exec(textContent)) !== null) terms.add(match[1].trim());
 
   return [...terms]
     .filter(t => t.split(/\s+/).length >= MIN_WORDS)
@@ -452,6 +497,33 @@ function generateSlug(title) {
 }
 
 // ============================================================
+// Metadata Extraction (HTML-aware)
+// ============================================================
+
+function extractMetadata(html, pageTitle) {
+  let title = pageTitle;
+  let subtitle = '';
+  let cover_image = '';
+
+  // Extract title from <h1>
+  const h1Match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  if (h1Match) title = h1Match[1].replace(/<[^>]+>/g, '').trim().slice(0, 200);
+
+  // Extract subtitle from first <p> with substantial text
+  const pMatches = html.match(/<p[^>]*>([\s\S]*?)<\/p>/gi) || [];
+  for (const p of pMatches) {
+    const text = p.replace(/<[^>]+>/g, '').trim();
+    if (text.length > 10) { subtitle = text.slice(0, 300); break; }
+  }
+
+  // Extract cover image from first <img>
+  const imgMatch = html.match(/<img [^>]*src="([^"]+)"/i);
+  cover_image = imgMatch ? imgMatch[1] : '';
+
+  return { title, subtitle, cover_image };
+}
+
+// ============================================================
 // Supabase Save
 // ============================================================
 
@@ -527,7 +599,7 @@ async function main() {
     console.log(`[clean] OK — ${cleanedHtml.length} caracteres`);
     console.log('');
 
-    // Step 3: Translate (preserving HTML)
+    // Step 3: Translate (preserving HTML with Unicode PUA placeholders)
     cleanedHtml = await translateHtmlPreserving(cleanedHtml);
     console.log(`[translate] OK — ${cleanedHtml.length} caracteres após tradução`);
     console.log('');
@@ -539,17 +611,20 @@ async function main() {
       console.log('');
     }
 
-    // Step 5: Build post object
+    // Step 5: Extract metadata from cleaned HTML
+    const { title: metaTitle, subtitle, cover_image } = extractMetadata(cleanedHtml, title);
+
+    // Step 6: Build post object
     const category = flags.category || detectCategory(flags.url);
     const slug = generateSlug(title);
 
     const post = {
-      title: title.replace(/_/g, ' '),
+      title: metaTitle || title.replace(/_/g, ' '),
       slug,
-      subtitle: `Importado de ConsoleGamesWiki`,
+      subtitle: subtitle || `Importado de ConsoleGamesWiki`,
       content: cleanedHtml,
       category,
-      cover_image: null,
+      cover_image: cover_image || null,
       tags: flags.tags,
       is_pinned: false,
       status: flags.draft ? 'draft' : 'published',
@@ -557,7 +632,7 @@ async function main() {
       source_url: flags.url,
     };
 
-    // Step 6: Output
+    // Step 7: Output
     if (flags.localOnly) {
       const outputPath = join(__dirname, '..', `${slug}.json`);
       writeFileSync(outputPath, JSON.stringify(post, null, 2), 'utf-8');

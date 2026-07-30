@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, Trash2, Eye, Edit3, Pin, Sparkles, Image, Tag as TagIcon } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { X, Save, Trash2, Eye, Edit3, Pin, Sparkles, Image, Tag as TagIcon, Upload, Loader2, Trash } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Post } from '../types';
 import { renderMarkdown } from '../lib/sanitize';
 import { useEscapeKey } from '../lib/useEscapeKey';
+import { useImageUpload } from '../lib/useImageUpload';
 import { ConfirmDialog } from './ConfirmDialog';
+import { TipTapEditor } from './editor/TipTapEditor';
 
 interface PostModalProps {
   post: Partial<Post> | null;
@@ -35,7 +37,9 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [deleting, setDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [coverTab, setCoverTab] = useState<'upload' | 'url'>('url');
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const coverUpload = useImageUpload();
 
   useEffect(() => {
     if (post) {
@@ -228,15 +232,103 @@ export const PostModal: React.FC<PostModalProps> = ({
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-on-surface)] uppercase tracking-wider mb-1.5 flex items-center gap-1">
                       <Image className="w-3.5 h-3.5" />
-                      URL da Imagem de Capa
+                      Imagem de Capa
                     </label>
-                    <input
-                      type="url"
-                      value={coverImage}
-                      onChange={e => setCoverImage(e.target.value)}
-                      placeholder="https://exemplo.com/imagem.jpeg"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
-                    />
+
+                    {/* Cover tab switcher */}
+                    <div className="flex mb-2 bg-[var(--color-surface-alt)] p-0.5 rounded-lg text-[10px] font-bold">
+                      <button
+                        type="button"
+                        onClick={() => setCoverTab('upload')}
+                        className={`flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-md transition-all ${
+                          coverTab === 'upload'
+                            ? 'bg-[var(--color-surface)] text-[var(--color-primary)] shadow-xs'
+                            : 'text-[var(--color-on-surface-variant)]'
+                        }`}
+                      >
+                        <Upload className="w-3 h-3" /> Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCoverTab('url')}
+                        className={`flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-md transition-all ${
+                          coverTab === 'url'
+                            ? 'bg-[var(--color-surface)] text-[var(--color-primary)] shadow-xs'
+                            : 'text-[var(--color-on-surface-variant)]'
+                        }`}
+                      >
+                        <Image className="w-3 h-3" /> URL
+                      </button>
+                    </div>
+
+                    {coverTab === 'upload' ? (
+                      <div className="space-y-2">
+                        {!coverUpload.file ? (
+                          <div
+                            {...coverUpload.getRootProps()}
+                            className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
+                              coverUpload.isDragActive
+                                ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                                : 'border-[var(--color-outline-variant)] hover:border-[var(--color-primary)]/50'
+                            }`}
+                          >
+                            <input {...coverUpload.getInputProps()} />
+                            <Upload className={`w-5 h-5 ${coverUpload.isDragActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'}`} />
+                            <p className="text-[10px] text-[var(--color-on-surface-variant)] text-center">
+                              Arraste ou clique para enviar
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="relative rounded-xl overflow-hidden border border-[var(--color-outline-variant)]">
+                            <img
+                              src={coverUpload.preview}
+                              alt="Preview"
+                              className="w-full h-32 object-cover"
+                            />
+                            <div className="absolute top-1 right-1 flex gap-1">
+                              <button
+                                type="button"
+                                onClick={() => coverUpload.reset()}
+                                className="p-1 rounded-md bg-[var(--color-background)]/80 hover:bg-[var(--color-background)] text-[var(--color-on-surface-variant)] transition-colors"
+                                title="Trocar imagem"
+                              >
+                                <Trash className="w-3 h-3" />
+                              </button>
+                            </div>
+                            {coverUpload.uploadedUrl && (
+                              <div className="absolute bottom-1 left-1 px-2 py-0.5 rounded-md bg-[var(--color-sage)]/90 text-white text-[10px] font-bold">
+                                Enviada
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {coverUpload.uploadError && (
+                          <p className="text-[10px] text-[var(--color-crimson)]">{coverUpload.uploadError}</p>
+                        )}
+
+                        <CoverUploadButton upload={coverUpload} setCoverImage={setCoverImage} />
+                      </div>
+                    ) : (
+                      <input
+                        type="url"
+                        value={coverImage}
+                        onChange={e => setCoverImage(e.target.value)}
+                        placeholder="https://exemplo.com/imagem.jpeg"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+                      />
+                    )}
+
+                    {coverImage && coverTab === 'url' && (
+                      <div className="mt-2 relative rounded-xl overflow-hidden border border-[var(--color-outline-variant)]">
+                        <img
+                          src={coverImage}
+                          alt="Cover preview"
+                          className="w-full h-24 object-cover"
+                          onError={e => (e.currentTarget.style.display = 'none')}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -324,13 +416,10 @@ export const PostModal: React.FC<PostModalProps> = ({
                   </div>
 
                   {activeTab === 'editor' ? (
-                    <textarea
-                      required
-                      rows={12}
-                      value={content}
-                      onChange={e => setContent(e.target.value)}
-                      placeholder="Escreva seu artigo em Markdown... ex: &#10;## Título da Seção &#10;Texto explicativo aqui...&#10;- Item 1&#10;- Item 2"
-                      className="w-full px-4 py-3 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] text-[var(--color-on-surface)] font-mono text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none leading-relaxed"
+                    <TipTapEditor
+                      content={content}
+                      onChange={setContent}
+                      placeholder="Escreva seu artigo aqui..."
                     />
                   ) : (
                     <div className="min-h-[300px] p-6 rounded-xl border border-[var(--color-outline-variant)] bg-[var(--color-background)] prose max-w-none">
@@ -390,3 +479,39 @@ export const PostModal: React.FC<PostModalProps> = ({
     </AnimatePresence>
   );
 };
+
+function CoverUploadButton({
+  upload,
+  setCoverImage,
+}: {
+  upload: ReturnType<typeof useImageUpload>;
+  setCoverImage: (url: string) => void;
+}) {
+  const handleUpload = useCallback(async () => {
+    const url = await upload.upload();
+    if (url) setCoverImage(url);
+  }, [upload, setCoverImage]);
+
+  if (!upload.file || upload.uploadedUrl) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={handleUpload}
+      disabled={upload.uploading}
+      className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-bold transition-all shadow-md disabled:opacity-50"
+    >
+      {upload.uploading ? (
+        <>
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          Enviando...
+        </>
+      ) : (
+        <>
+          <Upload className="w-3.5 h-3.5" />
+          Enviar Imagem
+        </>
+      )}
+    </button>
+  );
+}

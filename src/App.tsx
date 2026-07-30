@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, MotionConfig } from 'motion/react';
+import { HelmetProvider } from 'react-helmet-async';
 import { Footer } from './components/Footer';
 import { LoginGate } from './components/LoginGate';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -106,15 +107,17 @@ function AppRoutes() {
 export function App() {
   return (
     <BrowserRouter>
-      <MotionConfig reducedMotion="user">
-        <AuthProvider>
-          <ErrorBoundary>
-            <div className="min-h-screen flex flex-col bg-[var(--color-background)] text-[var(--color-on-background)] font-sans antialiased">
-              <AppRoutes />
-            </div>
-          </ErrorBoundary>
-        </AuthProvider>
-      </MotionConfig>
+      <HelmetProvider>
+        <MotionConfig reducedMotion="user">
+          <AuthProvider>
+            <ErrorBoundary>
+              <div className="min-h-screen flex flex-col bg-[var(--color-background)] text-[var(--color-on-background)] font-sans antialiased">
+                <AppRoutes />
+              </div>
+            </ErrorBoundary>
+          </AuthProvider>
+        </MotionConfig>
+      </HelmetProvider>
     </BrowserRouter>
   );
 }

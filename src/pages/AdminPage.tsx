@@ -89,7 +89,7 @@ export const AdminPage: React.FC = () => {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [postsSearch, setPostsSearch] = useState('');
   const debouncedPostsSearch = useDebounce(postsSearch, 300);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft' | 'archived'>('all');
   const [selectedPost, setSelectedPost] = useState<Partial<Post> | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
@@ -270,7 +270,7 @@ export const AdminPage: React.FC = () => {
 
   const handleToggleStatus = async (post: Post) => {
     try {
-      const nextStatus = post.status === 'published' ? 'draft' : 'published';
+      const nextStatus = post.status === 'published' ? 'draft' : post.status === 'draft' ? 'archived' : 'published';
       await apiPatch('/api/posts', { id: post.id, status: nextStatus });
       await loadPosts();
     } catch (err) {
@@ -617,6 +617,14 @@ export const AdminPage: React.FC = () => {
                 >
                   Rascunhos
                 </button>
+                <button
+                  onClick={() => setStatusFilter('archived')}
+                  className={`px-3 py-1 rounded-lg type-body font-bold transition-all ${
+                    statusFilter === 'archived' ? 'bg-[var(--color-on-surface-variant)] text-white' : 'text-[var(--color-on-surface-variant)]'
+                  }`}
+                >
+                  Arquivados
+                </button>
               </div>
 
               {/* Busca */}
@@ -685,10 +693,12 @@ export const AdminPage: React.FC = () => {
                             className={`px-2.5 py-1 rounded-full type-caption font-bold transition-all cursor-pointer hover:opacity-80 ${
                               post.status === 'published'
                                 ? 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border border-[var(--color-sage)]/30'
-                                : 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border border-[var(--color-amber)]/30'
+                                : post.status === 'archived'
+                                  ? 'bg-[var(--color-on-surface-variant)]/10 text-[var(--color-on-surface-variant)] border border-[var(--color-on-surface-variant)]/30'
+                                  : 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border border-[var(--color-amber)]/30'
                             }`}
                           >
-                            {post.status === 'published' ? 'Publicado' : 'Rascunho'}
+                            {post.status === 'published' ? 'Publicado' : post.status === 'archived' ? 'Arquivado' : 'Rascunho'}
                           </button>
                         </td>
                         <td className="p-4">

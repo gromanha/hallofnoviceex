@@ -5,6 +5,7 @@ import { Post } from '../types';
 import { renderMarkdown } from '../lib/sanitize';
 import { useEscapeKey } from '../lib/useEscapeKey';
 import { useImageUpload } from '../lib/useImageUpload';
+import { useAutoSave } from '../lib/useAutoSave';
 import { ConfirmDialog } from './ConfirmDialog';
 import { TipTapEditor } from './editor/TipTapEditor';
 
@@ -30,7 +31,7 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [coverImage, setCoverImage] = useState('');
   const [tagsStr, setTagsStr] = useState('');
   const [isPinned, setIsPinned] = useState(false);
-  const [status, setStatus] = useState<'published' | 'draft'>('published');
+  const [status, setStatus] = useState<'published' | 'draft' | 'archived'>('published');
   const [slug, setSlug] = useState('');
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   const [saving, setSaving] = useState(false);
@@ -41,6 +42,18 @@ export const PostModal: React.FC<PostModalProps> = ({
   const titleInputRef = useRef<HTMLInputElement>(null);
   const coverUpload = useImageUpload();
 
+  const autoSave = useAutoSave(post?.id, {
+    title,
+    subtitle,
+    category,
+    content,
+    coverImage,
+    tagsStr,
+    isPinned,
+    status,
+    slug,
+  }, isOpen);
+
   useEffect(() => {
     if (post) {
       setTitle(post.title || '');
@@ -50,7 +63,7 @@ export const PostModal: React.FC<PostModalProps> = ({
       setCoverImage(post.cover_image || '');
       setTagsStr(post.tags ? post.tags.join(', ') : '');
       setIsPinned(Boolean(post.is_pinned));
-      setStatus(post.status === 'draft' ? 'draft' : 'published');
+      setStatus(post.status === 'draft' ? 'draft' : post.status === 'archived' ? 'archived' : 'published');
       setSlug(post.slug || '');
     } else {
       setTitle('');
@@ -102,6 +115,7 @@ export const PostModal: React.FC<PostModalProps> = ({
         status,
         slug: slug.trim() || undefined,
       });
+      autoSave.clearDraft();
       onClose();
     } catch (err: any) {
       setErrorMsg(err?.message || 'Não foi possível salvar a postagem. Verifique os campos obrigatórios e tente novamente.');
@@ -383,6 +397,19 @@ export const PostModal: React.FC<PostModalProps> = ({
                     >
                       Rascunho
                     </button>
+                    {post?.id && (
+                      <button
+                        type="button"
+                        onClick={() => setStatus('archived')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                          status === 'archived'
+                            ? 'bg-[var(--color-on-surface-variant)] text-white shadow-xs'
+                            : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)]'
+                        }`}
+                      >
+                        Arquivado
+                      </button>
+                    )}
                   </div>
                 </div>
 

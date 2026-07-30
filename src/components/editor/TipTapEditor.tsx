@@ -4,6 +4,7 @@ import { defaultExtensions } from './extensions'
 import { EditorToolbar } from './EditorToolbar'
 import { FloatingToolbar } from './FloatingToolbar'
 import { ImagePickerDialog } from './ImagePickerDialog'
+import { LinkDialog } from './LinkDialog'
 import { apiPost } from '../../lib/api'
 
 interface TipTapEditorProps {
@@ -20,6 +21,9 @@ export function TipTapEditor({
   editable = true,
 }: TipTapEditorProps) {
   const [imagePickerOpen, setImagePickerOpen] = useState(false)
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false)
+  const [linkInitialUrl, setLinkInitialUrl] = useState('')
+  const [linkInitialText, setLinkInitialText] = useState('')
   const [uploading, setUploading] = useState(false)
 
   const uploadImageFile = useCallback(async (file: File): Promise<string | null> => {
@@ -114,6 +118,33 @@ export function TipTapEditor({
     }
   }, [editor])
 
+  const handleOpenLinkDialog = useCallback(() => {
+    if (editor) {
+      const { from, to } = editor.state.selection
+      const selectedText = editor.state.doc.textBetween(from, to, '')
+      const existingLink = editor.getAttributes('link')
+      setLinkInitialUrl(existingLink.href || '')
+      setLinkInitialText(selectedText || '')
+      setLinkDialogOpen(true)
+    }
+  }, [editor])
+
+  const handleLinkInsert = useCallback((url: string, text?: string) => {
+    if (editor) {
+      const { from, to } = editor.state.selection
+      const hasSelection = from !== to
+
+      if (hasSelection) {
+        editor.chain().focus().setLink({ href: url }).run()
+      } else if (text) {
+        editor.chain().focus().insertContent(`<a href="${url}">${text}</a>`).run()
+      } else {
+        editor.chain().focus().setLink({ href: url }).run()
+      }
+    }
+    setLinkDialogOpen(false)
+  }, [editor])
+
   if (!editor) return null
 
   return (
@@ -122,6 +153,7 @@ export function TipTapEditor({
         <EditorToolbar
           editor={editor}
           onImageClick={() => setImagePickerOpen(true)}
+          onLinkClick={handleOpenLinkDialog}
         />
       )}
       <EditorContent editor={editor} />
@@ -133,6 +165,13 @@ export function TipTapEditor({
         open={imagePickerOpen}
         onClose={() => setImagePickerOpen(false)}
         onInsert={handleImageInsert}
+      />
+      <LinkDialog
+        open={linkDialogOpen}
+        onClose={() => setLinkDialogOpen(false)}
+        onInsert={handleLinkInsert}
+        initialUrl={linkInitialUrl}
+        initialText={linkInitialText}
       />
     </div>
   )

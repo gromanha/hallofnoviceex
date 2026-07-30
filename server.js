@@ -568,6 +568,154 @@ app.delete('/api/event-types', async (req, res) => {
   }
 });
 
+// ── Image Upload (Supabase Storage) ───────────────────────────
+
+app.post('/api/upload', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { file, filename, contentType } = req.body || {};
+    if (!file || !filename) {
+      return res.status(400).json({ error: 'file_and_filename_required' });
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+    if (!allowedTypes.includes(contentType)) {
+      return res.status(400).json({ error: 'invalid_content_type' });
+    }
+
+    const MAX_SIZE = 10 * 1024 * 1024;
+    const fileBuffer = Buffer.from(file, 'base64');
+    if (fileBuffer.length > MAX_SIZE) {
+      return res.status(400).json({ error: 'file_too_large' });
+    }
+
+    const ext = filename.split('.').pop()?.toLowerCase() || 'jpg';
+    const safeName = `${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${ext}`;
+    const filePath = `blog-images/${safeName}`;
+
+    const { error: uploadError } = await supabaseAdmin
+      .storage
+      .from('blog-images')
+      .upload(filePath, fileBuffer, {
+        contentType: contentType || 'image/jpeg',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('[upload] storage error', uploadError);
+      return res.status(500).json({ error: 'upload_failed' });
+    }
+
+    const { data: urlData } = supabaseAdmin
+      .storage
+      .from('blog-images')
+      .getPublicUrl(filePath);
+
+    return res.json({ url: urlData.publicUrl, path: filePath });
+  } catch (err) {
+    console.error('[upload] error', err);
+    return res.status(500).json({ error: safeError(err) });
+  }
+});
+
+// ── Posts Revisions ───────────────────────────────────────────
+
+app.get('/api/posts/:id/revisions', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.params;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+
+    const { data, error } = await supabaseAdmin
+      .from('post_revisions')
+      .select('*')
+      .eq('post_id', id)
+      .order('revision_n', { ascending: false });
+    if (error) throw error;
+    return res.json(data || []);
+  } catch (err) {
+    console.error('[revisions] list error', err);
+    return res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.post('/api/posts/:id/revisions', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id } = req.params;
+    if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+
+    const { title, content } = req.body || {};
+    if (!title || !content) return res.status(400).json({ error: 'title_and_content_required' });
+
+    const { data: lastRev } = await supabaseAdmin
+      .from('post_revisions')
+      .select('revision_n')
+      .eq('post_id', id)
+      .order('revision_n', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const nextN = (lastRev?.revision_n || 0) + 1;
+
+    const { data, error } = await supabaseAdmin
+      .from('post_revisions')
+      .insert({
+        post_id: id,
+        title: clampStr(title, 200),
+        content: String(content),
+        revision_n: nextN,
+        created_by: claims.sub,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return res.json(data);
+  } catch (err) {
+    console.error('[revisions] create error', err);
+    return res.status(500).json({ error: safeError(err) });
+  }
+});
+
+app.post('/api/posts/:id/revisions/:revId/restore', async (req, res) => {
+  const claims = requireAdmin(req, res);
+  if (!claims) return;
+  try {
+    const { id, revId } = req.params;
+    if (!id || !isUUID(id) || !revId || !isUUID(revId)) {
+      return res.status(400).json({ error: 'invalid_id' });
+    }
+
+    const { data: revision, error: revErr } = await supabaseAdmin
+      .from('post_revisions')
+      .select('*')
+      .eq('id', revId)
+      .eq('post_id', id)
+      .maybeSingle();
+    if (revErr) throw revErr;
+    if (!revision) return res.status(404).json({ error: 'revision_not_found' });
+
+    const { data, error } = await supabaseAdmin
+      .from('posts')
+      .update({
+        title: revision.title,
+        content: revision.content,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return res.json(data);
+  } catch (err) {
+    console.error('[revisions] restore error', err);
+    return res.status(500).json({ error: safeError(err) });
+  }
+});
+
 // ── Posts CRUD ─────────────────────────────────────────────────
 
 app.get('/api/posts', async (req, res) => {
@@ -629,7 +777,7 @@ app.post('/api/posts', async (req, res) => {
   const claims = requireAdmin(req, res);
   if (!claims) return;
   try {
-    const { title, subtitle = '', content, category = 'noticias', cover_image = '', tags = [], is_pinned = false, status = 'published', slug } = req.body || {};
+    const { title, subtitle = '', content, category = 'noticias', cover_image = '', tags = [], is_pinned = false, status = 'published', slug, reading_time, word_count } = req.body || {};
     if (!title || !content) return res.status(400).json({ error: 'title_and_content_required' });
 
     let generatedSlug = slug || title.toLowerCase()
@@ -654,6 +802,8 @@ app.post('/api/posts', async (req, res) => {
       is_pinned: Boolean(is_pinned),
       status: status === 'draft' ? 'draft' : 'published',
       published_at: new Date().toISOString(),
+      reading_time: reading_time != null ? Math.max(0, Math.floor(Number(reading_time))) : null,
+      word_count: word_count != null ? Math.max(0, Math.floor(Number(word_count))) : null,
     };
 
     const { data, error } = await supabaseAdmin.from('posts').insert(payload).select().single();
@@ -671,6 +821,13 @@ app.patch('/api/posts', async (req, res) => {
   try {
     const { id, ...updates } = req.body;
     if (!id || !isUUID(id)) return res.status(400).json({ error: 'invalid_id' });
+
+    if (updates.reading_time !== undefined) {
+      updates.reading_time = updates.reading_time != null ? Math.max(0, Math.floor(Number(updates.reading_time))) : null;
+    }
+    if (updates.word_count !== undefined) {
+      updates.word_count = updates.word_count != null ? Math.max(0, Math.floor(Number(updates.word_count))) : null;
+    }
 
     updates.updated_at = new Date().toISOString();
     const { data, error } = await supabaseAdmin.from('posts').update(updates).eq('id', id).select().single();

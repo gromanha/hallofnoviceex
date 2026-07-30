@@ -1170,3 +1170,75 @@ div[style*="float: right"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── FCCard — FC Info Card in Sidebar ── */
+.fccard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+
+.fccard:hover {
+  border-color: var(--card-border-hover);
+}
+
+/* Crest layers */
+.fccard-crest {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.fccard-crest img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Members Panel ── */
+.members-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.members-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.members-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-outline);
+  border-radius: 2px;
+}
+
+.members-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+.members-panel__item {
+  border-left: 2px solid transparent;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.members-panel__item:hover {
+  border-left-color: var(--color-primary);
+}
+
+/* Skeleton shimmer for member panel */
+@keyframes panelShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.members-panel .shimmer {
+  animation: panelShimmer 1.5s ease-in-out infinite;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

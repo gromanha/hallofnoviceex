@@ -3,15 +3,18 @@ import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Home, BookOpen, Calendar, UtensilsCrossed, Shield, Moon, Sun, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
+import { FCCard } from './FCCard';
+import type { UseLodestoneFCReturn } from '../lib/useLodestoneFC';
 import logoUrl from '@/assets/logo.png';
 
 interface SidebarProps {
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
   onOpenLogin?: () => void;
+  lodestone?: UseLodestoneFCReturn;
 }
 
-export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onOpenLogin }) => {
+export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onOpenLogin, lodestone }) => {
   const { admin, onLogout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -104,6 +107,13 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
             </NavLink>
           )}
         </nav>
+
+        {/* FC Card — desktop only */}
+        {lodestone && (
+          <div className="hidden lg:block border-t border-[var(--color-outline)]/30 pt-3">
+            <FCCard lodestone={lodestone} />
+          </div>
+        )}
 
         {/* Footer Actions */}
         <div className="px-3 py-4 border-t border-[var(--color-outline)]/30 space-y-2">

@@ -6,11 +6,14 @@ import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
 import { WeekCalendarPreview } from '../components/WeekCalendarPreview';
+import { MembersCard } from '../components/MembersCard';
+import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const lodestone = useLodestoneFC();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -272,7 +275,7 @@ export const HomePage: React.FC = () => {
             )}
           </div>
 
-          {/* Right Column: Calendar + Quick Info */}
+          {/* Right Column: Calendar + Members + Quick Info */}
           <div className="hidden xl:flex flex-col w-80 shrink-0 space-y-5">
             {/* Week Calendar Preview */}
             <motion.div
@@ -283,12 +286,21 @@ export const HomePage: React.FC = () => {
               <WeekCalendarPreview />
             </motion.div>
 
+            {/* Members Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <MembersCard lodestone={lodestone} maxVisible={6} />
+            </motion.div>
+
             {/* Quick Info Card */}
             <motion.div
               className="glass rounded-2xl p-5 border border-[var(--color-outline)]/50 space-y-4"
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
               <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">
                 Matrícula Digital

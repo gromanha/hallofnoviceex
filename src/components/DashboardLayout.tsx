@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Sidebar } from './Sidebar';
-import { MembersPanel } from './MembersPanel';
 import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 interface DashboardLayoutProps {
@@ -19,7 +18,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = memo(({ children,
       <div className="flex-1 min-w-0 overflow-y-auto pb-16 lg:pb-0">
         {children}
       </div>
-      <MembersPanel lodestone={lodestone} />
     </div>
   );
 });

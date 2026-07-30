@@ -18,6 +18,7 @@ const LOG_DIR = path.join(OUTPUT_DIR, 'logs')
 const args = process.argv.slice(2)
 const flags = {
   noImport: args.includes('--no-import'),
+  noTranslate: args.includes('--no-translate'),
   verbose: args.includes('--verbose'),
   quiet: args.includes('--quiet'),
   rehost: args.includes('--rehost'),
@@ -31,7 +32,7 @@ const batchFile = args.includes('--batch') ? args[args.indexOf('--batch') + 1] :
 async function runPipeline(targetUrl, options = {}) {
   const results = []
   let rawDataPath = null
-  let translatedDataPath = null
+  let dataToImport = null
 
   try {
     const slug = targetUrl.split('/wiki/')[1]?.toLowerCase().replace(/_/g, '-') || 'unknown'
@@ -45,16 +46,26 @@ async function runPipeline(targetUrl, options = {}) {
       message: `${rawData.title} — ${rawData.images.length} imagens, ${rawData.tables} tabelas`,
     })
 
-    const translatedData = await translateWikiPage(rawDataPath)
-    translatedDataPath = path.join(OUTPUT_DIR, `${translatedData.slug}-translated.json`)
-    results.push({
-      step: 'TRADUÇÃO PT-BR',
-      success: true,
-      message: `${translatedData.title} — ${(Buffer.byteLength(translatedData.content, 'utf8') / 1024).toFixed(1)}KB traduzidos`,
-    })
+    if (options.noTranslate) {
+      dataToImport = rawData
+      results.push({
+        step: 'TRADUÇÃO PT-BR',
+        success: true,
+        skipped: true,
+        message: 'Ignorado (--no-translate)',
+      })
+    } else {
+      const translatedData = await translateWikiPage(rawDataPath)
+      dataToImport = translatedData
+      results.push({
+        step: 'TRADUÇÃO PT-BR',
+        success: true,
+        message: `${translatedData.title} — ${(Buffer.byteLength(translatedData.content, 'utf8') / 1024).toFixed(1)}KB traduzidos`,
+      })
+    }
 
     if (!options.noImport) {
-      const importResult = await importWikiPage(translatedDataPath, {
+      const importResult = await importWikiPage(rawDataPath, dataToImport, {
         status: options.status || 'published',
         rehostImages: options.rehost || false,
       })
@@ -114,6 +125,7 @@ async function runBatch(batchPath) {
     console.log(`\n[${i + 1}/${urls.length}] ${urls[i]}`)
     const result = await runPipeline(urls[i], {
       noImport: flags.noImport,
+      noTranslate: flags.noTranslate,
       rehost: flags.rehost,
       status: flags.status,
     })
@@ -132,13 +144,14 @@ async function main() {
   if (batchFile) {
     await runBatch(batchFile)
   } else if (importFile) {
-    await importWikiPage(importFile, {
+    await importWikiPage(importFile, null, {
       status: flags.status,
       rehostImages: flags.rehost,
     })
   } else if (url) {
     await runPipeline(url, {
       noImport: flags.noImport,
+      noTranslate: flags.noTranslate,
       rehost: flags.rehost,
       status: flags.status,
     })
@@ -146,11 +159,13 @@ async function main() {
     console.log(`
 Uso:
   node tools/wiki-pipeline.mjs <url>                    # Pipeline completo
+  node tools/wiki-pipeline.mjs <url> --no-translate     # Sem tradução (inglês)
   node tools/wiki-pipeline.mjs <url> --no-import        # Apenas scrape + traduz
   node tools/wiki-pipeline.mjs --import <arquivo.json>  # Apenas importar
   node tools/wiki-pipeline.mjs --batch <arquivo.txt>    # Batch de URLs
 
 Flags:
+  --no-translate Pular etapa de tradução (importa em inglês)
   --no-import    Pular etapa de importação
   --draft        Importar como draft (não publicado)
   --rehost       Re-hospedar imagens no Supabase Storage

@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar, BookOpen, Plus, Edit3, Trash2, Pin, Search, ShieldCheck, LogOut, Check, Eye,
-  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed, Copy,
+  PlusCircle, X, Clock, Tag, RefreshCw, UtensilsCrossed, Copy, Globe,
 } from 'lucide-react';
 import { Post, MagicalEvent, EventTypeItem, Recipe } from '../types';
 import { apiGet, apiPost, apiPatch, apiDel } from '../lib/api';
 import { PostModal } from '../components/PostModal';
 import { RecipeModal } from '../components/RecipeModal';
+import { WikiImportTab } from '../components/wiki/WikiImportTab';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounce } from '../lib/useDebounce';
 import { useEscapeKey } from '../lib/useEscapeKey';
@@ -78,7 +79,7 @@ const EMPTY_TYPE_FORM: TypeFormState = {
 export const AdminPage: React.FC = () => {
   const navigate = useNavigate();
   const { admin, onLogout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'types' | 'recipes'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'types' | 'recipes' | 'wiki'>('posts');
 
   const handleNavigatePost = useCallback((slug: string) => {
     navigate(`/post/${slug}`);
@@ -548,6 +549,21 @@ export const AdminPage: React.FC = () => {
         >
           <UtensilsCrossed className="w-4 h-4 text-[var(--color-secondary)]" />
           Receitas ({recipes.length})
+        </button>
+
+        <button
+          role="tab"
+          aria-selected={activeTab === 'wiki'}
+          aria-controls="tabpanel-wiki"
+          onClick={() => setActiveTab('wiki')}
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl type-title transition-all whitespace-nowrap ${
+            activeTab === 'wiki'
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md'
+              : 'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+          }`}
+        >
+          <Globe className="w-4 h-4 text-[var(--color-secondary)]" />
+          Wiki Import
         </button>
       </div>
 
@@ -1154,6 +1170,22 @@ export const AdminPage: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {activeTab === 'wiki' && (
+        <motion.div
+          key="tabpanel-wiki"
+          role="tabpanel"
+          id="tabpanel-wiki"
+          aria-labelledby="tab-wiki"
+          className="space-y-6"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+        >
+          <WikiImportTab />
+        </motion.div>
+      )}
 
       {/* ═══════════════════ MODAL: EVENTO ═══════════════════ */}
       <AnimatePresence>

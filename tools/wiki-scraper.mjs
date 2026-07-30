@@ -42,14 +42,21 @@ export async function scrapeWikiPage(url) {
     }
 
     logger.substep('Aguardando carregamento completo da página')
-    await page.waitForSelector('div.mw-parser-output', { timeout: 10000 })
+    await page.waitForSelector('div.mw-content-ltr', { timeout: 15000 })
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 3000))
 
     logger.substep('Extraindo conteúdo principal')
 
     const data = await page.evaluate((baseUrl) => {
-      const content = document.querySelector('div.mw-parser-output')
+      // Try multiple selectors to find the content
+      let content = document.querySelector('div.mw-parser-output')
+      
+      // If mw-parser-output is too small, try mw-content-ltr
+      if (!content || content.innerHTML.length < 1000) {
+        content = document.querySelector('div.mw-content-ltr')
+      }
+      
       if (!content) return null
 
       const titleEl = document.querySelector('h1.firstHeading .mw-page-title-main') ||
@@ -78,11 +85,23 @@ export async function scrapeWikiPage(url) {
         '.footer', '.catlinks', '.printfooter', '.visualClear',
         'script', 'style', '.ad-slot', '[data-fuse]',
         '.ad', '#siteNotice', '.suggestions', '.mw-portlet',
+        'iframe',
       ]
 
       for (const selector of selectorsToRemove) {
         content.querySelectorAll(selector).forEach(el => el.remove())
       }
+
+      // Remove ad/tracking images
+      content.querySelectorAll('img').forEach(img => {
+        const src = img.src || ''
+        if (src.includes('primis') || src.includes('doubleclick') || 
+            src.includes('googleads') || src.includes('googlesyndication') ||
+            src.includes('facebook') || src.includes('analytics') ||
+            src.includes('pixel') || src.includes('track')) {
+          img.remove()
+        }
+      })
 
       content.querySelectorAll('a[href]').forEach(a => {
         const href = a.getAttribute('href')
@@ -97,6 +116,13 @@ export async function scrapeWikiPage(url) {
           img.setAttribute('src', baseUrl + src)
         }
         img.setAttribute('loading', 'lazy')
+        // Remove srcset to avoid CORS issues
+        img.removeAttribute('srcset')
+        // Remove data-file attributes
+        img.removeAttribute('data-file-width')
+        img.removeAttribute('data-file-height')
+        img.removeAttribute('data-file-type')
+        img.removeAttribute('decoding')
       })
 
       content.querySelectorAll('table').forEach(table => {
@@ -130,7 +156,7 @@ export async function scrapeWikiPage(url) {
     }, WIKI_BASE_URL)
 
     if (!data) {
-      throw new Error('Conteúdo da wiki não encontrado (div.mw-parser-output)')
+      throw new Error('Conteúdo da wiki não encontrado (div.mw-content-ltr)')
     }
 
     logger.success(`Título: ${data.title}`)

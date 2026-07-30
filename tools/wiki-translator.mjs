@@ -18,13 +18,16 @@ export async function translateWikiPage(rawDataPath) {
   logger.data('Tamanho HTML', `${(Buffer.byteLength(rawData.content, 'utf8') / 1024).toFixed(1)}KB`)
 
   const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY não configurada no .env')
+  const msApiKey = process.env.MS_TRANSLATOR_KEY
+  const msRegion = process.env.MS_TRANSLATOR_REGION || 'global'
+
+  if (!apiKey && (!msApiKey || !msApiKey.trim())) {
+    throw new Error('GEMINI_API_KEY ou MS_TRANSLATOR_KEY devem estar configurados no .env')
   }
 
-  const gemini = createGeminiClient(apiKey)
+  const gemini = createGeminiClient(apiKey, msApiKey, msRegion)
 
-  logger.substep('Conectando à Gemini API')
+  logger.substep(apiKey ? 'Conectando à Gemini API (fallback: Microsoft Translator)' : 'Conectando à Microsoft Translator')
 
   logger.substep('Traduzindo título e subtítulo')
   const titlePtBr = await gemini.translateText(rawData.title)

@@ -60,7 +60,7 @@ renderer.table = function({ header, rows }: { header: any[]; rows: any[][] }) {
 renderer.image = function({ href, title, text }: { href: string; title: string | null; text: string }) {
   const titleAttr = title ? ` title="${title}"` : ''
   const alt = text || ''
-  return `<figure class="wiki-image"><img src="${href}" alt="${alt}"${titleAttr} loading="lazy" onerror="this.parentElement.style.display='none'" />${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`
+  return `<figure class="wiki-image"><img src="${href}" alt="${alt}"${titleAttr} loading="lazy" crossorigin="anonymous" />${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`
 }
 
 // Configure marked options
@@ -108,6 +108,22 @@ function renderHtml(html: string): string {
   // Fix relative URLs that might have slipped through
   processed = processed.replace(/src="\/mediawiki\//g, 'src="https://ffxiv.consolegameswiki.com/mediawiki/')
   processed = processed.replace(/href="\/wiki\//g, 'href="https://ffxiv.consolegameswiki.com/wiki/')
+  
+  // Fix srcset with relative URLs
+  processed = processed.replace(/srcset="\/mediawiki\//g, 'srcset="https://ffxiv.consolegameswiki.com/mediawiki/')
+  
+  // Remove srcset to avoid CORS issues and use src only
+  processed = processed.replace(/ srcset="[^"]*"/g, '')
+  
+  // Fix data-file-width/data-file-height attributes that might cause issues
+  processed = processed.replace(/data-file-width="/g, 'data-wiki-width="')
+  processed = processed.replace(/data-file-height="/g, 'data-wiki-height="')
+  
+  // Remove onerror handlers that hide content
+  processed = processed.replace(/ onerror="[^"]*"/g, '')
+  
+  // Remove ad/tracking images (primis, doubleclick, etc.)
+  processed = processed.replace(/<img[^>]+src="https?:\/\/[^"]*(?:primis|doubleclick|googleads|googlesyndication|facebook|analytics)[^"]*"[^>]*>*/gi, '')
 
   // Sanitize with DOMPurify — allow wiki-specific tags and attributes
   const sanitized = DOMPurify.sanitize(processed, {

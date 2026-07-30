@@ -874,6 +874,19 @@ img {
   font-style: italic;
 }
 
+/* Fix for inline wiki images (icons, small images) */
+span[typeof="mw:File"] img,
+span.icon-label-container img {
+  display: inline;
+  vertical-align: middle;
+  max-width: none;
+  height: auto;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin: 0;
+}
+
 /* Centered content from <centro> tags */
 div[style*="text-align:center"],
 div[style*="text-align: center"] {

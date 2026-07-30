@@ -10,7 +10,6 @@ import { useCodeHighlight } from '../lib/useCodeHighlight';
 import { ReadingProgressBar } from '../components/blog/ReadingProgressBar';
 import { ReadingTimeBadge } from '../components/blog/ReadingTimeBadge';
 import { ShareButtons } from '../components/blog/ShareButtons';
-import { TableOfContents } from '../components/blog/TableOfContents';
 import { PostNavigation } from '../components/blog/PostNavigation';
 
 export const PostDetailPage: React.FC = () => {
@@ -138,10 +137,10 @@ export const PostDetailPage: React.FC = () => {
 
       <ReadingProgressBar />
 
-      <article className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col xl:flex-row gap-8">
+      <article className="w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col gap-8">
           {/* Main content */}
-          <div className="flex-1 min-w-0 space-y-8">
+          <div className="w-full space-y-8">
             <motion.div
               className="flex items-center justify-between"
               initial={{ opacity: 0, y: 8 }}
@@ -252,9 +251,6 @@ export const PostDetailPage: React.FC = () => {
               nextPost={adjacentPosts.next}
             />
           </div>
-
-          {/* Sidebar: Table of Contents */}
-          <TableOfContents contentHtml={renderedContent} />
         </div>
       </article>
     </>

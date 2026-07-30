@@ -1365,45 +1365,6 @@ app.get('/api/ffxiv/cache/stats', (req, res) => {
   res.json(getCacheStats());
 });
 
-// ── Lodestone Free Company API ─────────────────────────────────
-import { getFCProfile, getFCMembers, getFCAllMembers } from './api/lib/lodestone.js';
-
-const LODESTONE_FC_ID = process.env.LODESTONE_FC_ID || '9234349560946612399';
-
-// GET /api/lodestone/fc — FC profile
-app.get('/api/lodestone/fc', externalRateLimit, async (_req, res) => {
-  try {
-    const data = await getFCProfile(LODESTONE_FC_ID);
-    res.json(data);
-  } catch (err) {
-    console.error('[lodestone] fc profile error', err?.message || err);
-    res.status(500).json({ error: 'lodestone_fetch_failed' });
-  }
-});
-
-// GET /api/lodestone/fc/members?page=1 — FC members with pagination
-app.get('/api/lodestone/fc/members', externalRateLimit, async (req, res) => {
-  try {
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const data = await getFCMembers(LODESTONE_FC_ID, page);
-    res.json(data);
-  } catch (err) {
-    console.error('[lodestone] fc members error', err?.message || err);
-    res.status(500).json({ error: 'lodestone_fetch_failed' });
-  }
-});
-
-// GET /api/lodestone/fc/members/all — all FC members (auto-paginated)
-app.get('/api/lodestone/fc/members/all', externalRateLimit, async (_req, res) => {
-  try {
-    const data = await getFCAllMembers(LODESTONE_FC_ID);
-    res.json(data);
-  } catch (err) {
-    console.error('[lodestone] fc all members error', err?.message || err);
-    res.status(500).json({ error: 'lodestone_fetch_failed' });
-  }
-});
-
 // ── Static files (SPA) ────────────────────────────────────────
 const DIST_DIR = join(__dirname, 'dist');
 app.use(express.static(DIST_DIR));

@@ -1,5 +1,5 @@
 import React, { memo, useState, useMemo } from 'react';
-import { RefreshCw, Search, Users, ExternalLink } from 'lucide-react';
+import { RefreshCw, Search, Users, ExternalLink, ChevronDown } from 'lucide-react';
 import type { UseLodestoneFCReturn, LodestoneMember } from '../lib/useLodestoneFC';
 
 interface MembersPanelProps {
@@ -74,7 +74,7 @@ function PanelSkeleton() {
 }
 
 export const MembersPanel: React.FC<MembersPanelProps> = memo(({ lodestone }) => {
-  const { members, loading, error, refetch, fc } = lodestone;
+  const { members, loading, error, refetch, fc, loadMoreMembers, hasMoreMembers } = lodestone;
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
@@ -154,6 +154,20 @@ export const MembersPanel: React.FC<MembersPanelProps> = memo(({ lodestone }) =>
             {filtered.map(member => (
               <MemberItem key={member.ID} member={member} />
             ))}
+            {hasMoreMembers && !search && (
+              <button
+                onClick={loadMoreMembers}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] text-[var(--color-primary)] hover:bg-[var(--color-surface-alt)]/50 transition-colors disabled:opacity-50"
+              >
+                {loading ? (
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                ) : (
+                  <ChevronDown className="w-3 h-3" />
+                )}
+                Carregar mais membros
+              </button>
+            )}
           </div>
         )}
       </div>

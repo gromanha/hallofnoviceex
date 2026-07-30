@@ -3,3 +3,4 @@ calendario/dist/
 calendario/node_modules/
 node_modules/
 .env*
+tools/output/

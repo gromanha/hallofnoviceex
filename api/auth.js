@@ -1,5 +1,5 @@
-import { getSupabaseAdmin } from './lib/supabase.js';
-import { signAdminToken, setAuthCookie, clearAuthCookie, requireAdmin } from './lib/auth.js';
+import { getSupabaseAdmin } from '../src/lib/supabase.js';
+import { signAdminToken, setAuthCookie, clearAuthCookie, requireAdmin } from '../src/lib/auth.js';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {

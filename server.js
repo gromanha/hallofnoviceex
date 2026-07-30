@@ -1366,7 +1366,7 @@ app.get('/api/ffxiv/cache/stats', (req, res) => {
 });
 
 // ── Lodestone Free Company API (local dev only) ────────────────
-import { getFCProfile, getFCMembers, getFCAllMembers } from './api/lib/lodestone.js';
+import { getFCProfile, getFCMembers, getFCAllMembers } from './src/lib/lodestone.js';
 
 const LODESTONE_FC_ID = process.env.LODESTONE_FC_ID || '9234349560946612399';
 

@@ -1,5 +1,5 @@
-import { getSupabaseAdmin, getSupabaseAnon } from './lib/supabase.js';
-import { requireAdmin } from './lib/auth.js';
+import { getSupabaseAdmin, getSupabaseAnon } from '../src/lib/supabase.js';
+import { requireAdmin } from '../src/lib/auth.js';
 
 export default async function handler(req, res) {
   try {

@@ -1,4 +1,4 @@
-import { getFCProfile } from '../lib/lodestone.js';
+import { getFCProfile } from '../../src/lib/lodestone.js';
 
 const LODESTONE_FC_ID = process.env.LODESTONE_FC_ID || '9234349560946612399';
 

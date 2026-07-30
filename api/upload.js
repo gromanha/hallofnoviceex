@@ -1,5 +1,5 @@
-import { requireAdmin } from './lib/auth.js';
-import { getSupabaseAdmin } from './lib/supabase.js';
+import { requireAdmin } from '../src/lib/auth.js';
+import { getSupabaseAdmin } from '../src/lib/supabase.js';
 
 const BUCKET = 'blog-images';
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB

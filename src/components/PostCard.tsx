@@ -19,11 +19,9 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
     : '';
 
   return (
-    <article
-      onClick={onClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-      tabIndex={0}
-      role="link"
+    <a
+      href={`/post/${post.slug}`}
+      onClick={(e) => { e.preventDefault(); onClick(); }}
       className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow card-shimmer-accent"
     >
       {/* Cover Image */}
@@ -117,7 +115,7 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
           </div>
 
       </div>
-    </article>
+    </a>
   );
 });
 

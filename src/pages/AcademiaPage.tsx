@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { BookOpen, Search, Sparkles, Filter, X, UtensilsCrossed } from 'lucide-react';
+import { BookOpen, Search, Sparkles, Filter, X, UtensilsCrossed, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
@@ -12,6 +12,7 @@ export const AcademiaPage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -37,6 +38,7 @@ export const AcademiaPage: React.FC = () => {
     let cancelled = false;
     async function loadPosts() {
       setLoading(true);
+      setLoadError(null);
       try {
         let url = '/api/posts';
         const params = new URLSearchParams();
@@ -48,6 +50,7 @@ export const AcademiaPage: React.FC = () => {
         if (!cancelled) setPosts(data || []);
       } catch (err) {
         console.error('Erro ao carregar postagens na página de Academia:', err);
+        if (!cancelled) setLoadError('Não foi possível carregar as publicações. Verifique sua conexão e tente novamente.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -177,6 +180,40 @@ export const AcademiaPage: React.FC = () => {
             {[1, 2, 3, 4, 5, 6].map(n => (
               <div key={n} className="h-80 bg-[var(--color-surface)] rounded-2xl shimmer" />
             ))}
+          </motion.div>
+        ) : loadError ? (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30"
+          >
+            <AlertTriangle className="w-10 h-10 text-[var(--color-crimson)] mx-auto mb-3 opacity-60" />
+            <h3 className="type-title text-[var(--color-on-surface)] mb-1">{loadError}</h3>
+            <button
+              onClick={() => {
+                setLoading(true);
+                setLoadError(null);
+                let url = '/api/posts';
+                const params = new URLSearchParams();
+                if (selectedCategory !== 'all') params.append('category', selectedCategory);
+                if (debouncedSearchQuery.trim()) params.append('search', debouncedSearchQuery.trim());
+                if (params.toString()) url += `?${params.toString()}`;
+                apiGet<Post[]>(url)
+                  .then(data => setPosts(data || []))
+                  .catch(err => {
+                    console.error('Erro ao recarregar postagens:', err);
+                    setLoadError('Falha ao recarregar. Tente novamente.');
+                  })
+                  .finally(() => setLoading(false));
+              }}
+              className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Tentar novamente
+            </button>
           </motion.div>
         ) : posts.length === 0 ? (
           <motion.div

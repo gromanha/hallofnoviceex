@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChefHat, Search, Filter, X, UtensilsCrossed, Globe, ExternalLink } from 'lucide-react';
+import { ChefHat, Search, Filter, X, UtensilsCrossed, Globe, ExternalLink, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Recipe, RecipeCategory } from '../types';
 import { apiGet } from '../lib/api';
 import { RecipeCard } from '../components/RecipeCard';
@@ -24,6 +24,7 @@ export const RecipesPage: React.FC = () => {
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -49,6 +50,7 @@ export const RecipesPage: React.FC = () => {
     let cancelled = false;
     async function loadRecipes() {
       setLoading(true);
+      setLoadError(null);
       try {
         let url = '/api/recipes';
         const params = new URLSearchParams();
@@ -60,6 +62,7 @@ export const RecipesPage: React.FC = () => {
         if (!cancelled) setRecipes(data || []);
       } catch (err) {
         console.error('Erro ao carregar receitas:', err);
+        if (!cancelled) setLoadError('Não foi possível carregar as receitas. Verifique sua conexão e tente novamente.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -72,7 +75,7 @@ export const RecipesPage: React.FC = () => {
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
       {/* Header */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 relative overflow-hidden text-center space-y-4">
+      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 relative overflow-hidden text-center space-y-4">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 right-1/4 w-72 h-72 bg-[var(--color-secondary)]/10 rounded-full blur-3xl" />
         </div>
@@ -82,7 +85,7 @@ export const RecipesPage: React.FC = () => {
             Livro de Receitas de Eorzea
           </div>
 
-          <h1 className="type-display text-[var(--color-on-surface)]">
+          <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
             Livro de Receitas de Eorzea
           </h1>
 
@@ -118,7 +121,7 @@ export const RecipesPage: React.FC = () => {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 aria-pressed={selectedCategory === cat.id}
-                className={`px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
+                className={`px-3 py-1.5 rounded-full type-label normal-case transition-all ${
                   selectedCategory === cat.id
                     ? catColor
                       ? `${catColor.bg} ${catColor.text} shadow-md border border-current/20`
@@ -168,6 +171,40 @@ export const RecipesPage: React.FC = () => {
             {[1, 2, 3, 4, 5, 6].map(n => (
               <div key={n} className="h-80 bg-[var(--color-surface)] rounded-2xl shimmer" />
             ))}
+          </motion.div>
+        ) : loadError ? (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30"
+          >
+            <AlertTriangle className="w-10 h-10 text-[var(--color-crimson)] mx-auto mb-3 opacity-60" />
+            <h3 className="type-title text-[var(--color-on-surface)] mb-1">{loadError}</h3>
+            <button
+              onClick={() => {
+                setLoading(true);
+                setLoadError(null);
+                let url = '/api/recipes';
+                const params = new URLSearchParams();
+                if (selectedCategory !== 'all') params.append('category', selectedCategory);
+                if (debouncedSearch.trim()) params.append('search', debouncedSearch.trim());
+                if (params.toString()) url += `?${params.toString()}`;
+                apiGet<Recipe[]>(url)
+                  .then(data => setRecipes(data || []))
+                  .catch(err => {
+                    console.error('Erro ao recarregar receitas:', err);
+                    setLoadError('Falha ao recarregar. Tente novamente.');
+                  })
+                  .finally(() => setLoading(false));
+              }}
+              className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Tentar novamente
+            </button>
           </motion.div>
         ) : recipes.length === 0 ? (
           <motion.div

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="rune-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#5BA4B5"/>
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="20" stroke="url(#rune-stroke)" stroke-width="1" fill="none" opacity="0.4"/>
+  <circle cx="24" cy="24" r="16" stroke="#C9A84C" stroke-width="0.5" fill="none" opacity="0.2"/>
+  <!-- Cardinal points -->
+  <path d="M24 4 L26 10 L24 8 L22 10Z" fill="#C9A84C" opacity="0.6"/>
+  <path d="M24 44 L26 38 L24 40 L22 38Z" fill="#C9A84C" opacity="0.6"/>
+  <path d="M4 24 L10 22 L8 24 L10 26Z" fill="#C9A84C" opacity="0.6"/>
+  <path d="M44 24 L38 22 L40 24 L38 26Z" fill="#C9A84C" opacity="0.6"/>
+  <!-- Inner rune -->
+  <path d="M24 14 L28 24 L24 20 L20 24Z" fill="#5BA4B5" opacity="0.4"/>
+  <path d="M24 34 L28 24 L24 28 L20 24Z" fill="#5BA4B5" opacity="0.4"/>
+  <circle cx="24" cy="24" r="3" fill="#4FC3F7" opacity="0.3"/>
+</svg>

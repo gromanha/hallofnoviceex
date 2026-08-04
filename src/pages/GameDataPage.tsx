@@ -295,7 +295,7 @@ export const GameDataPage: React.FC = () => {
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 relative overflow-hidden text-center space-y-4">
+      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 relative overflow-hidden text-center space-y-4">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-72 h-72 bg-[var(--color-primary)]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[var(--color-secondary)]/10 rounded-full blur-3xl" />
@@ -326,8 +326,8 @@ export const GameDataPage: React.FC = () => {
             className={`
               flex items-center gap-2 px-4 py-2 rounded-xl type-body transition-all duration-200
               ${activeTab === tab.id
-                ? 'bg-[var(--color-secondary)] text-[var(--color-on-secondary)] shadow-lg'
-                : 'glass border border-[var(--color-outline)]/30 text-[var(--color-on-surface-variant)] hover:border-[var(--color-secondary)]/50'
+                ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-lg'
+                : 'glass border border-[var(--color-outline)]/30 text-[var(--color-on-surface-variant)] hover:border-[var(--color-primary)]/50'
               }
             `}
           >

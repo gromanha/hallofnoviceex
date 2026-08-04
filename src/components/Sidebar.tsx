@@ -60,12 +60,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
         bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-surface-alt)] border-r border-[var(--color-outline)]/50 overflow-hidden
         transition-transform duration-300 ease-in-out
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        {/* Golden ornamental border - top */}
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/40 to-transparent" aria-hidden="true" />
-
+      `}      >
         {/* Brand */}
-        <div className="px-5 py-6 border-b border-[var(--color-outline)]/30 sidebar-brand-shimmer">
+        <div className="px-5 py-6 border-b border-[var(--color-outline)]/30">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#C9A84C]/30 shadow-md shrink-0">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
@@ -188,13 +185,6 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
           )}
         </div>
 
-        {/* Arcane Flourish */}
-        <div className="px-5 py-3 flex justify-center" aria-hidden="true">
-          <img src="/svg/rune-circle.svg" alt="" className="sidebar-sigil w-8 h-8 opacity-30" />
-        </div>
-
-        {/* Golden ornamental border - bottom */}
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/40 to-transparent" aria-hidden="true" />
       </aside>
 
       {/* Mobile bottom nav */}

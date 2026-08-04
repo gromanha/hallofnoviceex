@@ -1,10 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ── Academy Fonts — Cormorant Garamond for body ── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
-
-/* ── Arcane Academy — Animation utilities ── */
+/* ── Core Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -15,49 +12,19 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(91, 164, 181, 0.15); }
-  50% { box-shadow: 0 0 30px rgba(91, 164, 181, 0.25); }
-}
-
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-/* ── Phase 2: Campus Animations ── */
-@keyframes crystalGlow {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(79, 195, 247, 0.3)); }
-  50% { filter: drop-shadow(0 0 20px rgba(79, 195, 247, 0.6)); }
+@keyframes toastSlideIn {
+  from { transform: translateY(100%) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-@keyframes pageTurn {
-  0% { transform: perspective(800px) rotateY(0deg); }
-  100% { transform: perspective(800px) rotateY(-10deg); }
-}
-
-@keyframes petalFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.7; }
-  90% { opacity: 0.7; }
-  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-}
-
-@keyframes goldenFocus {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(201, 168, 76, 0); }
-  50% { box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.2); }
-}
-
-@keyframes dustFloat {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  20% { opacity: 0.4; }
-  80% { opacity: 0.4; }
-  100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
-}
-
-@keyframes ivySway {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(2deg); }
+@keyframes toastSlideOut {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to { transform: translateY(100%) scale(0.95); opacity: 0; }
 }
 
 .fade-in {
@@ -80,7 +47,7 @@ html {
 }
 
 body {
-  font-family: 'Cormorant Garamond', 'Inter', system-ui, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--color-background);
   background-image: url('/textures/parchment-light.svg');
   background-repeat: repeat;
@@ -92,14 +59,25 @@ body {
   background-image: url('/textures/parchment-dark.svg');
 }
 
-/* ── Focus Visible ── */
+[data-theme="dark"] .type-body {
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+[data-theme="dark"] .prose {
+  line-height: 1.65;
+}
+
+[data-theme="dark"] .type-caption {
+  letter-spacing: 0.03em;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* ── Custom Scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -118,17 +96,17 @@ body {
   background: var(--color-primary);
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-outline) transparent;
 }
 
 @theme {
-  --font-serif: "Cinzel", Georgia, serif;
+  --font-body: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-cinzel: "Cinzel", serif;
+  --font-cormorant: "Cormorant Garamond", Georgia, serif;
 
   /* ── Type Scale — Role-based tokens ── */
   --type-display-size: clamp(2rem, 5vw, 3.5rem);
@@ -151,9 +129,9 @@ body {
   --type-label-leading: 1.4;
   --type-label-tracking: 0.05em;
 
-  --type-caption-size: 0.625rem;
-  --type-caption-leading: 1.4;
-  --type-caption-tracking: 0.04em;
+  --type-caption-size: 0.6875rem;
+  --type-caption-leading: 1.45;
+  --type-caption-tracking: 0.02em;
 
   /* ── Arcane Academy — Campus Palette ── */
   --color-primary: #5BA4B5;
@@ -226,8 +204,6 @@ body {
   --card-shadow-active: 0 2px 8px rgba(0, 0, 0, 0.3);
   --card-border-hover: rgba(91, 164, 181, 0.3);
   --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.4);
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --sidebar-nav-glow: 0 0 8px rgba(91, 164, 181, 0.5), 0 0 16px rgba(91, 164, 181, 0.2);
 }
 
 /* ── Light Theme Overrides — Parchment Campus ── */
@@ -303,8 +279,6 @@ body {
   --card-shadow-active: 0 2px 8px rgba(44, 36, 22, 0.1);
   --card-border-hover: rgba(201, 168, 76, 0.3);
   --shadow-elevated: 0 12px 40px rgba(44, 36, 22, 0.12);
-  --shadow-subtle: 0 1px 3px rgba(44, 36, 22, 0.06);
-  --sidebar-nav-glow: 0 0 8px rgba(91, 164, 181, 0.4), 0 0 16px rgba(91, 164, 181, 0.15);
 }
 
 /* ── Glass-morphism Utilities ── */
@@ -318,10 +292,6 @@ body {
 .glass-hover:hover {
   background: var(--glass-bg-hover);
   border-color: var(--card-border-hover);
-}
-
-.glow-hover:hover {
-  box-shadow: var(--card-shadow-hover);
 }
 
 /* ── Card Glow on Hover ── */
@@ -392,7 +362,7 @@ button:active:not(:disabled):hover,
 }
 
 .type-body {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--type-body-size);
   font-weight: 400;
   line-height: var(--type-body-leading);
@@ -416,18 +386,33 @@ button:active:not(:disabled):hover,
   letter-spacing: var(--type-caption-tracking);
 }
 
-/* ── Accent Text ── */
+.type-body-semibold {
+  font-family: var(--font-body);
+  font-size: var(--type-body-size);
+  font-weight: 600;
+  line-height: var(--type-body-leading);
+  letter-spacing: var(--type-body-tracking);
+}
+
+.type-label-xs {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .text-accent-orange {
   color: var(--color-primary);
 }
 
-/* Ensure images never overflow their containers */
 img {
   max-width: 100%;
   height: auto;
 }
 
-/* ── Recipe Card (Arcane variant) ── */
+/* ── Recipe Card ── */
 .recipe-card {
   background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
   border: 1px solid var(--color-outline);
@@ -440,70 +425,7 @@ img {
   box-shadow: var(--card-shadow-hover);
 }
 
-/* ── Sidebar Scroll ── */
-.sidebar-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb {
-  background: var(--color-outline);
-  border-radius: 2px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
-/* ── Sidebar Delight — Arcane Grimoire ── */
-@keyframes brandShimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes runeGlow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-@keyframes iconSpin {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.15); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-@keyframes sigilFloat {
-  0%, 100% { transform: translateY(0px); opacity: 0.3; }
-  50% { transform: translateY(-2px); opacity: 0.5; }
-}
-
-.sidebar-brand-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.sidebar-brand-shimmer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(91, 164, 181, 0.08) 40%,
-    rgba(201, 168, 76, 0.12) 50%,
-    rgba(91, 164, 181, 0.08) 60%,
-    transparent 100%
-  );
-  animation: brandShimmer 3s ease-in-out 0.5s 1 forwards;
-  pointer-events: none;
-}
-
+/* ── Sidebar Nav Active ── */
 .sidebar-nav-active {
   position: relative;
 }
@@ -517,153 +439,9 @@ img {
   width: 3px;
   border-radius: 0 2px 2px 0;
   background: var(--color-primary);
-  box-shadow: var(--sidebar-nav-glow);
-  animation: runeGlow 2.5s ease-in-out infinite;
 }
 
-.sidebar-theme-toggle:active svg {
-  animation: iconSpin 0.4s ease-in-out;
-}
-
-.sidebar-sigil {
-  animation: sigilFloat 4s ease-in-out infinite;
-}
-
-/* ── Delight: Rune Loading Circle ── */
-@keyframes runeRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes runeRotateReverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-@keyframes runePulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-@keyframes runeGlowBreathe {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(91, 164, 181, 0.2)); }
-  50% { filter: drop-shadow(0 0 12px rgba(91, 164, 181, 0.5)); }
-}
-
-@keyframes logoFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
-}
-
-.rune-circle {
-  animation: runeRotate 8s linear infinite;
-}
-
-.rune-circle-reverse {
-  animation: runeRotateReverse 12s linear infinite;
-}
-
-.rune-dot {
-  animation: runePulse 2s ease-in-out infinite;
-}
-
-.rune-glow {
-  animation: runeGlowBreathe 3s ease-in-out infinite;
-}
-
-.logo-float {
-  animation: logoFloat 3s ease-in-out infinite;
-}
-
-/* ── Delight: Card Shimmer Accent ── */
-@keyframes shimmerAccent {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.card-shimmer-accent::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    110deg,
-    transparent 30%,
-    rgba(201, 168, 76, 0.08) 45%,
-    rgba(91, 164, 181, 0.06) 50%,
-    rgba(201, 168, 76, 0.08) 55%,
-    transparent 70%
-  );
-  background-size: 200% 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.group:hover .card-shimmer-accent,
-*:hover > .card-shimmer-accent {
-  opacity: 1;
-  animation: shimmerAccent 1.5s ease-in-out;
-}
-
-/* ── Delight: Wandering Book (404) ── */
-@keyframes wanderFloat {
-  0%, 100% { transform: translate(0, 0) rotate(-3deg); }
-  25% { transform: translate(6px, -8px) rotate(2deg); }
-  50% { transform: translate(-4px, -12px) rotate(-1deg); }
-  75% { transform: translate(8px, -5px) rotate(3deg); }
-}
-
-@keyframes wanderGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(201, 168, 76, 0.1); }
-  50% { box-shadow: 0 0 40px rgba(201, 168, 76, 0.2); }
-}
-
-.wander-book {
-  animation: wanderFloat 6s ease-in-out infinite, wanderGlow 4s ease-in-out infinite;
-}
-
-/* ── Delight: Sparkle Float ── */
-@keyframes sparkleFloat {
-  0% { transform: translateY(0) scale(1); opacity: 0.6; }
-  50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
-  100% { transform: translateY(-16px) scale(0.8); opacity: 0; }
-}
-
-@keyframes sparkleDrift {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.8; }
-  90% { opacity: 0.8; }
-  100% { transform: translate(var(--drift-x, 20px), var(--drift-y, -30px)) rotate(180deg); opacity: 0; }
-}
-
-.sparkle-particle {
-  animation: sparkleDrift var(--sparkle-duration, 3s) ease-in-out infinite;
-  animation-delay: var(--sparkle-delay, 0s);
-}
-
-/* ── Delight: Today Glow ── */
-@keyframes todayGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(91, 164, 181, 0); }
-  50% { box-shadow: 0 0 12px 2px rgba(91, 164, 181, 0.15); }
-}
-
-.today-glow {
-  animation: todayGlow 3s ease-in-out infinite;
-}
-
-/* ── Delight: Toast Slide ── */
-@keyframes toastSlideIn {
-  from { transform: translateY(100%) scale(0.95); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-@keyframes toastSlideOut {
-  from { transform: translateY(0) scale(1); opacity: 1; }
-  to { transform: translateY(100%) scale(0.95); opacity: 0; }
-}
-
+/* ── Toast ── */
 .toast-enter {
   animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -675,13 +453,13 @@ img {
 /* ── Prose: Markdown Content Styling ── */
 .prose {
   color: var(--color-on-surface);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--type-body-size);
   line-height: var(--type-body-leading);
 }
 
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-family: var(--font-display);
+  font-family: var(--font-cinzel);
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
   line-height: 1.2;
@@ -692,10 +470,11 @@ img {
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-family: var(--font-display);
+  font-family: var(--font-cinzel);
   font-size: clamp(1.25rem, 3vw, 1.75rem);
   font-weight: 600;
   line-height: 1.25;
+  letter-spacing: 0;
   color: var(--color-on-surface);
   margin-top: 1.75em;
   margin-bottom: 0.6em;
@@ -704,20 +483,22 @@ img {
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-family: var(--font-display);
+  font-family: var(--font-cinzel);
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.3;
+  letter-spacing: 0;
   color: var(--color-on-surface);
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-family: var(--font-display);
+  font-family: var(--font-cinzel);
   font-size: 1.125rem;
   font-weight: 600;
   line-height: 1.35;
+  letter-spacing: 0;
   color: var(--color-on-surface);
   margin-top: 1.25em;
   margin-bottom: 0.4em;
@@ -922,7 +703,6 @@ img {
   font-style: italic;
 }
 
-/* Fix for inline wiki images (icons, small images) */
 span[typeof="mw:File"] img,
 span.icon-label-container img {
   display: inline;
@@ -933,13 +713,6 @@ span.icon-label-container img {
   box-shadow: none;
   border-radius: 0;
   margin: 0;
-}
-
-/* Centered content from <centro> tags */
-div[style*="text-align:center"],
-div[style*="text-align: center"] {
-  text-align: center;
-  margin: 1.5em 0;
 }
 
 /* Wiki-style numbered lists */
@@ -964,7 +737,6 @@ div[style*="text-align: center"] {
   color: var(--color-primary);
 }
 
-/* Nested lists */
 .prose ol ol,
 .prose ul ul,
 .prose ol ul,
@@ -973,7 +745,6 @@ div[style*="text-align: center"] {
   padding-left: 1.5em;
 }
 
-/* Wiki-style references */
 .ref {
   font-size: 0.8em;
   vertical-align: super;
@@ -981,7 +752,6 @@ div[style*="text-align: center"] {
   cursor: pointer;
 }
 
-/* Mark/highlight text */
 mark {
   background: var(--color-amber-light);
   color: var(--color-on-surface);
@@ -989,13 +759,11 @@ mark {
   border-radius: 0.25em;
 }
 
-/* Abbreviations */
 abbr {
   text-decoration: underline dotted;
   cursor: help;
 }
 
-/* Definition lists */
 dl {
   margin: 1em 0;
 }
@@ -1010,7 +778,6 @@ dd {
   color: var(--color-on-surface-variant);
 }
 
-/* Icon images (small inline icons) */
 img[width="20"],
 img[width="16"],
 img[height="20"],
@@ -1023,7 +790,7 @@ img[height="16"] {
   box-shadow: none;
 }
 
-/* ── Wiki HTML Import: Quotation Boxes ── */
+/* ── Wiki HTML Import ── */
 .quotation-box,
 blockquote.quotation-box {
   border-left: 3px solid var(--color-primary);
@@ -1040,7 +807,6 @@ blockquote.quotation-box p {
   margin: 0.5em 0;
 }
 
-/* ── Wiki HTML Import: Table of Contents ── */
 .toc {
   background: var(--color-surface);
   border: 1px solid var(--color-outline);
@@ -1080,18 +846,16 @@ blockquote.quotation-box p {
   text-decoration: underline;
 }
 
-/* ── Wiki HTML Import: MW Heading Wrappers ── */
 .mw-heading {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
 
-.mw-heading h1 { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 700; }
-.mw-heading h2 { font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 600; border-bottom: 1px solid var(--color-outline); padding-bottom: 0.4em; }
-.mw-heading h3 { font-size: 1.25rem; font-weight: 600; }
-.mw-heading h4 { font-size: 1.125rem; font-weight: 600; }
+.mw-heading h1 { font-family: var(--font-cinzel); font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 700; letter-spacing: 0; }
+.mw-heading h2 { font-family: var(--font-cinzel); font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 600; letter-spacing: 0; border-bottom: 1px solid var(--color-outline); padding-bottom: 0.4em; }
+.mw-heading h3 { font-family: var(--font-cinzel); font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
+.mw-heading h4 { font-family: var(--font-cinzel); font-size: 1.125rem; font-weight: 600; letter-spacing: 0; }
 
-/* ── Wiki HTML Import: Images from mediawiki ── */
 img[src*="mediawiki"] {
   max-width: 100%;
   height: auto;
@@ -1107,7 +871,6 @@ img[alt*="Icon"] {
   margin: 0 0.25em;
 }
 
-/* ── Wiki HTML Import: Hatnote boxes (if kept) ── */
 .hatnote {
   font-style: italic;
   color: var(--color-on-surface-variant);
@@ -1116,62 +879,6 @@ img[alt*="Icon"] {
   font-size: 0.9em;
 }
 
-/* ── Wiki HTML Import: Navbox ── */
-.navbox {
-  margin-top: 2em;
-  border: 1px solid var(--color-outline);
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-.navbox-title {
-  background: var(--color-surface-alt);
-  padding: 0.5em 1em;
-  font-weight: 600;
-  text-align: center;
-}
-
-.navbox-content {
-  padding: 0.5em 1em;
-}
-
-/* ── Wiki HTML Import: Item Tables (stdt__table_v2) ── */
-table.item,
-table.stdt__table_v2 {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5em 0;
-  font-size: 0.9em;
-  border: 1px solid var(--color-outline);
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-table.item th,
-table.stdt__table_v2 th {
-  background: var(--color-surface-alt);
-  text-align: left;
-  font-weight: 600;
-  padding: 0.75em 1em;
-  border-bottom: 2px solid var(--color-outline);
-  color: var(--color-on-surface);
-  white-space: nowrap;
-}
-
-table.item td,
-table.stdt__table_v2 td {
-  padding: 0.75em 1em;
-  border-bottom: 1px solid var(--color-outline);
-  color: var(--color-on-surface);
-  vertical-align: top;
-}
-
-table.item tbody tr:hover,
-table.stdt__table_v2 tbody tr:hover {
-  background: var(--color-primary-light);
-}
-
-/* ── Wiki HTML Import: Icon Label Containers ── */
 .icon-label-container {
   display: inline-flex;
   align-items: center;
@@ -1188,7 +895,6 @@ table.stdt__table_v2 tbody tr:hover {
   box-shadow: none;
 }
 
-/* ── Wiki HTML Import: Plainlinks ── */
 .plainlinks a {
   color: var(--color-primary);
   text-decoration: none;
@@ -1198,7 +904,6 @@ table.stdt__table_v2 tbody tr:hover {
   text-decoration: underline;
 }
 
-/* ── Wiki HTML Import: Standard Frame Icons ── */
 .standard-frame-icon {
   display: inline-block;
   vertical-align: middle;
@@ -1212,16 +917,6 @@ table.stdt__table_v2 tbody tr:hover {
   box-shadow: none;
 }
 
-/* ── Wiki HTML Import: Float Right Containers ── */
-div[style*="float:right"],
-div[style*="float: right"] {
-  float: right;
-  clear: right;
-  margin-bottom: 0.5em;
-  padding: 0.5em 0 0.8em 1.4em;
-  max-width: 20em;
-}
-
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1232,7 +927,7 @@ div[style*="float: right"] {
   }
 }
 
-/* ── FCCard — FC Info Card in Sidebar ── */
+/* ── FCCard — FC Info Card ── */
 .fccard {
   background: var(--color-surface);
   border: 1px solid var(--color-outline);
@@ -1244,7 +939,6 @@ div[style*="float: right"] {
   border-color: var(--card-border-hover);
 }
 
-/* Crest layers */
 .fccard-crest {
   position: relative;
   border-radius: 0.5rem;
@@ -1260,23 +954,6 @@ div[style*="float: right"] {
 }
 
 /* ── Members Panel ── */
-.members-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-.members-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.members-scroll::-webkit-scrollbar-thumb {
-  background: var(--color-outline);
-  border-radius: 2px;
-}
-
-.members-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
 .members-panel__item {
   border-left: 2px solid transparent;
   transition: border-color 0.15s ease, background-color 0.15s ease;
@@ -1286,17 +963,6 @@ div[style*="float: right"] {
   border-left-color: var(--color-primary);
 }
 
-/* Skeleton shimmer for member panel */
-@keyframes panelShimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.members-panel .shimmer {
-  animation: panelShimmer 1.5s ease-in-out infinite;
-}
-
-/* Line clamp utility */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1304,18 +970,37 @@ div[style*="float: right"] {
   overflow: hidden;
 }
 
-/* ── Phase 2: Campus Utility Classes ── */
+/* ── Minimal utility classes referenced by components ── */
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.sidebar-sigil {
+  /* Intentionally empty — animation removed in distillation */
+}
+
+.today-glow {
+  /* Intentionally empty — animation removed in distillation */
+}
+
 .crystal-glow {
-  animation: crystalGlow 3s ease-in-out infinite;
+  /* Intentionally empty — animation removed in distillation */
 }
 
-.golden-focus:focus {
-  animation: goldenFocus 2s ease-in-out infinite;
+.wander-book {
+  /* Intentionally empty — animation removed in distillation */
 }
 
-.golden-border {
-  border: 2px solid transparent;
-  border-image: linear-gradient(to right, transparent, #C9A84C, transparent) 1;
+.sparkle-particle {
+  /* Intentionally empty — animation removed in distillation */
+}
+
+.card-shimmer-accent {
+  /* Intentionally empty — animation removed in distillation */
 }
 
 .golden-border-subtle {
@@ -1326,30 +1011,11 @@ div[style*="float: right"] {
   border-color: rgba(201, 168, 76, 0.4);
 }
 
-.parchment-bg {
-  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
+/* ── Scrollbar None Utility ── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
-.text-gold {
-  color: #C9A84C;
-}
-
-.text-crystal {
-  color: #4FC3F7;
-}
-
-.text-lavender {
-  color: #9B7EC8;
-}
-
-.text-sage {
-  color: #6B8E6B;
-}
-
-.font-cinzel {
-  font-family: 'Cinzel', serif;
-}
-
-.font-cormorant {
-  font-family: 'Cormorant Garamond', serif;
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

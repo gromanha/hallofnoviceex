@@ -1,19 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BookOpen, ArrowRight, ExternalLink, Calendar, MapPin } from 'lucide-react';
+import { BookOpen, ArrowRight, ExternalLink, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
-import { WeekCalendarPreview } from '../components/WeekCalendarPreview';
-import { MembersCard } from '../components/MembersCard';
-import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const lodestone = useLodestoneFC();
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -41,11 +38,14 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     let cancelled = false;
     async function loadPosts() {
+      setLoading(true);
+      setLoadError(null);
       try {
         const data = await apiGet<Post[]>('/api/posts');
         if (!cancelled) setPosts(data || []);
       } catch (err) {
         console.error('Erro ao carregar postagens:', err);
+        if (!cancelled) setLoadError('Não foi possível carregar as postagens. Verifique sua conexão e tente novamente.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -70,41 +70,11 @@ export const HomePage: React.FC = () => {
             className="absolute inset-0 w-full h-full object-cover opacity-25 blur-[1px] mix-blend-soft-light"
             aria-hidden="true"
           />
-          {/* Gradient veil over the image for delicacy */}
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-surface)]/80 via-[var(--color-surface)]/50 to-[var(--color-surface)]/90" />
-        </div>
-
-        {/* Atmospheric depth layers */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] left-[10%] w-[500px] h-[500px] bg-[var(--color-primary)]/[0.04] rounded-full blur-[100px]" />
-          <div className="absolute bottom-[-30%] right-[15%] w-[400px] h-[400px] bg-[var(--color-secondary)]/[0.05] rounded-full blur-[80px]" />
-          <div className="absolute top-[20%] right-[30%] w-[200px] h-[200px] bg-[var(--color-tertiary)]/[0.03] rounded-full blur-[60px]" />
-        </div>
-
-        {/* Decorative floating elements */}
-        <div className="absolute top-20 left-[5%] opacity-20 pointer-events-none" aria-hidden="true">
-          <img src="/svg/floating-book.svg" alt="" className="w-16 h-16 wander-book" />
-        </div>
-        <div className="absolute bottom-20 right-[8%] opacity-15 pointer-events-none" aria-hidden="true">
-          <img src="/svg/rune-circle.svg" alt="" className="w-12 h-12 sidebar-sigil" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
           <div className="flex flex-col items-center text-center space-y-8">
-
-            {/* Ceremonial Mark */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[var(--color-primary)]/[0.08] border border-[var(--color-primary)]/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
-                  Behemoth — Majestic Battle Academy
-                </span>
-              </div>
-            </motion.div>
 
             {/* Academy Name — Cinzel ceremonial */}
             <motion.div
@@ -159,173 +129,95 @@ export const HomePage: React.FC = () => {
               </a>
             </motion.div>
 
-            {/* Campus Quick Card — glass anchor */}
-            <motion.div
-              className="glass rounded-2xl px-6 py-4 border border-[var(--color-outline)]/50 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[var(--color-secondary)]/10 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-[var(--color-crystal)]" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-[var(--color-on-surface)]">Campus Físico</p>
-                  <p className="text-[10px] font-mono text-[var(--color-on-surface-variant)]">
-                    Mist — Ward 19, Plot 35
-                  </p>
-                </div>
-              </div>
-              <span className="hidden sm:block w-px h-8 bg-[var(--color-outline)]/50" />
-              <p className="text-[11px] text-[var(--color-on-surface-variant)] leading-relaxed max-w-xs">
-                Visite nossa sede decorada em estilo Old Sharlayan, com Biblioteca, Salas Táticas e Cantina.
-              </p>
-            </motion.div>
-
           </div>
         </div>
-
-        {/* Bottom edge: subtle gold line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-secondary)]/20 to-transparent" />
       </section>
 
       {/* ═══════════════════ Content Area ═══════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-        {/* ── Quick Actions Banner ── */}
-        <motion.div
-          className="glass rounded-2xl p-5 border border-[var(--color-outline)]/50 golden-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4" viewBox="0 0 32 32" fill="none"><rect x="6" y="4" width="20" height="24" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/><ellipse cx="16" cy="4" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/><ellipse cx="16" cy="28" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/></svg>
+        {/* ── Posts Section ── */}
+        <div>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="type-title text-[var(--color-on-surface)] flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[var(--color-primary)]" />
+                Últimas Postagens
+              </h2>
+              <p className="type-caption text-[var(--color-on-surface-variant)] mt-1">
+                Guias, notícias e códices do Corpo Docente
+              </p>
             </div>
-            <p className="text-[11px] text-[var(--color-on-surface-variant)] font-cinzel">
-              FC Final Fantasy XIV • <strong className="text-[var(--color-on-surface)]">Behemoth</strong> • Acesse eventos e guias
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+
             <button
-              onClick={() => navigate('/calendario')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface)] border border-[var(--color-outline)] text-[var(--color-on-surface)] font-bold text-xs transition-all"
+              onClick={handleNavigateAcademia}
+              className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] flex items-center gap-1 transition-colors"
             >
-              <Calendar className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-              Calendário
+              Ver todos <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
-        </motion.div>
 
-        {/* ── Two Column Layout ── */}
-        <div className="flex gap-6">
-          {/* Left Column: Posts */}
-          <div className="flex-1 min-w-0 space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="type-title text-[var(--color-on-surface)] flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-[var(--color-primary)]" />
-                  Últimas Postagens
-                </h2>
-                <p className="type-caption text-[var(--color-on-surface-variant)] mt-1">
-                  Guias, notícias e códices do Corpo Docente
-                </p>
-              </div>
-
+          {/* Posts Grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[1, 2, 3, 4].map(n => (
+                <div key={n} className="h-72 bg-[var(--color-surface)] rounded-2xl shimmer" />
+              ))}
+            </div>
+          ) : loadError ? (
+            <div className="text-center py-12 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30">
+              <AlertTriangle className="w-10 h-10 text-[var(--color-crimson)] mx-auto mb-3 opacity-60" />
+              <p className="text-sm font-semibold text-[var(--color-on-surface)] mb-1">{loadError}</p>
               <button
-                onClick={handleNavigateAcademia}
-                className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] flex items-center gap-1 transition-colors"
+                onClick={() => {
+                  setLoading(true);
+                  setLoadError(null);
+                  apiGet<Post[]>('/api/posts')
+                    .then(data => setPosts(data || []))
+                    .catch(err => {
+                      console.error('Erro ao recarregar postagens:', err);
+                      setLoadError('Falha ao recarregar. Tente novamente.');
+                    })
+                    .finally(() => setLoading(false));
+                }}
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all"
               >
-                Ver todos <ArrowRight className="w-3.5 h-3.5" />
+                <RefreshCw className="w-3.5 h-3.5" />
+                Tentar novamente
               </button>
             </div>
-
-            {/* Posts Grid */}
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {[1, 2, 3, 4].map(n => (
-                  <div key={n} className="h-72 bg-[var(--color-surface)] rounded-2xl shimmer" />
-                ))}
-              </div>
-            ) : posts.length === 0 ? (
-              <div className="text-center py-12 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
-                <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-40" />
-                <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma postagem encontrada.</p>
-                <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Use o Painel Admin para criar a primeira publicação.</p>
-              </div>
-            ) : (
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-5"
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-              >
-                {pinnedPosts.map(post => (
-                  <motion.div key={post.id} variants={itemVariants}>
-                    <PostCard
-                      post={post}
-                      onClick={() => handleNavigatePost(post.slug)}
-                    />
-                  </motion.div>
-                ))}
-                {recentPosts.map(post => (
-                  <motion.div key={post.id} variants={itemVariants}>
-                    <PostCard
-                      post={post}
-                      onClick={() => handleNavigatePost(post.slug)}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </div>
-
-          {/* Right Column: Calendar + Members + Quick Info */}
-          <div className="hidden xl:flex flex-col w-80 shrink-0 space-y-5">
-            {/* Week Calendar Preview */}
+          ) : posts.length === 0 ? (
+            <div className="text-center py-12 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
+              <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-40" />
+              <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma postagem encontrada.</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Use o Painel Admin para criar a primeira publicação.</p>
+            </div>
+          ) : (
             <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-5"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
             >
-              <WeekCalendarPreview />
+              {pinnedPosts.map(post => (
+                <motion.div key={post.id} variants={itemVariants}>
+                  <PostCard
+                    post={post}
+                    onClick={() => handleNavigatePost(post.slug)}
+                  />
+                </motion.div>
+              ))}
+              {recentPosts.map(post => (
+                <motion.div key={post.id} variants={itemVariants}>
+                  <PostCard
+                    post={post}
+                    onClick={() => handleNavigatePost(post.slug)}
+                  />
+                </motion.div>
+              ))}
             </motion.div>
-
-            {/* Members Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <MembersCard lodestone={lodestone} maxVisible={6} />
-            </motion.div>
-
-            {/* Quick Info Card */}
-            <motion.div
-              className="glass rounded-2xl p-5 border border-[var(--color-outline)]/50 space-y-4"
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <h3 className="font-display font-bold text-sm text-[var(--color-on-surface)]">
-                Matrícula Digital
-              </h3>
-              <p className="text-[11px] text-[var(--color-on-surface-variant)] leading-relaxed">
-                Junte-se a nós pelo Discord oficial para participar dos eventos, learning parties e matricular seu personagem.
-              </p>
-              <a
-                href="https://discord.gg/3XJgrsVUbP"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center px-4 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-xs transition-all hover:shadow-md hover:shadow-[var(--color-primary)]/20"
-              >
-                Quero Me Matricular
-              </a>
-            </motion.div>
-          </div>
+          )}
         </div>
 
       </div>

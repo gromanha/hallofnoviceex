@@ -96,10 +96,10 @@ export const Footer: React.FC = () => {
             <ChevronUp className="w-3 h-3" />
             Voltar ao Topo
           </button>
-          <p className="font-cinzel text-[10px] tracking-wider text-[var(--color-on-surface-variant)]/70">
+          <p className="font-cinzel text-[10px] tracking-wider text-[var(--color-on-surface-variant)]" style={{ opacity: 0.7 }}>
             © 2026 Hall of the Novice EX — Desenvolvido para a comunidade de Final Fantasy XIV
           </p>
-          <p className="mt-1 font-cinzel text-[9px] tracking-wider text-[var(--color-on-surface-variant)]/50">
+          <p className="mt-1 font-cinzel text-[9px] tracking-wider text-[var(--color-on-surface-variant)]" style={{ opacity: 0.5 }}>
             Todos os direitos de imagem e marca pertencem à Square Enix Co., Ltd.
           </p>
         </div>

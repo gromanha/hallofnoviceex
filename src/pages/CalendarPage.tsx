@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   BookOpen, Sparkles, ChevronLeft, ChevronRight, Clock,
-  Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar, RefreshCw
+  Wand2, Swords, FlaskConical, Layers, Eye, Moon, Star, Calendar, RefreshCw, AlertTriangle
 } from 'lucide-react';
 import { MagicalEvent, MonthData, EventTypeItem } from '../types';
 import { apiGet } from '../lib/api';
@@ -106,11 +106,13 @@ export const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<MagicalEvent[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypeItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function loadData() {
       setLoading(true);
+      setLoadError(null);
       try {
         const [evs, types] = await Promise.all([
           apiGet<MagicalEvent[]>('/api/events'),
@@ -122,6 +124,7 @@ export const CalendarPage: React.FC = () => {
         }
       } catch (err) {
         console.error('Erro ao carregar dados do calendário:', err);
+        if (!cancelled) setLoadError('Não foi possível carregar os eventos. Verifique sua conexão e tente novamente.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -231,7 +234,7 @@ export const CalendarPage: React.FC = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="font-display font-bold text-sm px-3 min-w-[100px] text-center text-[var(--color-on-surface)]">
+          <span className="font-cinzel font-bold text-sm px-3 min-w-[100px] text-center text-[var(--color-on-surface)]">
             {currentMonth.name}
           </span>
 
@@ -297,6 +300,41 @@ export const CalendarPage: React.FC = () => {
             transition={{ duration: 0.15 }}
             className="h-96 bg-[var(--color-surface)] rounded-2xl shimmer"
           />
+        ) : loadError ? (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30"
+          >
+            <AlertTriangle className="w-10 h-10 text-[var(--color-crimson)] mx-auto mb-3 opacity-60" />
+            <h3 className="font-display font-bold text-base text-[var(--color-on-surface)] mb-1">{loadError}</h3>
+            <button
+              onClick={() => {
+                setLoading(true);
+                setLoadError(null);
+                Promise.all([
+                  apiGet<MagicalEvent[]>('/api/events'),
+                  apiGet<EventTypeItem[]>('/api/event-types'),
+                ])
+                  .then(([evs, types]) => {
+                    setEvents(evs || []);
+                    setEventTypes(types || []);
+                  })
+                  .catch(err => {
+                    console.error('Erro ao recarregar calendário:', err);
+                    setLoadError('Falha ao recarregar. Tente novamente.');
+                  })
+                  .finally(() => setLoading(false));
+              }}
+              className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Tentar novamente
+            </button>
+          </motion.div>
         ) : monthEvents.length === 0 ? (
           <EmptyCalendarState />
         ) : filteredEvents.length === 0 ? (
@@ -367,7 +405,7 @@ export const CalendarPage: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-0.5 mt-1">
+                  <div className="space-y-0.5 mt-1 max-h-[80px] sm:max-h-[100px] overflow-y-auto overflow-hidden scrollbar-none">
                       {dayEvs.map(ev => {
                         const tInfo = typeMap.get(ev.type);
                         const curMonthIdx = REAL_MONTH_NAMES.indexOf(REAL_MONTH_NAMES[TODAY.getMonth()]);

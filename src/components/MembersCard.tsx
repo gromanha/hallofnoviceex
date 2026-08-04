@@ -84,14 +84,24 @@ export const MembersCard: React.FC<MembersCardProps> = memo(({ lodestone, maxVis
     return (
       <div className="glass rounded-2xl p-4 border border-[var(--color-outline)]/50 text-center space-y-2">
         <p className="text-[11px] text-[var(--color-on-surface-variant)]">Erro ao carregar membros</p>
-        <a
-          href="https://na.finalfantasyxiv.com/lodestone/freecompany/9234349560946612399/member"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[11px] text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
-        >
-          Ver no Lodestone <ExternalLink className="w-3 h-3" />
-        </a>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={refetch}
+            disabled={loading}
+            className="inline-flex items-center gap-1 text-[11px] text-[var(--color-primary)] hover:underline disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+            Tentar novamente
+          </button>
+          <a
+            href="https://na.finalfantasyxiv.com/lodestone/freecompany/9234349560946612399/member"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] inline-flex items-center gap-1"
+          >
+            Ver no Lodestone <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
       </div>
     );
   }

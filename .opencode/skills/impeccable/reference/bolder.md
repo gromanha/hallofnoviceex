@@ -4,7 +4,7 @@
 
 ## Scope is sovereign
 
-"Everything else stays" is a literal instruction. Touch only the named target. Do not restyle its neighbors, do not migrate the page to a new idea, do not add colors, fonts, radii, shadows, or system primitives the surface does not already own. If the existing system genuinely cannot express the direction, stop and ask the user directly to clarify what you cannot infer. before expanding it, naming the exact addition and the job it would do.
+"Everything else stays" is a literal instruction. Touch only the named target. Do not restyle its neighbors, do not migrate the page to a new idea, do not add colors, fonts, radii, shadows, or system primitives the surface does not already own. If the existing system genuinely cannot express the direction, stop and STOP and call the `question` tool to clarify. before expanding it, naming the exact addition and the job it would do.
 
 ## Why it reads flat
 

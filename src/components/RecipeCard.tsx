@@ -20,11 +20,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
   const totalTime = [recipe.prep_time, recipe.cook_time].filter(Boolean).join(' + ');
 
   return (
-    <article
-      onClick={onClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-      tabIndex={0}
-      role="link"
+    <a
+      href={`/receitas/${recipe.slug}`}
+      onClick={(e) => { e.preventDefault(); onClick(); }}
       className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow card-shimmer-accent"
     >
       {recipe.cover_image && !imgError && (
@@ -111,7 +109,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
           </div>
         </div>
       </div>
-    </article>
+    </a>
   );
 });
 

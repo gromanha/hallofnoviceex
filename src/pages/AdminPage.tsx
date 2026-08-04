@@ -473,7 +473,7 @@ export const AdminPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4" />
             Área Administrativa
           </div>
-          <h1 className="type-display text-[var(--color-on-surface)]">
+          <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
             Painel Administrativo
           </h1>
           <p className="type-body text-[var(--color-on-surface-variant)]">

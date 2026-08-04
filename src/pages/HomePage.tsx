@@ -76,8 +76,13 @@ export const HomePage: React.FC = () => {
       {/* ═══════════════════ Trending Categories ═══════════════════ */}
       <TrendingCategories />
 
+      {/* ── Section Divider ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-outline)]/30 to-transparent" />
+      </div>
+
       {/* ═══════════════════ Content Area ═══════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
         <div className="flex flex-col xl:flex-row gap-8">
 
           {/* ── Main Content: Posts ── */}
@@ -170,11 +175,21 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
+      {/* ── Section Divider ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-outline)]/30 to-transparent" />
+      </div>
+
       {/* ═══════════════════ Featured Guides ═══════════════════ */}
       <FeaturedGuides />
 
       {/* ═══════════════════ Latest Reviews ═══════════════════ */}
       <LatestReviews />
+
+      {/* ── Section Divider ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-outline)]/30 to-transparent" />
+      </div>
 
       {/* ═══════════════════ Popular Collections ═══════════════════ */}
       <PopularCollections />

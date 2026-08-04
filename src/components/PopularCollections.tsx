@@ -18,7 +18,7 @@ const collections: Collection[] = [
     description: 'Tudo que você precisa para começar sua jornada em Eorzea',
     guideCount: 15,
     icon: <BookOpen className="w-5 h-5" />,
-    gradient: 'from-blue-500/20 to-cyan-500/20',
+    gradient: 'from-[var(--color-primary)]/15 to-[var(--color-crystal)]/15',
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const collections: Collection[] = [
     description: 'Estratégias e dicas para o conteúdo de fim de jogo',
     guideCount: 22,
     icon: <Bookmark className="w-5 h-5" />,
-    gradient: 'from-purple-500/20 to-pink-500/20',
+    gradient: 'from-[var(--color-secondary)]/15 to-[var(--color-lavender)]/15',
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ const collections: Collection[] = [
     description: 'Domine as artes de criar e coletar recursos',
     guideCount: 18,
     icon: <BookOpen className="w-5 h-5" />,
-    gradient: 'from-amber-500/20 to-orange-500/20',
+    gradient: 'from-[var(--color-secondary)]/15 to-[var(--color-sage)]/15',
   },
   {
     id: 4,
@@ -42,13 +42,13 @@ const collections: Collection[] = [
     description: 'Torne-se um guerreiro temido nos campos de batalha',
     guideCount: 9,
     icon: <Bookmark className="w-5 h-5" />,
-    gradient: 'from-red-500/20 to-rose-500/20',
+    gradient: 'from-[var(--color-crimson)]/15 to-[var(--color-secondary)]/15',
   },
 ];
 
 export const PopularCollections: React.FC = () => {
   return (
-    <section className="py-12 bg-[var(--color-surface-alt)]/30">
+    <section className="py-16 sm:py-20 bg-[var(--color-surface-alt)]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

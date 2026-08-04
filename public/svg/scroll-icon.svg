@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="scroll-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F0E8"/>
+      <stop offset="100%" stop-color="#EDE7DB"/>
+    </linearGradient>
+  </defs>
+  <!-- Scroll body -->
+  <rect x="6" y="4" width="20" height="24" rx="2" fill="url(#scroll-fill)" stroke="#C9A84C" stroke-width="0.8"/>
+  <!-- Top roll -->
+  <ellipse cx="16" cy="4" rx="12" ry="2.5" fill="#EDE7DB" stroke="#C9A84C" stroke-width="0.6"/>
+  <!-- Bottom roll -->
+  <ellipse cx="16" cy="28" rx="12" ry="2.5" fill="#EDE7DB" stroke="#C9A84C" stroke-width="0.6"/>
+  <!-- Text lines -->
+  <line x1="10" y1="10" x2="22" y2="10" stroke="#C9A84C" stroke-width="0.4" opacity="0.4"/>
+  <line x1="10" y1="14" x2="20" y2="14" stroke="#C9A84C" stroke-width="0.4" opacity="0.3"/>
+  <line x1="10" y1="18" x2="22" y2="18" stroke="#C9A84C" stroke-width="0.4" opacity="0.3"/>
+  <line x1="10" y1="22" x2="18" y2="22" stroke="#C9A84C" stroke-width="0.4" opacity="0.25"/>
+  <!-- Seal -->
+  <circle cx="22" cy="22" r="3" fill="#C9A84C" opacity="0.5"/>
+  <circle cx="22" cy="22" r="2" fill="#5BA4B5" opacity="0.4"/>
+</svg>

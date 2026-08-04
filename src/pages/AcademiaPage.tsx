@@ -60,7 +60,7 @@ export const AcademiaPage: React.FC = () => {
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
       {/* Cabeçalho */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 relative overflow-hidden text-center space-y-4">
+      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 border-b border-b-[#C9A84C]/20 relative overflow-hidden text-center space-y-4">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-72 h-72 bg-[var(--color-primary)]/10 rounded-full blur-3xl" />
         </div>
@@ -70,7 +70,7 @@ export const AcademiaPage: React.FC = () => {
             Códice & Biblioteca Sharlayan
           </div>
 
-          <h1 className="type-display text-[var(--color-on-surface)]">
+          <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
             Acervo Didático e Guias Acadêmicos
           </h1>
 
@@ -116,12 +116,12 @@ export const AcademiaPage: React.FC = () => {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 aria-pressed={selectedCategory === cat.id}
-                className={`px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
+                className={`px-3 py-1.5 rounded-full type-label normal-case transition-all ${
                   selectedCategory === cat.id
                     ? catColor
-                      ? `${catColor.bg} ${catColor.text} shadow-md border border-current/20`
+                      ? `${catColor.bg} ${catColor.text} shadow-md shadow-[#C9A84C]/30 border border-current/20`
                       : 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
-                    : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+                    : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] border border-[#C9A84C]/20'
                 }`}
               >
                 {catColor && <span className="w-1.5 h-1.5 rounded-full inline-block mr-1" style={{ backgroundColor: catColor.dot }} />}
@@ -134,7 +134,7 @@ export const AcademiaPage: React.FC = () => {
 
           <a
             href="/receitas"
-            className="px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/20 flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-full text-[10px] font-bold transition-all bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/20 flex items-center gap-1.5 border border-[#C9A84C]/20"
           >
             <UtensilsCrossed className="w-3 h-3" />
             Receitas
@@ -142,13 +142,13 @@ export const AcademiaPage: React.FC = () => {
         </div>
 
         <div className="relative w-full md:w-64">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-secondary)]" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Buscar por título ou tag..."
-            className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:ring-2 focus:ring-[#C9A84C]/40 focus:border-[#C9A84C]/40 focus:outline-none"
           />
           {searchQuery && (
             <button

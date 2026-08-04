@@ -16,15 +16,15 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${
       isActive
-        ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+        ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-b-2 border-[#C9A84C] rounded-b-none'
         : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)]'
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 text-[10px] transition-colors ${isActive ? 'text-[var(--color-primary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`;
+    `flex flex-col items-center gap-1 text-[10px] transition-colors ${isActive ? 'text-[var(--color-secondary)] font-bold' : 'text-[var(--color-on-surface-variant)]'}`;
 
   return (
-    <header className="sticky top-0 z-40 glass border-b border-[var(--color-outline)]/50">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-[var(--color-surface-alt)] via-[var(--color-surface)] to-[var(--color-surface-alt)] backdrop-blur-lg border-b-2 border-double border-[#C9A84C]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
             to="/"
             className="flex items-center gap-3 text-left group"
           >
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-[var(--color-outline)] shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-[#C9A84C]/30 shadow-md group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(79,195,247,0.3)] transition-transform">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
             <div>
@@ -50,32 +50,32 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
           <nav className="hidden md:flex items-center gap-1" aria-label="Menu principal">
             <NavLink to="/" end className={linkClass}>
               <Home className="w-4 h-4" />
-              Início
+              Pátio Principal
             </NavLink>
 
             <NavLink to="/academia" className={linkClass}>
               <BookOpen className="w-4 h-4" />
-              Códice & Guias
+              Códice Arcano
             </NavLink>
 
             <NavLink to="/calendario" className={linkClass}>
               <Calendar className="w-4 h-4" />
-              Calendário
+              Calendário Acadêmico
             </NavLink>
 
             <NavLink to="/receitas" className={linkClass}>
               <UtensilsCrossed className="w-4 h-4" />
-              Receitas
+              Cantina
             </NavLink>
 
             <NavLink to="/game-data" className={linkClass}>
               <Globe className="w-4 h-4" />
-              Explorar Dados
+              Arquivo Mágico
             </NavLink>
 
             {admin && (
               <NavLink to="/admin" className={({ isActive }) =>
-                `flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all border border-[var(--color-secondary)]/30 ${
+                `flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all border-2 border-[#C9A84C]/40 rounded-full hover:border-[#C9A84C]/60 ${
                   isActive
                     ? 'bg-[var(--color-secondary)] text-[var(--color-background)] font-bold shadow-md'
                     : 'text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/10'
@@ -128,7 +128,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
         </div>
 
         {/* Mobile Navigation bar */}
-        <nav className="md:hidden flex items-center justify-around py-2 border-t border-[var(--color-outline)]/30 text-[10px] font-medium" aria-label="Menu de navegação mobile">
+        <nav className="md:hidden flex items-center justify-around py-2 border-t-2 border-t-[#C9A84C]/20 text-[10px] font-medium" aria-label="Menu de navegação mobile">
           <NavLink to="/" end className={mobileLinkClass}>
             <Home className="w-4 h-4" />
             Início
@@ -143,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({ onOpenLogin, theme = 'dark'
           </NavLink>
           <NavLink to="/receitas" className={mobileLinkClass}>
             <UtensilsCrossed className="w-4 h-4" />
-            Receitas
+            Cantina
           </NavLink>
           <NavLink to="/game-data" className={mobileLinkClass}>
             <Globe className="w-4 h-4" />

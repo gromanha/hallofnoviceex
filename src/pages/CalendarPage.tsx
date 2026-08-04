@@ -208,12 +208,12 @@ export const CalendarPage: React.FC = () => {
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header do Calendário */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">
           <span className="type-label text-[var(--color-primary)] flex items-center gap-1.5 justify-center md:justify-start">
             <Sparkles className="w-3.5 h-3.5" /> Cronograma de Aulas e Batalhas
           </span>
-          <h1 className="type-display text-[var(--color-on-surface)]">
+          <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
             Calendário — {currentMonth.name} {currentMonth.cycle}
           </h1>
           <p className="type-body text-[var(--color-on-surface-variant)]">
@@ -255,10 +255,10 @@ export const CalendarPage: React.FC = () => {
         <button
           onClick={() => setSelectedType('all')}
           aria-pressed={selectedType === 'all'}
-          className={`px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
+          className={`px-3 py-1.5 rounded-full type-label normal-case transition-all ${
             selectedType === 'all'
-              ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
-              : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+              ? 'bg-[var(--color-primary)] text-white shadow-[0_0_12px_rgba(91,164,181,0.3)]'
+              : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] border border-[#C9A84C]/20'
           }`}
         >
           Todas ({monthEvents.length})
@@ -272,10 +272,10 @@ export const CalendarPage: React.FC = () => {
               key={t.id}
               onClick={() => setSelectedType(t.key)}
               aria-pressed={selectedType === t.key}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl type-label normal-case transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full type-label normal-case transition-all ${
                 selectedType === t.key
-                  ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
-                  : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+                  ? 'bg-[var(--color-primary)] text-white shadow-[0_0_12px_rgba(91,164,181,0.3)]'
+                  : 'bg-[var(--color-surface-alt)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] border border-[#C9A84C]/20'
               }`}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: t.color }} />
@@ -324,7 +324,7 @@ export const CalendarPage: React.FC = () => {
           
           <div className="grid grid-cols-7 gap-1.5 mb-2 text-center type-label text-[var(--color-on-surface-variant)]">
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-              <div key={d} className="py-2 bg-[var(--color-surface-alt)] rounded-lg">
+              <div key={d} className="py-2 bg-[#C9A84C]/10 rounded-lg font-cinzel">
                 {d}
               </div>
             ))}
@@ -352,8 +352,8 @@ export const CalendarPage: React.FC = () => {
                   key={day}
                   className={`min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] p-2 rounded-xl border transition-all flex flex-col justify-between ${
                     isToday
-                      ? 'border-[var(--color-tertiary)] bg-[var(--color-tertiary)]/5 shadow-md shadow-[var(--color-tertiary)]/10'
-                      : 'border-[var(--color-outline)]/30 bg-[var(--color-surface-alt)]/30 hover:border-[var(--color-primary)]/30'
+                      ? 'border-[var(--color-crystal)] bg-[var(--color-tertiary)]/5 shadow-[0_0_20px_rgba(91,164,181,0.2)]'
+                      : 'border-[rgba(201,168,76,0.2)] bg-[var(--color-surface-alt)]/30 hover:border-[var(--color-primary)]/30'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -416,7 +416,7 @@ export const CalendarPage: React.FC = () => {
           >
             <motion.div
               ref={modalRef}
-              className="glass rounded-2xl max-w-lg w-full overflow-hidden border border-[var(--color-outline)]/80 shadow-2xl space-y-4"
+              className="glass rounded-2xl max-w-lg w-full overflow-hidden border-2 border-[#C9A84C]/30 shadow-2xl space-y-4"
               onClick={e => e.stopPropagation()}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -488,7 +488,7 @@ export const CalendarPage: React.FC = () => {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white type-body font-bold hover:bg-[var(--color-primary-deep)] transition-all hover:shadow-md hover:shadow-[var(--color-primary)]/20"
+                    className="px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white type-body font-bold hover:bg-[var(--color-primary-deep)] transition-all hover:shadow-md hover:shadow-[var(--color-primary)]/20 border border-[#C9A84C]/30"
                   >
                     Fechar
                   </button>

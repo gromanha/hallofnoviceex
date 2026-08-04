@@ -8,6 +8,8 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { PageLoader } from './components/PageLoader';
 import { DashboardLayout } from './components/DashboardLayout';
+import { IvyCorners } from './components/IvyCorners';
+import { GoldenDust } from './components/GoldenDust';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 
@@ -112,6 +114,8 @@ export function App() {
           <AuthProvider>
             <ErrorBoundary>
               <div className="min-h-screen flex flex-col bg-[var(--color-background)] text-[var(--color-on-background)] font-sans antialiased">
+                <IvyCorners />
+                <GoldenDust count={10} />
                 <AppRoutes />
               </div>
             </ErrorBoundary>

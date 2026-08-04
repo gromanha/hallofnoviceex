@@ -1,0 +1,614 @@
+================================================================================
+  PLANO DE RECONSTRUÇÃO DA UI — HALL OF THE NOVICE EX
+  Academia de Magia, Batalha e Artesanato
+  Versão: 1.0 | Data: 04/08/2026
+================================================================================
+
+SUMÁRIO
+------
+1. Análise da Identidade Visual
+2. Fase 1: Tokens de Design — Paleta e Tipografia
+3. Fase 2: Background Global — O Campus
+4. Fase 3: Sidebar — A "Biblioteca" Lateral
+5. Fase 4: Navbar Top — O "Hall de Entrada"
+6. Fase 5: Home Page — O Pátio Principal
+7. Fase 6: Calendário — O "Mural de Avisos"
+8. Fase 7: Academia (Blog) — A "Grande Biblioteca"
+9. Fase 8: Footer — Os "Jardins"
+10. Fase 9: Componentes Compartilhados
+11. Fase 10: Assets a Criar/Gerar
+12. Fase 11: Animações Adicionais
+13. Fase 12: Ordem de Implementação
+
+
+================================================================================
+1. ANÁLISE DA IDENTIDADE VISUAL (imagens de referência)
+================================================================================
+
+As imagens da pasta "identidade/" revelam uma estética Old Sharlayan com
+elementos marcantes que definem a personalidade do site:
+
+  ELEMENTO              COR / ESTILO
+  ─────────────────────────────────────────────────────────
+  Paredes               Parchment quente #F5F0E8, pedra clarinha
+  Acentos               Azul cristal #5BA4B5, teal profundo #2D6A6A
+  Detalhes dourados     #C9A84C, ornamentos em colunas
+  Vegetação             Lavanda #9B7EC8, lírios brancos, hera verde
+  Cristais              Azul brilhante com glow #4FC3F7
+  Tipografia            Serifada cerimonial (Cinzel), estilo acadêmico
+  Arquitetura           Arcos góticos, colunas, vitrais, escadarias
+  Livros flutuantes     Magia arcana, spellbooks com brilho
+
+Cores extraídas das imagens:
+
+  PALETA PRINCIPAL (Light Mode)
+  ─────────────────────────────────────────
+  Background:           #FBF8F3 (parchment fundo)
+  Surface:              #F5F0E8 (parchment claro)
+  Surface Alt:          #EDE7DB (parchment médio)
+  Texto Principal:      #2C2416 (marrom escuro)
+  Texto Secundário:     #5A5040 (marrom médio)
+  Primary (Cristal):    #5BA4B5 (teal azul)
+  Primary Deep:         #2D6A6A (teal escuro)
+  Secondary (Dourado):  #C9A84C (ouro arcana)
+  Lavanda:              #9B7EC8
+  Sage (Jardim):        #6B8E6B
+  Cristal Glow:         #4FC3F7
+  Erro:                 #C0392B
+
+  PALETA PRINCIPAL (Dark Mode)
+  ─────────────────────────────────────────
+  Background:           #1A1F2E
+  Surface:              #232A3B
+  Surface Alt:          #2A3244
+  Texto Principal:      #E2E8F0
+  Texto Secundário:     #94A3B8
+  Primary:              #5BA4B5
+  Primary Deep:         #2D6A6A
+  Secondary:            #C9A84C
+  Cristal Glow:         #4FC3F7
+
+
+================================================================================
+2. FASE 1: TOKENS DE DESIGN — PALETA E TIPOGRAFIA
+================================================================================
+
+Objetivo: Substituir os tokens de cor atuais (que usam laranja como primary)
+pelos novos tokens baseados na identidade visual do campus.
+
+Arquivo: src/index.css (seção @theme)
+
+Mudanças no @theme:
+  - Trocar --color-primary de #f97316 (laranja) para #5BA4B5 (cristal teal)
+  - Trocar --color-primary-deep para #2D6A6A
+  - Trocar --color-secondary para #C9A84C (manter dourado)
+  - Atualizar --color-background e --color-surface para tons parchment
+  - Atualizar --color-on-background e --color-on-surface para marrom escuro
+  - Adicionar --color-lavender: #9B7EC8
+  - Adicionar --color-crystal: #4FC3F7
+  - Adicionar --color-sage: #6B8E6B
+  - Manter font-cinzel como fonte principal de títulos
+
+Mudanças no [data-theme="light"]:
+  - Atualizar todas as variáveis para a paleta parchment
+  - Background: #FBF8F3
+  - Surface: #F5F0E8
+
+Mudanças no [data-theme="dark"]:
+  - Manter base escura atual
+  - Ajustar primary/secondary para combinar com a nova identidade
+
+Adicionar fonte:
+  - Cormorant Garamond via Google Fonts para corpo em light mode
+  - @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap')
+
+
+================================================================================
+3. FASE 2: BACKGROUND GLOBAL — O CAMPUS
+================================================================================
+
+Objetivo: Transformar o fundo sólido do site em uma textura imersiva que
+lembre as paredes de pedra/parchment do campus acadêmico.
+
+Arquivos afetados:
+  - src/index.css
+  - public/textures/ (nova pasta)
+
+Passos:
+
+  2.1 Criar pasta public/textures/ com texturas:
+      - parchment-light.png (512x512, repetível, textura de papel envelhecido)
+      - parchment-dark.png (versão escura para dark mode)
+
+  2.2 Aplicar background no body (index.css):
+      body {
+        background-color: var(--color-background);
+        background-image: url('/textures/parchment-light.png');
+        background-repeat: repeat;
+      }
+
+      [data-theme="dark"] body {
+        background-image: url('/textures/parchment-dark.png');
+      }
+
+  2.3 Adicionar cantos de hera decorativa (position: fixed):
+      - Criar svg/ivy-corner.svg
+      - Criar componente <IvyCorners /> que renderiza 4 cantos
+      - Estilo: position fixed, z-index 0, pointer-events none, opacity 0.15-0.25
+      - Adicionar no App.tsx como overlay global
+
+  2.4 Efeito de partículas de poeira dourada (opcional):
+      - Componente <GoldenDust /> com partículas flutuando
+      - Usar CSS animations com múltiplos elementos span
+      - Movimento lento vertical (y) com opacidade variável
+
+
+================================================================================
+4. FASE 3: SIDEBAR — A "BIBLIOTECA" LATERAL
+================================================================================
+
+Objetivo: Transformar a sidebar genérica em uma estante de biblioteca arcana.
+
+Arquivo: src/components/Sidebar.tsx
+
+Mudanças:
+
+  4.1 Fundo da sidebar:
+      - Light: bg-gradient-to-b from-[#EDE7DB] to-[#F5F0E8] com textura
+      - Dark: bg-gradient-to-b from-[#2D2418] to-[#1A1510]
+      - Adicionar textura de madeira/pedra sutil via CSS
+
+  4.2 Bordas decorativas:
+      - Borda dourada ornativa no topo:
+        border-top: 2px solid transparent
+        border-image: linear-gradient(to right, transparent, #C9A84C, transparent) 1
+      - Mesma borda na base
+
+  4.3 Brand section (topo):
+      - Logo maior (w-12 h-12 em vez de w-10 h-10)
+      - Nome "HALL OF THE NOVICE EX" em Cinzel bold
+      - Subtítulo "Majestic Battle Academy" em letter-spacing largo
+      - Adicionar animação shimmer dourado (já existe sidebar-brand-shimmer)
+
+  4.4 Links de navegação:
+      - Substituir ícones lucide-react por SVGs temáticos:
+        → Início: SVG de casa com torre acadêmica
+        → Códice: SVG de livro aberto com runas
+        → Calendário: SVG de pergaminho com selo
+        → Receitas: SVG de caldeirão/poção
+        → Admin: SVG de escudo com coroa
+      - Hover: efeito de "página virando" (scale + sombra)
+      - Active: barra lateral DOURADA (não laranja) + glow sutil
+
+  4.5 Novo componente <RuneDivider />:
+      - Separador SVG entre seções
+      - Runa circular animada com animação sigilFloat
+      - Cor: dourado com opacidade baixa
+
+  4.6 Fundo da sidebar — cristal flutuante:
+      - Pequeno SVG de cristal azul no canto inferior
+      - Animação crystalGlow (pulse de brilho)
+      - Opacidade baixa (0.2-0.3)
+
+  4.7 Botões de ação (tema/login):
+      - Fundo com borda dourada sutil
+      - Hover: glow dourado
+      - Texto: Cinzel medium
+
+
+================================================================================
+5. FASE 4: NAVBAR TOP — O "HALL DE ENTRADA"
+================================================================================
+
+Objetivo: Criar um header cerimonial que lembre a entrada de uma academia arcana.
+
+Arquivo: src/components/Navbar.tsx
+
+Mudanças:
+
+  5.1 Logo e Brand:
+      - Logo crest: tamanho maior (w-12 h-12), borda dourada
+      - Animação de "brilho cristalino" ao hover (crystalGlow)
+      - Nome: Cinzel bold, tracking-wider
+      - Subtítulo: letter-spacing mais largo
+
+  5.2 Fundo do header:
+      - Light: bg-gradient-to-r from-[#EDE7DB] via-[#F5F0E8] to-[#EDE7DB]
+      - Dark: bg-gradient-to-r from-[#1A1F2E] via-[#232A3B] to-[#1A1F2E]
+      - Backdrop-blur para efeito glass
+
+  5.3 Borda inferior ornamental:
+      - Trocar border-b simples por:
+        border-b-2 border-double border-[#C9A84C]/30
+      - Ou usar background-image com gradiente dourado
+
+  5.4 Links de navegação:
+      - Renomear labels:
+        → "Início" → "Pátio Principal"
+        → "Códice & Guias" → "Códice Arcano"
+        → "Calendário" → "Calendário Acadêmico"
+        → "Receitas" → "Cantina"
+        → "Explorar Dados" → "Arquivo Mágico"
+      - Hover: efeito sutil de elevação + borda dourada
+      - Active: fundo primary/10 + borda inferior dourada
+
+  5.5 Botão Admin:
+      - Estilo "selo de cera" com borda dourada
+      - Ícone Shield com glow sutil
+
+  5.6 Mobile bottom nav:
+      - Fundo: surface com borda dourada superior
+      - Ícones: estilo runa/botão dourado no active
+      - Labels: Cinzel medium
+
+
+================================================================================
+6. FASE 5: HOME PAGE — O PÁTIO PRINCIPAL
+================================================================================
+
+Objetivo: Criar uma experiência imersiva que faz o usuário sentir que está
+entrando no campus da academia.
+
+Arquivo: src/pages/HomePage.tsx
+
+Mudanças:
+
+  6.1 Hero Section — "A Entrada do Campus":
+
+      a) Background:
+         - Usar identidade/hall principal.png como background
+         - Opacidade: 0.15-0.25 (sutil, não competir com conteúdo)
+         - mix-blend-mode: soft-light
+         - Gradiente overlay: from-surface via-surface/80 to-surface
+
+      b) Título "Hall of the Novice EX":
+         - Fonte: Cinzel bold, tamanho display
+         - Text-shadow dourado: 0 2px 4px rgba(201, 168, 76, 0.2)
+         - Debajo: "Majestic Battle Academy" em letter-spacing largo
+
+      c) Motto:
+         - "Onde o conhecimento se torna a sua maior magia."
+         - Itálico, cor lavanda (#9B7EC8)
+         - Fonte: Cormorant Garamond italic
+
+      d) CTAs:
+         - "Conheça a Academia": fundo primary, borda dourada no hover
+         - "Entrar no Discord": borda dourada, fundo transparente
+
+      e) Flutuantes decorativos (adicionar):
+         - Livro mágico SVG flutuando (classe wander-book já existe)
+         - Partículas de cristal (sparkle-particle já existe)
+         - Coluna gótica sutil nas laterais (SVG)
+
+  6.2 Quick Actions Banner:
+      - Estilo "pergaminho" com borda dourada
+      - Ícone de scroll/baguete em vez de MessageSquare
+      - Texto em Cinzel medium
+
+  6.3 Two Column Layout:
+
+      a) Posts Grid (coluna esquerda):
+         - Cards com borda de "página de livro":
+           border: 1px solid rgba(201, 168, 76, 0.2)
+         - Hover: border-color: rgba(201, 168, 76, 0.4)
+         - Top accent: h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/50 to-transparent
+
+      b) Sidebar direita:
+         - Cards com estilo "prancheta de estudante"
+         - Borda dourada sutil
+         - Fundo: surface-alt
+
+  6.4 Campus Quick Card:
+      - Manter, mas ajustar cores para nova paleta
+      - Ícone MapPin: cor crystal em vez de secondary
+
+
+================================================================================
+7. FASE 6: CALENDÁRIO — O "MURAL DE AVISOS"
+================================================================================
+
+Objetivo: Criar um calendário acadêmico imersivo inspirado na imagem calendario.png.
+
+Arquivo: src/pages/CalendarPage.tsx
+
+Mudanças:
+
+  7.1 Header:
+      - Usar identidade/calendario.png como referência
+      - Título em estilo "cronograma acadêmico" Cinzel bold
+      - Colunas góticas decorativas nas laterais (SVGs)
+      - Fundo: gradiente parchment com borda dourada
+
+  7.2 Grade do Calendário:
+      - Fundo de cada dia:
+        bg-gradient-to-br from-[#F5F0E8] to-[#EDE7DB]
+      - Borda:
+        border: 1px solid rgba(201, 168, 76, 0.2)
+      - Dia atual:
+        box-shadow: 0 0 20px rgba(91, 164, 181, 0.2)
+        border-color: var(--color-crystal)
+      - Header dos dias da semana:
+        bg-[#C9A84C]/10, texto em Cinzel bold
+      - Eventos: badges com cores temáticas:
+        → Lavanda para eventos mágicos
+        → Cristal para aulas teóricas
+        → Dourado para eventos sociais
+        → Sage para treinos de combate
+
+  7.3 Filtros:
+      - Botões estilo "selo de cera":
+        rounded-full, borda dourada, fundo parchment
+      - Active: fundo primary com glow cristalino
+
+  7.4 Modal de Evento:
+      - Borda ornamental dourada (2px, border-image gradient)
+      - Background: textura pergaminho sutil
+      - Header com ícone temático do tipo de evento
+      - Botão fechar: estilo runa
+
+  7.5 Empty State:
+      - Pergaminho vazio com selo dourado
+      - Texto: "Nenhum evento registrado neste período"
+      - Ícone de pergaminho fechado
+
+
+================================================================================
+8. FASE 7: ACADEMIA (BLOG) — A "GRANDE BIBLIOTECA"
+================================================================================
+
+Objetivo: Transformar a página de posts em uma biblioteca acadêmica imersiva.
+
+Arquivo: src/pages/AcademiaPage.tsx
+
+Mudanças:
+
+  8.1 Header:
+      - Usar identidade/sala de aula.png como referência
+      - Subtítulo: "Códice & Biblioteca Sharlayan"
+      - Fundo: textura de quadro-negro sutil (dark slate com chalk dust)
+      - Bordas: douradas ornativas
+
+  8.2 Cards de Post:
+      - Borda superior dourada:
+        border-t-2 border-t-[#C9A84C]
+      - Shadow estilo "livro empilhado":
+        shadow-[0_2px_8px_rgba(0,0,0,0.08)]
+      - Hover:
+        → lift: translateY(-2px)
+        → glow dourado: shadow-[0_8px_24px_rgba(201,168,76,0.15)]
+        → border-color: rgba(201, 168, 76, 0.4)
+
+  8.3 Barra de Filtros:
+      - Estilo "etiqueta de arquivo"
+      - Cada categoria com cor de disciplina:
+        → Codice: primary (cristal)
+        → Combate EX/Savage: crimson
+        → Crafting: secondary (dourado)
+        → Notícias: sage (verde)
+
+  8.4 Busca:
+      - Input com borda dourada no focus
+      - Ícone de lupa com cor secondary
+
+  8.5 Empty State:
+      - Livro aberto flutuando com magia saindo
+      - Animação wander-book
+      - Texto: "Nenhum tomo encontrado na estante"
+
+
+================================================================================
+9. FASE 8: FOOTER — OS "JARDINS"
+================================================================================
+
+Objetivo: Criar um footer que lembre os jardins do campus com lavanda e pedra.
+
+Arquivo: src/components/Footer.tsx
+
+Mudanças:
+
+  9.1 Background:
+      - Light: gradiente de verde pedra
+        from-[#E8E4D8] via-[#DDD8CC] to-[#D5D0C4]
+        com textura de jardin sutil
+      - Dark: from-[#1A2418] via-[#1A1F2E] to-[#1A1510]
+
+  9.2 Linha divisória superior:
+      - SVG de hera/lavanda em vez de border-t simples
+      - Ou gradiente dourado: from-transparent via-[#C9A84C]/30 to-transparent
+
+  9.3 Coluna 1 — Sobre:
+      - Motto em estilo "placa de academia":
+        borda dourada, fundo parchment
+      - Texto: Cinzel medium
+
+  9.4 Coluna 2 — Campus:
+      - Ícone de mapa estilizado com pin cristalino
+      - Endereço em estilo "inscrição"
+      - Lista com marcadores: pequenos cristais SVGs
+
+  9.5 Coluna 3 — Discord:
+      - Botão com gradiente dourado-cristal:
+        from-[#C9A84C] to-[#5BA4B5]
+      - Hover: glow mixto
+
+  9.6 Copyright:
+      - Estilo "inscrição em pedra"
+      - Fonte: Cinzel, tamanho pequeno
+      - Borda ornamental acima
+
+  9.7 Botão "Voltar ao Topo":
+      - Estilo: pedra com borda dourada
+      - Hover: glow cristalino
+
+
+================================================================================
+10. FASE 9: COMPONENTES COMPARTILHADOS
+================================================================================
+
+Objetivo: Criar componentes reutilizáveis que transmitem a identidade visual
+do campus por todo o site.
+
+Novos arquivos em src/components/ui/:
+
+  10.1 <AcademyCard />
+       - Card reutilizável com borda ornamental dourada
+       - Top accent: linha dourada gradiente
+       - Hover: lift + glow dourado
+       - Props: children, className, hover (boolean)
+
+  10.2 <CrystalDivider />
+       - Separador decorativo com cristal SVG central
+       - Linhas douradas saindo dos lados
+       - Animação: pulse sutil do cristal
+
+  10.3 <FloatingBook />
+       - Livro SVG aberto com animação wander-book
+       - Glow cristalino no contorno
+       - Props: size, className, animated
+
+  10.4 <IvyCorners />
+       - 4 SVGs de hera nos cantos do viewport
+       - Position: fixed, z-index: 0, pointer-events: none
+       - Opacidade: 0.15 (light) / 0.08 (dark)
+
+  10.5 <RuneSymbol />
+       - SVGs de runas para decorar seções
+       - Animação: sigilFloat
+       - Props: symbol (string), size, className
+
+  10.6 <GoldenBorder />
+       - Wrapper que adiciona borda dourada ornamental
+       - Borda: 2px gradient dourado
+       - Cantos: border-radius: 1rem
+
+  10.7 <ParchmentBackground />
+       - Wrapper com fundo texturizado parchment
+       - Props: variant ("light" | "dark"), children
+
+  10.8 <AcademyButton />
+       - Botão temático reutilizável
+       - Variantes: "primary" (cristal), "secondary" (dourado), "ghost"
+       - Estilo: borda dourada sutil, hover glow
+
+
+================================================================================
+11. FASE 10: ASSETS A CRIAR/GERAR
+================================================================================
+
+Texturas (public/textures/):
+  ──────────────────────────────────────────────────────────
+  parchment-light.png    Textura de pergaminho claro (512x512, tileable)
+  parchment-dark.png     Textura de pergaminho escuro (512x512, tileable)
+  stone-border.png       Borda de pedra ornamental (para headers)
+
+SVGs Decorativos (public/svg/ ou src/assets/svg/):
+  ──────────────────────────────────────────────────────────
+  ivy-corner.svg         Hera decorativa para cantos do viewport
+  crystal-divider.svg    Cristal com raios dourados (separador)
+  floating-book.svg      Livro aberto mágico (decoração)
+  rune-circle.svg        Runa circular animada (sidebar, loaders)
+  column-ornament.svg    Coluna gótica (bordas laterais hero)
+  lavender-sprig.svg     Ramo de lavanda (footer, cards)
+  academy-crest.svg      Emblema da academia (brand)
+  scroll-icon.svg        Pergaminho enrolado (botões temáticos)
+
+Fontes (public/fonts/ ou Google Fonts):
+  ──────────────────────────────────────────────────────────
+  Cormorant-Garamond     Fonte alternativa para corpo (light mode)
+  (ou via Google Fonts import)
+
+Imagens de referência (já existentes):
+  ──────────────────────────────────────────────────────────
+  identidade/hall principal.png    → Hero background
+  identidade/sala de aula.png      → Academia header
+  identidade/calendario.png        → Calendário header
+  identidade/jardins.png           → Footer background
+  identidade/identidade visual 2k.jpeg → Referência geral de paleta
+
+
+================================================================================
+12. FASE 11: ANIMAÇÕES ADICIONAIS
+================================================================================
+
+Adicionar ao src/index.css:
+
+  @keyframes crystalGlow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(79, 195, 247, 0.3)); }
+    50% { filter: drop-shadow(0 0 20px rgba(79, 195, 247, 0.6)); }
+  }
+
+  @keyframes pageTurn {
+    0% { transform: perspective(800px) rotateY(0deg); }
+    100% { transform: perspective(800px) rotateY(-10deg); }
+  }
+
+  @keyframes petalFall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+
+  @keyframes goldenFocus {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(201, 168, 76, 0); }
+    50% { box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.2); }
+  }
+
+  @keyframes dustFloat {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    20% { opacity: 0.4; }
+    80% { opacity: 0.4; }
+    100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+  }
+
+Classes utilitárias:
+  .crystal-glow { animation: crystalGlow 3s ease-in-out infinite; }
+  .golden-focus:focus { animation: goldenFocus 2s ease-in-out infinite; }
+
+
+================================================================================
+13. FASE 12: ORDEM DE IMPLEMENTAÇÃO
+================================================================================
+
+Prioridade ALTA (implementar primeiro):
+  ──────────────────────────────────────────────────────────
+  [1] Tokens de design (index.css)           — Fundação visual
+  [2] Assets visuais (SVGs, texturas)        — Necessários para tudo
+  [3] Background campus (index.css)          — Atmosfera global
+  [4] Sidebar biblioteca (Sidebar.tsx)       — Navegação imersiva
+  [5] Navbar cerimonial (Navbar.tsx)         — Identidade do header
+  [6] Home pátio (HomePage.tsx)              — Primeira impressão
+
+Prioridade MÉDIA (implementar depois):
+  ──────────────────────────────────────────────────────────
+  [7] Calendário mural (CalendarPage.tsx)    — Experiência acadêmica
+  [8] Academia biblioteca (AcademiaPage.tsx) — Leitura imersiva
+  [9] Footer jardins (Footer.tsx)            — Encerramento temático
+  [10] Componentes shared                    — Reutilização
+
+Prioridade BAIXA (refinamento):
+  ──────────────────────────────────────────────────────────
+  [11] Animações adicionais                  — Delight
+  [12] Responsividade fina                   — Mobile polish
+  [13] Acessibilidade reforçada              — Compliance
+
+
+================================================================================
+RESUMO DA TRANSFORMAÇÃO
+================================================================================
+
+DE: Dashboard genérico dark com glass-morphism e acentos laranja
+PARA: Campus mágico imersivo com texturas de pergaminho, bordas douradas,
+      cristais, hera, livros flutuantes e atmosfera de academia arcana
+      Old Sharlayan.
+
+A mudança principal é TORNAR O SITE UM LUGAR: cada página representa uma
+"sala" do campus, com sua própria identidade visual dentro da mesma paleta.
+
+O site deixa de ser um "painel de controle" para ser um "campus digital"
+onde o aluno se sente imerso na experiência da academia.
+
+
+================================================================================
+FIM DO PLANO
+================================================================================

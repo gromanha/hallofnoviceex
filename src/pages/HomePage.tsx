@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BookOpen, ArrowRight, ExternalLink, MessageSquare, Calendar, MapPin } from 'lucide-react';
+import { BookOpen, ArrowRight, ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
@@ -81,6 +81,14 @@ export const HomePage: React.FC = () => {
           <div className="absolute top-[20%] right-[30%] w-[200px] h-[200px] bg-[var(--color-tertiary)]/[0.03] rounded-full blur-[60px]" />
         </div>
 
+        {/* Decorative floating elements */}
+        <div className="absolute top-20 left-[5%] opacity-20 pointer-events-none" aria-hidden="true">
+          <img src="/svg/floating-book.svg" alt="" className="w-16 h-16 wander-book" />
+        </div>
+        <div className="absolute bottom-20 right-[8%] opacity-15 pointer-events-none" aria-hidden="true">
+          <img src="/svg/rune-circle.svg" alt="" className="w-12 h-12 sidebar-sigil" />
+        </div>
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
           <div className="flex flex-col items-center text-center space-y-8">
 
@@ -105,18 +113,18 @@ export const HomePage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <h1 className="font-cinzel font-bold text-[var(--type-display-size)] leading-[var(--type-display-leading)] tracking-[var(--type-display-tracking)] text-[var(--color-on-surface)]">
+              <h1 className="font-cinzel font-bold text-[var(--type-display-size)] leading-[var(--type-display-leading)] tracking-[var(--type-display-tracking)] text-[var(--color-on-surface)]" style={{ textShadow: '0 2px 4px rgba(201, 168, 76, 0.2)' }}>
                 Hall of the Novice{' '}
                 <span className="text-[var(--color-primary)]">EX</span>
               </h1>
-              <p className="type-headline text-[var(--color-on-surface-variant)] max-w-xl mx-auto">
+              <p className="type-headline font-cinzel text-[var(--color-on-surface-variant)] max-w-xl mx-auto">
                 Academia de Magia, Batalha e Artesanato
               </p>
             </motion.div>
 
             {/* Sharlayan Motto */}
             <motion.p
-              className="type-body italic text-[var(--color-secondary)] max-w-md"
+              className="type-body italic font-cormorant text-[var(--color-lavender)] max-w-md"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
@@ -133,7 +141,7 @@ export const HomePage: React.FC = () => {
             >
               <button
                 onClick={handleNavigateAcademia}
-                className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-sm transition-all hover:shadow-xl hover:shadow-[var(--color-primary)]/30 hover:scale-[1.02]"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-sm transition-all hover:shadow-xl hover:shadow-[var(--color-primary)]/30 hover:scale-[1.02] border border-transparent hover:border-[#C9A84C]/40"
               >
                 <BookOpen className="w-4 h-4" />
                 Conheça a Academia
@@ -143,9 +151,9 @@ export const HomePage: React.FC = () => {
                 href="https://discord.gg/3XJgrsVUbP"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface)] border border-[var(--color-outline)] text-[var(--color-on-surface)] font-bold text-sm transition-all hover:border-[var(--color-primary)]/30"
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface)] border-2 border-[#C9A84C]/40 hover:border-[#C9A84C]/60 hover:bg-[#C9A84C]/5 text-[var(--color-on-surface)] font-bold text-sm transition-all"
               >
-                <MessageSquare className="w-4 h-4 text-[var(--color-primary)]" />
+                <svg className="w-4 h-4" viewBox="0 0 32 32" fill="none"><rect x="6" y="4" width="20" height="24" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/><ellipse cx="16" cy="4" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/><ellipse cx="16" cy="28" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/></svg>
                 Entrar no Discord
                 <ExternalLink className="w-3 h-3 opacity-50" />
               </a>
@@ -160,7 +168,7 @@ export const HomePage: React.FC = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-[var(--color-secondary)]/10 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-[var(--color-secondary)]" />
+                  <MapPin className="w-4 h-4 text-[var(--color-crystal)]" />
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-[var(--color-on-surface)]">Campus Físico</p>
@@ -187,16 +195,16 @@ export const HomePage: React.FC = () => {
 
         {/* ── Quick Actions Banner ── */}
         <motion.div
-          className="glass rounded-2xl p-5 border border-[var(--color-outline)]/50 flex flex-col sm:flex-row items-center justify-between gap-4"
+          className="glass rounded-2xl p-5 border border-[var(--color-outline)]/50 golden-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
-              <MessageSquare className="w-4 h-4" />
+              <svg className="w-4 h-4" viewBox="0 0 32 32" fill="none"><rect x="6" y="4" width="20" height="24" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/><ellipse cx="16" cy="4" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/><ellipse cx="16" cy="28" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/></svg>
             </div>
-            <p className="text-[11px] text-[var(--color-on-surface-variant)]">
+            <p className="text-[11px] text-[var(--color-on-surface-variant)] font-cinzel">
               FC Final Fantasy XIV • <strong className="text-[var(--color-on-surface)]">Behemoth</strong> • Acesse eventos e guias
             </p>
           </div>

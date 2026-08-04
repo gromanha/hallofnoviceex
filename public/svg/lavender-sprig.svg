@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 64" fill="none">
+  <!-- Stem -->
+  <path d="M16 60 Q14 40 16 20 Q17 10 16 4" stroke="#6B8E6B" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Lavender buds -->
+  <ellipse cx="16" cy="6" rx="2.5" ry="3" fill="#9B7EC8" opacity="0.7"/>
+  <ellipse cx="14" cy="11" rx="2" ry="2.5" fill="#9B7EC8" opacity="0.6"/>
+  <ellipse cx="18" cy="10" rx="2" ry="2.5" fill="#9B7EC8" opacity="0.5"/>
+  <ellipse cx="15" cy="16" rx="1.8" ry="2.2" fill="#9B7EC8" opacity="0.45"/>
+  <ellipse cx="17" cy="15" rx="1.8" ry="2.2" fill="#9B7EC8" opacity="0.4"/>
+  <!-- Leaves -->
+  <path d="M14 30 Q8 28 10 34 Q12 32 14 30Z" fill="#6B8E6B" opacity="0.5"/>
+  <path d="M18 35 Q24 33 22 39 Q20 37 18 35Z" fill="#6B8E6B" opacity="0.4"/>
+  <path d="M13 42 Q7 40 9 46 Q11 44 13 42Z" fill="#6B8E6B" opacity="0.35"/>
+</svg>

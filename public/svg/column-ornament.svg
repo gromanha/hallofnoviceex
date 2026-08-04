@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 120" fill="none">
+  <defs>
+    <linearGradient id="column-fill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#EDE7DB"/>
+      <stop offset="50%" stop-color="#F5F0E8"/>
+      <stop offset="100%" stop-color="#EDE7DB"/>
+    </linearGradient>
+  </defs>
+  <!-- Capital -->
+  <rect x="2" y="0" width="20" height="8" rx="2" fill="url(#column-fill)" stroke="#C9A84C" stroke-width="0.5" opacity="0.6"/>
+  <path d="M4 8 Q12 12 20 8" stroke="#C9A84C" stroke-width="0.3" fill="none" opacity="0.4"/>
+  <!-- Shaft -->
+  <rect x="5" y="8" width="14" height="100" fill="url(#column-fill)" stroke="#C9A84C" stroke-width="0.3" opacity="0.5"/>
+  <!-- Fluting -->
+  <line x1="8" y1="12" x2="8" y2="104" stroke="#C9A84C" stroke-width="0.2" opacity="0.2"/>
+  <line x1="12" y1="12" x2="12" y2="104" stroke="#C9A84C" stroke-width="0.2" opacity="0.15"/>
+  <line x1="16" y1="12" x2="16" y2="104" stroke="#C9A84C" stroke-width="0.2" opacity="0.2"/>
+  <!-- Base -->
+  <rect x="2" y="108" width="20" height="8" rx="2" fill="url(#column-fill)" stroke="#C9A84C" stroke-width="0.5" opacity="0.6"/>
+  <path d="M4 108 Q12 104 20 108" stroke="#C9A84C" stroke-width="0.3" fill="none" opacity="0.4"/>
+  <!-- Ivy accent -->
+  <path d="M18 30 Q22 28 20 34 Q18 32 18 30Z" fill="#6B8E6B" opacity="0.3"/>
+  <path d="M19 50 Q23 48 21 54 Q19 52 19 50Z" fill="#6B8E6B" opacity="0.25"/>
+</svg>

@@ -210,11 +210,22 @@ export const CalendarPage: React.FC = () => {
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
-      {/* Header do Calendário */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="space-y-2 text-center md:text-left">
+      {/* Header do Calendário — Quadro de Eventos */}
+      <div className="relative rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* AI Background */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/calendar-garden.png"
+            alt=""
+            className="w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-background)]/70 via-[var(--color-background)]/85 to-[var(--color-background)]/95" />
+        </div>
+
+        <div className="relative z-10 space-y-2 text-center md:text-left p-8 sm:p-10 flex-1">
           <span className="type-label text-[var(--color-primary)] flex items-center gap-1.5 justify-center md:justify-start">
-            <Sparkles className="w-3.5 h-3.5" /> Cronograma de Aulas e Batalhas
+            <Sparkles className="w-3.5 h-3.5" /> Quadro de Eventos — Jardim da Academia
           </span>
           <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
             Calendário — {currentMonth.name} {currentMonth.cycle}
@@ -224,7 +235,7 @@ export const CalendarPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-[var(--color-surface-alt)] p-1.5 rounded-xl border border-[var(--color-outline)] shrink-0">
+        <div className="relative z-10 flex items-center gap-2 bg-[var(--color-surface-alt)]/80 backdrop-blur-sm p-1.5 rounded-xl border border-[var(--color-outline)] shrink-0 mr-6">
         <button
           onClick={prevMonth}
           disabled={monthIndex === 0}

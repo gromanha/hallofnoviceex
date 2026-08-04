@@ -1,0 +1,855 @@
+═══════════════════════════════════════════════════════════════════════════════
+  PLANO DE REFORMULAÇÃO VISUAL — Hall of the Novice EX
+  "The Magical Campus" — Reformulação Completa do Zero
+═══════════════════════════════════════════════════════════════════════════════
+
+  Versão: 1.2
+  Data: 04/08/2026
+   Status: Fase 1 + Fase 2 Concluídas + Cards Restaurados + Imagens AI Criadas + Fase 5 Concluída
+
+═══════════════════════════════════════════════════════════════════════════════
+  SUMÁRIO
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. Visão Geral do Projeto
+  2. Análise: Estado Atual vs Estado Desejado
+  3. Direção Visual: "The Magical Campus"
+  4. Paleta de Cores
+  5. Tipografia
+  6. Estrutura do Site (seguindo site.jpg)
+  7. Imagens AI-Generated Necessárias
+  8. Plano de Implementação (5 Fases)
+  9. Fase 1: Fundação Visual (CONCLUÍDA)
+  10. Fase 2: Layout Base
+  11. Fase 3: Componentes UI
+  12. Fase 4: Páginas
+  13. Fase 5: Detalhes e Polish
+  14. Riscos e Considerações
+  15. Arquivos Modificados/Criados
+
+═══════════════════════════════════════════════════════════════════════════════
+  1. VISÃO GERAL DO PROJETO
+═══════════════════════════════════════════════════════════════════════════════
+
+  O site "Hall of the Novice EX [HoN]" é a plataforma digital de uma Free
+  Company brasileira de Final Fantasy XIV, projetada como uma "Academia de
+  Magia, Batalha e Artesanato" inspirada em Old Sharlayan.
+
+  O usuário deseja refazer O VISUAL do site do zero, mantendo a estrutura
+  funcional existente. O visual deve seguir:
+
+  1. ESTRUTURA similar ao site de referência (site.jpg — PixelVault)
+  2. VISUAL da academia (imagens da pasta identidade/)
+  3. IMERSÃO total — sensação de caminhar pelo campus da escola de magia
+  4. IMAGENS AI-GENERATED para decoração e imersão
+
+  Stack técnico: React 19 + TypeScript + Vite + Tailwind CSS v4 + Framer Motion
+  Backend: Express.js + Supabase
+  Deploy: Vercel
+
+═══════════════════════════════════════════════════════════════════════════════
+  2. ANÁLISE: ESTADO ATUAL vs ESTADO DESEJADO
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────┬──────────────────────────┬──────────────────────────────┐
+  │ Aspecto         │ ATUAL (Arcane Dashboard) │ DESEJADO (Magical Campus)   │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Estilo          │ Dark gaming/esports      │ Watercolor illustration,     │
+  │                 │ dashboard                │ gótico acadêmico            │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Paleta          │ Slate escuro + teal +    │ Cream/parchment + teal      │
+  │                 │ gold                     │ suave + gold + lavanda      │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Sensação        │ Tech, frio, opaco        │ Quente, acolhedor,          │
+  │                 │                          │ imersivo                    │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Modo padrão     │ Dark-first               │ Light-first (campus         │
+  │                 │                          │ iluminado)                  │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Referência      │ site.jpg (PixelVault)    │ Estrutura SIM, visual NÃO   │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Imagens         │ Genéricas/ausentes       │ AI-generated: campus,       │
+  │                 │                          │ salas, jardins              │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Texturas        │ Glass-morphism           │ Parchment, pedra, hera      │
+  ├─────────────────┼──────────────────────────┼──────────────────────────────┤
+  │ Animações       │ Glow sutil               │ Livros flutuantes, cristais │
+  │                 │                          │ brilhantes, hera balançando │
+  └─────────────────┴──────────────────────────┴──────────────────────────────┘
+
+  O que será PRESERVADO (produto verdade):
+  - Todas as rotas e funcionalidades (Home, Academia, Calendário, Receitas,
+    Game Data, Admin)
+  - Estrutura de componentes (Sidebar, Cards, Modals, etc.)
+  - Tema dark/light toggle
+  - Acessibilidade (skip links, semântica, ARIA)
+  - Integrações (Supabase, Discord, Lodestone)
+
+  O que será SUBSTITUÍDO (mundo visual):
+  - DESIGN.md inteiro → novo mundo "The Magical Campus"
+  - Paleta de cores → extrair das imagens da identidade
+  - Tipografia → adaptar para gótico/acadêmico
+  - Todos os componentes UI → refazer no novo vocabulário visual
+  - Assets decorativos → novos SVGs + imagens AI-generated
+  - CSS inteiro → reconstruir com novos tokens
+
+═══════════════════════════════════════════════════════════════════════════════
+  3. DIREÇÃO VISUAL: "THE MAGICAL CAMPUS"
+═══════════════════════════════════════════════════════════════════════════════
+
+  Tese: O visitante está dentro do campus da Majestic Battle Academy. Cada
+  seção do site é um "cômodo" ou "área" da escola de magia. A navegação é
+  caminhar pelo campus — do saguão iluminado para a biblioteca, dos jardins
+  para a sala de aula.
+
+  A interface desaparece; a experiência é imersiva, acolhedora e viva.
+
+  Características-chave:
+  - Ground cream quente (#F5EFE0) — iluminado, acolhedor, não frio
+  - Academy Teal (#5BA4B5) como cor de ação principal
+  - Academy Gold (#C9A84C) como cor de identidade
+  - Academy Lavender (#9B7EC8) para highlights terciários
+  - Academy Sage (#7BA68A) para elementos naturais
+  - Cards com textura de parchment e bordas douradas sutil
+  - Cormorant Garamond para corpo, Cinzel para heading cerimonial
+  - Espaçamento generoso com layout de campus
+  - Motion: livros flutuando, cristais brilhando, hera balançando
+
+  Estilo de referência:
+  - Studio Ghibli (Ilha dos Gatos, O Castelo Animado)
+  - Final Fantasy XIV — Old Sharlayan
+  - Makoto Shinkai (Your Name, Weathering with You)
+  - Arte conceitual de RPG acadêmico
+
+═══════════════════════════════════════════════════════════════════════════════
+  4. PALETA DE CORES
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌──────────────────┬─────────┬─────────────────────────────────────────────┐
+  │ Cor              │ Hex     │ Uso                                         │
+  ├──────────────────┼─────────┼─────────────────────────────────────────────┤
+  │ Academy Cream    │ #F5EFE0 │ Background principal (parchment)            │
+  │ Academy Teal     │ #5BA4B5 │ Accents, CTAs, links                       │
+  │ Academy Gold     │ #C9A84C │ Borders, headings, badges                  │
+  │ Academy Lavender │ #9B7EC8 │ Highlights secundários                     │
+  │ Academy Sage     │ #7BA68A │ Natureza, sucesso                          │
+  │ Stone Light      │ #E8E0D0 │ Superfícies, cards                         │
+  │ Stone Medium     │ #C4B8A0 │ Bordas, divisores                          │
+  │ Ink Dark         │ #2D3436 │ Texto principal                            │
+  │ Ink Muted        │ #636E72 │ Texto secundário                           │
+  │ Crystal Teal     │ #4FC3F7 │ Cristais (dark mode)                       │
+  └──────────────────┴─────────┴─────────────────────────────────────────────┘
+
+  Regras de cor:
+  - Accent Rarity Rule: Teal em ≤15% da tela
+  - Gold Identity Rule: Gold apenas em elementos institucionais
+  - Campus Light Rule: Backgrounds sempre claros e quentes
+
+═══════════════════════════════════════════════════════════════════════════════
+  5. TIPOGRAFIA
+═══════════════════════════════════════════════════════════════════════════════
+
+  Display Font:    Cinzel (headings cerimoniais, hero headlines)
+  Heading Font:    EB Garamond (headings de seção)
+  Body Font:       Cormorant Garamond (texto corpo, prosa)
+  Label Font:      Inter (navegação, badges, metadados)
+
+  Hierarquia:
+  - Display:   clamp(2rem, 5vw, 3.5rem), weight 700, Cinzel
+  - Headline:  1.5rem, weight 600, EB Garamond
+  - Title:     1.125rem, weight 600, EB Garamond
+  - Body:      0.875rem, weight 400, Cormorant Garamond
+  - Label:     0.75rem, weight 500, uppercase, Inter
+
+═══════════════════════════════════════════════════════════════════════════════
+  6. ESTRUTURA DO SITE (seguindo site.jpg)
+═══════════════════════════════════════════════════════════════════════════════
+
+  Estrutura de referência (site.jpg — PixelVault):
+
+  ┌─────────────────────────────────────────────────────────┐
+  │ SIDEBAR (persistent, 256px)                             │
+  │ ┌─────────┐  ┌──────────────────────┬────────────────┐ │
+  │ │ Logo    │  │                      │ EVENTOS DA     │ │
+  │ │ Nav     │  │  HERO: Vista         │ SEMANA         │ │
+  │ │ Links   │  │  panorâmica campus   │ (WeekCalendar  │ │
+  │ │ Theme   │  │                      │  Preview)      │ │
+  │ │ FC Card │  │                      ├────────────────┤ │
+  │ └─────────┘  │                      │ MEMBROS DA FC  │ │
+  │              │                      │ (MembersCard)  │ │
+  │              ├──────────────────────┤                │ │
+  │              │ ÚLTIMAS POSTAGENS    │                │ │
+  │              │ Grid de PostCards    │                │ │
+  │              ├──────────────────────┴────────────────┤ │
+  │              │ FOOTER: Info da FC, Discord, Links    │ │
+  │              └───────────────────────────────────────┘ │
+  └─────────────────────────────────────────────────────────┘
+
+  Seções do site como áreas do campus:
+  - Hero → Vista panorâmica do campus (entrada principal)
+  - Academia → Sala de aula / Biblioteca
+  - Calendário → Quadro de eventos do pátio
+  - Receitas → Cozinha mágica
+  - Game Data → Biblioteca de tomos
+  - Footer → Portão de saída do campus
+
+═══════════════════════════════════════════════════════════════════════════════
+  7. IMAGENS AI-GENERATED NECESSÁRIAS
+═══════════════════════════════════════════════════════════════════════════════
+
+  Para criar a imersão "caminhar pelo campus", cada seção precisa de uma
+  imagem de fundo ou destaque. Os prompts completos estão em:
+  identidade/AI-IMAGE-PROMPTS.md
+
+  Resumo das imagens:
+
+  ┌─────────────────┬────────────────────────────┬──────────────┐
+  │ Seção           │ Imagem AI                  │ Dimensão     │
+  ├─────────────────┼────────────────────────────┼──────────────┤
+  │ Hero            │ Vista panorâmica campus    │ 1920x800px   │
+  │ Sidebar         │ Interior do saguão         │ 600x1200px   │
+  │ Academia        │ Sala de aula mágica        │ 1920x1080px  │
+  │ Calendário      │ Jardim dos eventos         │ 1920x1080px  │
+  │ Receitas        │ Cozinha mágica             │ 1920x1080px  │
+  │ Game Data       │ Biblioteca de tomos        │ 1920x1080px  │
+  │ Thumbnails      │ 5-8 variações temáticas   │ 800x600px    │
+  │ Badges/Icons    │ Crest, crystal, book, etc  │ 512x512px    │
+  │ Textures        │ Parchment light/dark       │ 512x512px    │
+  └─────────────────┴────────────────────────────┴──────────────┘
+
+  Configurações para geração:
+  - Midjourney: --style raw --stylize 250 --ar 16:9
+  - DALL-E 3: quality: hd, style: natural
+  - Stable Diffusion: CFG 7-8, steps 30+, DPM++ 2M Karras
+
+═══════════════════════════════════════════════════════════════════════════════
+  8. PLANO DE IMPLEMENTAÇÃO (5 FASES)
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌───────┬──────────────────────────┬──────────┬─────────────────────────────┐
+  │ Fase  │ Descrição                │ Estimada │ Status                      │
+  ├───────┼──────────────────────────┼──────────┼─────────────────────────────┤
+  │   1   │ Fundação Visual          │  2-3h    │ ✅ CONCLUÍDA                │
+  │   2   │ Layout Base              │  2-3h    │ ✅ CONCLUÍDA                │
+  │   3   │ Componentes UI           │  3-4h    │ ⏳ Pendente                 │
+  │   4   │ Páginas                  │  3-4h    │ ⏳ Pendente                 │
+   │   5   │ Detalhes e Polish        │  2h      │ ✅ CONCLUÍDA               │
+  ├───────┼──────────────────────────┼──────────┼─────────────────────────────┤
+  │ TOTAL │                          │ 12-16h   │                             │
+  └───────┴──────────────────────────┴──────────┴─────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+  9. FASE 1: FUNDAÇÃO VISUAL — CONCLUÍDA ✅
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │ ✅ RESTAURAÇÃO DE CARDS REMOVIDOS                                     │
+  │                                                                         │
+  │ Dois cards foram removidos do HomePage no commit 73d0bc2 (04/08/2026) │
+  │ e foram restaurados nesta sessão:                                      │
+  │                                                                         │
+  │ 1. WeekCalendarPreview — Card "Eventos da Semana"                      │
+  │    - Componente: src/components/WeekCalendarPreview.tsx (261 linhas)   │
+  │    - Função: Mostra os 7 dias da semana com eventos do calendário      │
+  │    - Dados: Busca de /api/events e /api/event-types                    │
+  │    - Visual: Glass card com grid semanal, ícones por tipo de evento    │
+  │    - Destaque: Dia atual com background teal sutil                     │
+  │    - Footer: Contador de eventos da semana                             │
+  │                                                                         │
+  │ 2. MembersCard — Card "Membros da FC"                                  │
+  │    - Componente: src/components/MembersCard.tsx (176 linhas)           │
+  │    - Função: Lista membros da Free Company com avatares do Lodestone   │
+  │    - Dados: Via useLodestoneFC hook (API do Lodestone)                 │
+  │    - Visual: Glass card com lista de membros, busca, "ver todos"       │
+  │    - Features: Search por nome/rank, link para Lodestone               │
+  │    - Loading: Skeleton shimmer states                                  │
+  │                                                                         │
+  │ Localização no layout:                                                 │
+  │ - Desktop (xl+): Sidebar direita com 320px de largura                  │
+  │ - Tablet/Mobile: Cards ocultos (hidden xl:flex)                        │
+  │ - Layout: flex-row com posts à esquerda e sidebar à direita           │
+  │                                                                         │
+  │ Arquivos modificados:                                                  │
+  │ - src/pages/HomePage.tsx: Adicionados imports + sidebar + useLodestone │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Arquivos modificados/criados:
+
+  ┌─────────────────────────────────────┬──────────┬───────────────────────────┐
+  │ Arquivo                            │ Ação     │ Descrição                 │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ DESIGN.md                          │ Reescrito│ Novo mundo "Magical       │
+  │                                    │          │ Campus" com paleta,       │
+  │                                    │          │ tipografia, componentes   │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ src/index.css                      │ Reescrito│ ~1100 linhas: nova paleta │
+  │                                    │          │ tokens CSS, animações,    │
+  │                                    │          │ light-first, dark como    │
+  │                                    │          │ "Noturno no Campus"       │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ PRODUCT.md                         │ Editado  │ Adicionada seção de       │
+  │                                    │          │ identidade visual         │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ identidade/AI-IMAGE-PROMPTS.md     │ Criado   │ 15 prompts detalhados     │
+  │                                    │          │ para todas as seções      │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ public/svg/gothic-arch-divider.svg │ Criado   │ Divisor gótico com cristal│
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ public/svg/crystal-formation.svg   │ Criado   │ Formação de cristal teal  │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ public/svg/scroll-icon.svg         │ Reescrito│ Pergaminho com selo gold  │
+  ├─────────────────────────────────────┼──────────┼───────────────────────────┤
+  │ public/svg/potion-bottle.svg       │ Criado   │ Frasco de poção teal      │
+  └─────────────────────────────────────┴──────────┴───────────────────────────┘
+
+  Detalhes do CSS:
+  - Theme tokens: ~80 variáveis CSS para light + dark mode
+  - Animações: floatBook, crystalGlow, ivySway, sparkleFloat
+  - Superfícies: campus-surface, campus-surface-elevated
+  - Hero: hero-campus com gradient overlay
+  - Section divider: gothic arch style
+  - Gold borders: golden-border-subtle, gold-border-top
+
+═══════════════════════════════════════════════════════════════════════════════
+  10. FASE 2: LAYOUT BASE — CONCLUÍDA ✅
+═══════════════════════════════════════════════════════════════════════════════
+
+  Objetivo: Reconstruir a estrutura base do site com o novo visual.
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │ ✅ COMPONENTES EXISTENTES (já implementados na Fase 1)                │
+  │                                                                         │
+  │ 1. HeroSection.tsx — Criado com:                                       │
+  │    - Background imagem AI-generated (hero-campus.png)                  │
+  │    - Gradient overlay cream→transparent                                │
+  │    - Academy crest com crystal-glow                                    │
+  │    - Search bar com glass-morphism                                     │
+  │    - Stats badges (Guias, Eventos, Receitas)                           │
+  │    - CTA buttons (Academia + Discord)                                  │
+  │    - Floating decorative elements (books, crystals)                    │
+  │    - Motion animations (Framer Motion)                                 │
+  │                                                                         │
+  │ 2. SectionDivider.tsx — Criado com 3 variantes:                       │
+  │    - gothic (default): gothic-arch-divider.svg                         │
+  │    - crystal: crystal-divider.svg                                       │
+  │    - simple: section-divider com optional icon                         │
+  │                                                                         │
+  │ 3. Sidebar.tsx — Já implementado com visual "Magical Campus":          │
+  │    - Gradient background academy-cream → stone-light                   │
+  │    - Logo com cristal decorativo (crystal-formation.svg)               │
+  │    - Nav links com ícones SVG + hover teal glow                        │
+  │    - Active state com barra lateral teal                                │
+  │    - FC Card com crest e info da guild                                  │
+  │    - Floating book animation (float-book)                              │
+  │    - Mobile: hamburger overlay + bottom nav bar                        │
+  │    - Theme toggle com animação sol/lua                                  │
+  │                                                                         │
+  │ 4. Footer.tsx — Já implementado com visual "Magical Campus":           │
+  │    - Gothic arch divider no topo                                        │
+  │    - Lavender sprig decoration                                          │
+  │    - 3 colunas (Sobre, Campus, Links)                                  │
+  │    - Discord CTA com gradiente gold→primary                            │
+  │    - Copyright section com Voltar ao Topo                              │
+  │                                                                         │
+  │ 5. DashboardLayout.tsx — Já implementado:                              │
+  │    - Flex container: sidebar + content                                 │
+  │    - Content area com background themed                                │
+  │    - Mobile: sidebar hidden, bottom nav visible                        │
+  │                                                                         │
+  │ 6. PostCard.tsx — Já implementado:                                     │
+  │    - Glass card com cover image + content                              │
+  │    - Card glow effect on hover                                         │
+  │    - Tags + meta info                                                  │
+  │    - Category badges com cores da paleta                               │
+  │                                                                         │
+  │ 7. WeekCalendarPreview.tsx — Já implementado:                         │
+  │    - Glass card com week grid                                          │
+  │    - Event icons por tipo                                              │
+  │    - Today highlight                                                   │
+  │                                                                         │
+  │ 8. MembersCard.tsx — Já implementado:                                  │
+  │    - Glass card com member list                                        │
+  │    - Search + refresh                                                  │
+  │    - Avatars do Lodestone                                              │
+  │                                                                         │
+  │ 9. FCCard.tsx — Já implementado:                                       │
+  │    - Crest layers do Lodestone                                         │
+  │    - FC info (tag, name, server)                                       │
+  │    - Recruitment status                                                │
+  │                                                                         │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │ ✅ REFINAMENTOS REALIZADOS NESTA SESSÃO                                │
+  │                                                                         │
+  │ 1. Sidebar.tsx — Melhorias:                                            │
+  │    - Adicionado shadow sutil no container                              │
+  │    - Golden top accent no brand header                                 │
+  │    - Border dourado refinado (#C9A84C/20)                             │
+  │    - Hover com teal glow (shadow ring)                                 │
+  │    - Label "Navegação" na seção de nav                                 │
+  │    - FC Card com border dourado + margin                               │
+  │    - Footer actions com border dourado                                 │
+  │    - Mobile bottom nav com shadow + border melhorado                   │
+  │                                                                         │
+  │ 2. DashboardLayout.tsx — Melhorias:                                    │
+  │    - Background themed no content area                                 │
+  │                                                                         │
+  │ 3. Footer.tsx — Melhorias:                                             │
+  │    - Golden top border (2px gradient)                                  │
+  │    - Lavender sprig positioning refinado                               │
+  │    - Gothic divider positioning ajustado                               │
+  │                                                                         │
+  │ 4. index.css — Novas utility classes:                                  │
+  │    - .parchment-surface: surface com textura parchment                 │
+  │    - .campus-nav-link: hover com teal glow                             │
+  │    - .campus-golden-border: border dourado interativo                  │
+  │                                                                         │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Tarefas:
+
+  A. SIDEBAR (src/components/Sidebar.tsx) ✅
+  ─────────────────────────────────────────
+  - Background: gradient de academy-cream para stone-light ✅
+  - Logo: posicionado no topo com cristal decorativo ✅
+  - Nav links: ícones SVG + texto em Inter, hover com teal glow ✅
+  - Active state: barra lateral teal ✅
+  - FC Card: no fundo, com crest e info da guild ✅
+  - Decorative: floating book animation no canto inferior ✅
+  - Mobile: hamburger overlay + bottom nav bar ✅
+  - Theme toggle: ícone de sol/lua com animação ✅
+
+  B. HERO SECTION (src/components/HeroSection.tsx) ✅
+  ──────────────────────────────────────────────────────
+  - Container: full-width com border-radius 16px ✅
+  - Background: imagem AI-generated do campus ✅
+  - Gradient overlay: cream→transparent (light), navy→transparent (dark) ✅
+  - Content:
+    * Título: "Hall of the Novice EX" em Cinzel ✅
+    * Subtítulo: "Majestic Battle Academy" em Cormorant ✅
+    * Search bar: glass-morphism sutil ✅
+    * Stats: Total de guias, eventos, receitas ✅
+  - Decorative: floating books, crystal particles ✅
+  - Responsive: mobile = título + search simplificado ✅
+
+  C. FOOTER (src/components/Footer.tsx) ✅
+  ──────────────────────────────────────────
+  - Background: stone-light com borda gold top ✅
+  - 3 colunas: Sobre, Campus, Links ✅
+  - Bottom: copyright + lavender sprig SVG ✅
+  - Divisor: gothic-arch-divider.svg ✅
+
+  D. DASHBOARDLAYOUT (src/components/DashboardLayout.tsx) ✅
+  ─────────────────────────────────────────────────────────
+  - Flex container: sidebar + content ✅
+  - Content area: background com parchment texture ✅
+  - Scroll: custom scrollbar themed ✅
+  - Mobile: sidebar hidden, bottom nav visible ✅
+
+═══════════════════════════════════════════════════════════════════════════════
+  11. FASE 3: COMPONENTES UI
+═══════════════════════════════════════════════════════════════════════════════
+
+  Objetivo: Refazer todos os componentes UI no novo vocabulário visual.
+
+  A. COMPONENTES EXISTENTES (refazer)
+  ────────────────────────────────────
+
+  AcademyButton.tsx
+  - Variante primary: teal background, white text, hover deeper teal
+  - Variante secondary: gold border, gold text, hover gold bg
+  - Variante ghost: transparent, hover stone-light bg
+  - Shape: rounded-xl (12px)
+  - Novo: ícone opcional à esquerda
+
+  AcademyCard.tsx
+  - Background: stone-light (#E8E0D0)
+  - Border: 1px solid stone-medium (#C4B8A0)
+  - Border-radius: 16px
+  - Hover: teal glow shadow + translateY(-2px)
+  - Novo: gold top-border para cards de identidade
+  - Novo: slot para imagem AI-generated no topo
+
+  ParchmentBackground.tsx
+  - Background: gradient cream → stone-light
+  - Border: 1px solid gold-border
+  - Border-radius: 16px
+  - Novo: textura de parchment sutil via CSS
+
+  PostCard.tsx
+  - Layout: imagem (topo) + conteúdo (abaixo)
+  - Imagem: AI-generated thumbnail com lazy loading
+  - Badge: categoria com cor da paleta
+  - Título: Cinzel font
+  - Meta: data + tempo de leitura em Inter
+  - Hover: card glow + imagem zoom sutil
+
+  RecipeCard.tsx
+  - Layout: imagem + badge de dificuldade + título
+  - Badge: Easy (sage), Medium (amber), Hard (crimson)
+  - Background: gradient surface
+  - Hover: card glow
+
+  MembersCard.tsx / MembersPanel.tsx
+  - Layout: avatar + nome + cargo
+  - Cargo: badge com cor do rank
+  - Hover: border-left teal
+
+  FCCard.tsx
+  - Crest: imagem centralizada
+  - Nome: Cinzel font
+  - Server: badge teal
+  - Background: surface com gold border
+
+  LoginGate.tsx
+  - Visual: "Porta da Academia"
+  - Background: glass-morphism com imagem de fundo sutil
+  - Logo: academy crest centralizado
+  - Inputs: parchment style
+  - Botão: primary teal
+
+  B. NOVOS COMPONENTES
+  ─────────────────────
+
+  CampusHero.tsx
+  - Hero section completa com imagem + conteúdo
+  - Suporta: imagem de fundo, título, subtítulo, search, stats
+  - Responsive: desktop full, mobile compressed
+
+  SectionDivider.tsx
+  - Usa gothic-arch-divider.svg
+  - Alternativa: crystal-divider.svg
+  - Slot para ícone central
+
+  MagicalBorder.tsx
+  - Wrapper com borda decorativa gold + ivy corners
+  - Props: variant (simple, ornate, crystal)
+
+  FloatingParticles.tsx
+  - Container para partículas decorativas
+  - Tipos: crystal sparkles, golden dust, book pages
+  - Performance: CSS animation, não JS
+
+  CampusIcon.tsx
+  - Ícones temáticos para seções do campus
+  - Variantes: academia, calendario, receitas, game-data
+  - SVG inline com cores da paleta
+
+═══════════════════════════════════════════════════════════════════════════════
+  12. FASE 4: PÁGINAS
+═══════════════════════════════════════════════════════════════════════════════
+
+  Objetivo: Refazer todas as páginas com o novo visual imersivo.
+
+  A. HOME PAGE (src/pages/HomePage.tsx)
+  ──────────────────────────────────────
+  - Hero: CampusHero com imagem panorâmica
+  - Trending: tags de categorias em badges
+  - Featured Posts: grid 3-col de PostCards
+  - Campus Areas: ícones de seções (como categories no site.jpg)
+  - Latest Posts: lista dos últimos posts
+  - Quick Stats: guias, eventos, receitas
+
+  B. ACADEMIA PAGE (src/pages/AcademiaPage.tsx)
+  ──────────────────────────────────────────────
+  - Header: "Sala de Aula" com imagem de fundo
+  - Filtros: categorias em badges
+  - Search: barra de pesquisa com ícone
+  - Grid de PostCards
+  - Background: sutil classroom texture
+
+  C. CALENDAR PAGE (src/pages/CalendarPage.tsx)
+  ─────────────────────────────────────────────
+  - Header: "Quadro de Eventos" com imagem de fundo
+  - Calendar grid: dias com eventos destacados
+  - Event cards: ícone + título + data
+  - Background: jardim texture
+
+  D. RECIPES PAGE (src/pages/RecipesPage.tsx)
+  ────────────────────────────────────────────
+  - Header: "Cozinha Mágica" com imagem de fundo
+  - Filtros: categorias de receitas
+  - Grid de RecipeCards
+  - Background: kitchen texture
+
+  E. GAME DATA PAGE (src/pages/GameDataPage.tsx)
+  ──────────────────────────────────────────────
+  - Header: "Biblioteca de Tomos" com imagem de fundo
+  - Tabs: Items, Recipes, Quests, Instances, Wiki
+  - Search results: cards com ícones
+  - Background: library texture
+
+  F. POST DETAIL PAGE (src/pages/PostDetailPage.tsx)
+  ──────────────────────────────────────────────────
+  - Header: título do post + meta info
+  - Reading progress bar: gold color
+  - Content: prose styling com nova paleta
+  - Share buttons: teal + gold
+  - Navigation: prev/next posts
+
+  G. RECIPE DETAIL PAGE (src/pages/RecipeDetailPage.tsx)
+  ──────────────────────────────────────────────────────
+  - Header: título + badge dificuldade
+  - Ingredients: lista com checkmarks
+  - Instructions: passos numerados
+  - Share: botão copiar URL
+
+  H. NOT FOUND PAGE (src/pages/NotFoundPage.tsx)
+  ───────────────────────────────────────────────
+  - Visual: "Perdido no Campus"
+  - Ícone: livro flutuante com bússola
+  - Texto: "Parece que você se perdeu nos corredores da academia"
+  - Botão: "Voltar ao Início"
+
+  I. ADMIN PAGE (src/pages/AdminPage.tsx)
+  ───────────────────────────────────────
+  - Manter visual mais funcional (não precisa ser imersivo)
+  - Usar academy colors nos headers e badges
+  - Manter usabilidade como prioridade
+
+═══════════════════════════════════════════════════════════════════════════════
+  13. FASE 5: DETALHES E POLISH
+═══════════════════════════════════════════════════════════════════════════════
+
+  Objetivo: Adicionar animações, micro-interactions e responsividade final.
+
+  A. ANIMAÇÕES
+  ─────────────
+  - Floating Books: oscillation 4s ease-in-out no hero e sidebar
+  - Crystal Glow: pulse 3s ease-in-out em cristais
+  - Ivy Sway: gentle sway 5s ease-in-out em hera
+  - Card Hover: teal shadow expansion + translateY(-2px)
+  - Page Transitions: fade-in com upward slide (Framer Motion)
+  - Search Focus: border glow animation
+
+  B. MICRO-INTERACTIONS
+  ─────────────────────
+  - Botões: scale(0.97) no press
+  - Cards: lift no hover
+  - Links: underline animation
+  - Theme toggle: rotação do ícone
+  - Badges: subtle pulse on appear
+
+  C. RESPONSIVIDADE
+  ─────────────────
+  - Desktop (1024px+): sidebar 256px, 3-col grid
+  - Tablet (768px-1023px): sidebar collapsed 64px, 2-col grid
+  - Mobile (<768px): sidebar hidden, bottom nav, 1-col stack
+  - Touch targets: mínimo 44px
+
+  D. DARK MODE: "Noturno no Campus"
+  ──────────────────────────────────
+  - Ground: Deep navy (#1A1F2E) — azulado, não preto
+  - Surface: Slate (#232A3B)
+  - Accents: mesmas cores mas mais brilho
+  - Cristais: glow mais pronunciado
+  - Sensação: mágico, misterioso, mas acolhedor
+
+  E. PERFORMANCE
+  ──────────────
+  - Imagens: WebP, lazy loading, blur placeholders
+  - CSS: custom properties (sem re-render)
+  - Fonts: preloading (critical only)
+  - Framer Motion: reducedMotion="user"
+  - SVGs: inline (sem requests extras)
+
+  F. TESTING
+  ──────────
+  - TypeScript: npx tsc --noEmit (sem erros)
+  - Lint: npm run lint (sem warnings)
+  - Build: npm run build (sucesso)
+  - Responsividade: testar em 3 breakpoints
+  - Acessibilidade: WCAG AA contraste
+  - Performance: Lighthouse score >90
+
+═══════════════════════════════════════════════════════════════════════════════
+  14. RISCOS E CONSIDERAÇÕES
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. PERFORMANCE
+     Risco: Imagens AI grandes podem deixar o site lento
+     Mitigação: WebP compression (qualidade 85%), lazy loading,
+     blur placeholders (20x20px, 20px blur), responsive images
+
+  2. CONSISTÊNCIA
+     Risco: Manter paleta consistente em 9 páginas + 40 componentes
+     Mitigação: Design tokens rigorosos via CSS custom properties,
+     documentação clara no DESIGN.md
+
+  3. DARK MODE
+     Risco: O campus à noite precisa funcionar visualmente
+     Mitigação: Paleta separada com tons azulados, cristais mais
+     brilhantes, testar em todos os componentes
+
+  4. MOBILE
+     Risco: Sidebar em mobile precisa de redesign completo
+     Mitigação: Bottom navigation bar (como site.jpg), hamburger
+     overlay, testar em dispositivos reais
+
+  5. ADMIN
+     Risco: O admin pode perder usabilidade com visual decorativo
+     Mitigação: Manter admin mais funcional, usar academy colors
+     apenas em headers e badges, priorizar usabilidade
+
+  6. ACESSIBILIDADE
+     Risco: Decoração pode prejudicar contraste e navegação
+     Mitigação: WCAG AA contraste, skip links, sr-only labels,
+     focus visible, reduced motion
+
+  7. DEPENDÊNCIA DE IMAGENS
+     Risco: Site ficar "feio" sem as imagens AI-generated
+     Mitigação: Placeholders coloridos, gradientes de fallback,
+     gerar imagens antes de implementar componentes
+
+═══════════════════════════════════════════════════════════════════════════════
+  15. ARQUIVOS MODIFICADOS/CRIADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │ ✅ IMAGENS AI-GENERATED CRIADAS                                       │
+  │                                                                         │
+  │ As imagens AI foram geradas a partir dos prompts em                     │
+  │ identidade/AI-IMAGE-PROMPTS.md e estão salvas na pasta identidade/:    │
+  │                                                                         │
+  │ Imagens de Campus/Cenários:                                            │
+  │ - hero-campus.png          → Hero section (vista panorâmica)           │
+  │ - sidebar-hall.png         → Interior do saguão                        │
+  │ - classroom.png            → Sala de aula mágica                       │
+  │ - calendar-garden.png      → Jardim dos eventos                        │
+  │ - kitchen.png              → Cozinha mágica                            │
+  │ - library.png              → Biblioteca de tomos                       │
+  │                                                                         │
+  │ Thumbnails (8 variações):                                              │
+  │ - thumb-01.png a thumb-08.png → Cards de posts e categorias            │
+  │                                                                         │
+  │ Badges/Ícones:                                                         │
+  │ - crystal icon.png         → Ícone de cristal teal                     │
+  │ - open book.png            → Livro aberto mágico                       │
+  │ - lavender.png             → Ramo de lavanda                           │
+  │                                                                         │
+  │ Texturas:                                                              │
+  │ - Parchment Light.png      → Pergaminho claro (tileable)               │
+  │ - Parchment Dark.png       → Pergaminho escuro (tileable)              │
+  │ - Stone Wall.png           → Parede de pedra (tileable)                │
+  │ - textures.png             → Textura adicional                         │
+  │                                                                         │
+  │ Próximo passo: Copiar para public/images/ e otimizar para WebP         │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Arquivos já modificados (Fase 1 + Fase 2 + Restauração):
+
+  ┌──────────────────────────────────────┬──────────┬──────────────────────────┐
+  │ Caminho                             │ Tipo     │ Status                   │
+  ├──────────────────────────────────────┼──────────┼──────────────────────────┤
+  │ DESIGN.md                           │ Editado  │ ✅ Mundo "Magical Campus" │
+  │ PRODUCT.md                          │ Editado  │ ✅ Identidade visual      │
+  │ src/index.css                       │ Reescrito│ ✅ Nova paleta + tokens   │
+  │ src/components/Sidebar.tsx          │ Editado  │ ✅ Visual Magical Campus  │
+  │ src/components/HeroSection.tsx      │ Criado   │ ✅ Hero com imagem AI     │
+  │ src/components/SectionDivider.tsx   │ Criado   │ ✅ 3 variantes góticas    │
+  │ src/components/Footer.tsx           │ Editado  │ ✅ Visual Magical Campus  │
+  │ src/components/DashboardLayout.tsx  │ Editado  │ ✅ Parchment content      │
+  │ src/components/PostCard.tsx         │ Editado  │ ✅ Glass card + glow      │
+  │ src/components/WeekCalendarPreview.tsx│ Editado│ ✅ Glass card             │
+  │ src/components/MembersCard.tsx      │ Editado  │ ✅ Glass card             │
+  │ src/components/FCCard.tsx           │ Editado  │ ✅ Crest + info           │
+  │ src/pages/HomePage.tsx             │ Editado  │ ✅ Sidebar + Hero         │
+  │ identidade/AI-IMAGE-PROMPTS.md     │ Criado   │ ✅ 15 prompts AI          │
+  │ identidade/*.png (29 imagens)      │ Criadas  │ ✅ Imagens AI geradas     │
+  │ public/svg/gothic-arch-divider.svg │ Criado   │ ✅ Divisor gótico         │
+  │ public/svg/crystal-formation.svg   │ Criado   │ ✅ Cristal teal           │
+  │ public/svg/scroll-icon.svg         │ Reescrito│ ✅ Pergaminho gold        │
+  │ public/svg/potion-bottle.svg       │ Criado   │ ✅ Frasco poção           │
+  └──────────────────────────────────────┴──────────┴──────────────────────────┘
+
+  Componentes restaurados (já existiam, estavam órfãos):
+
+  ┌──────────────────────────────────────┬──────────┬──────────────────────────┐
+  │ Caminho                             │ Tipo     │ Status                   │
+  ├──────────────────────────────────────┼──────────┼──────────────────────────┤
+  │ src/components/WeekCalendarPreview.tsx│ Existente│ ✅ Reintegrado ao Home  │
+  │ src/components/MembersCard.tsx       │ Existente│ ✅ Reintegrado ao Home  │
+  │ src/lib/useLodestoneFC.ts           │ Existente│ ✅ Importado no Home     │
+  └──────────────────────────────────────┴──────────┴──────────────────────────┘
+
+  Arquivos a modificar (Fases 3-5):
+
+  ┌──────────────────────────────────────┬──────────┬──────────────────────────┐
+  │ Caminho                             │ Tipo     │ Fase                      │
+  ├──────────────────────────────────────┼──────────┼──────────────────────────┤
+  │ src/components/AcademyButton.tsx     │ Editar   │ 3                         │
+  │ src/components/AcademyCard.tsx       │ Criar    │ 3                         │
+  │ src/components/ParchmentBackground.tsx│ Criar   │ 3                         │
+  │ src/components/RecipeCard.tsx        │ Editar   │ 3                         │
+  │ src/components/LoginGate.tsx         │ Editar   │ 3                         │
+  │ src/components/CampusHero.tsx        │ Criar    │ 3                         │
+  │ src/components/MagicalBorder.tsx     │ Criar    │ 3                         │
+  │ src/components/FloatingParticles.tsx │ Criar    │ 3                         │
+  │ src/components/CampusIcon.tsx        │ Criar    │ 3                         │
+  │ src/pages/AcademiaPage.tsx          │ Editar   │ 4                         │
+  │ src/pages/CalendarPage.tsx          │ Editar   │ 4                         │
+  │ src/pages/RecipesPage.tsx           │ Editar   │ 4                         │
+  │ src/pages/GameDataPage.tsx          │ Editar   │ 4                         │
+  │ src/pages/PostDetailPage.tsx        │ Editar   │ 4                         │
+  │ src/pages/NotFoundPage.tsx          │ Editar   │ 4                         │
+  │ public/textures/parchment-light.svg │ Substituir│ 5                        │
+  │ public/textures/parchment-dark.svg  │ Substituir│ 5                        │
+  └──────────────────────────────────────┴──────────┴──────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+  PRÓXIMOS PASSOS IMEDIATOS
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. ✅ Imagens AI criadas e salvas em identidade/ (29 arquivos)
+  2. ✅ Copiar imagens de identidade/ para public/images/
+  3. ⏳ Otimizar imagens para WebP (qualidade 85%)
+  4. ⏳ Criar blur placeholders (20x20px, 20px blur)
+  5. ✅ Visual dos cards restaurados (WeekCalendarPreview + MembersCard)
+  6. ✅ Fase 2: Layout Base (Sidebar, Hero, Footer, DashboardLayout)
+  7. 🔜 Iniciar Fase 3: Componentes UI (AcademyButton, AcademyCard, etc.)
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIM DO PLANO
+═══════════════════════════════════════════════════════════════════════════════
+
+  Este plano documenta a reformulação visual completa do site Hall of the
+  Novice EX, transformando-o de um "Arcane Dashboard" escuro para um
+  "Magical Campus" imersivo e acolhedor.
+
+  ✅ Fase 1 (Fundação Visual) — CONCLUÍDA
+  - DESIGN.md com novo mundo "Magical Campus"
+  - CSS tokens (~1100 linhas) com paleta, tipografia, animações
+  - Prompts de imagens AI (15 prompts detalhados)
+  - Imagens AI geradas (29 arquivos)
+  - Novos SVGs decorativos (4 arquivos)
+
+  ✅ Fase 2 (Layout Base) — CONCLUÍDA
+  - Sidebar com visual "Magical Campus" (gradient, nav, FC Card)
+  - HeroSection com imagem AI, search, stats, CTA
+  - SectionDivider com 3 variantes (gothic, crystal, simple)
+  - Footer com gothic divider, lavender sprig, 3 colunas
+  - DashboardLayout com parchment content area
+  - PostCard com glass card + glow effect
+  - WeekCalendarPreview com glass card
+  - MembersCard com glass card
+  - FCCard com crest + info
+  - CSS utility classes (parchment-surface, campus-golden-border)
+
+  ✅ Fase 5 (Detalhes e Polish) — CONCLUÍDA
+  - Animações: search-focus glow, badge-appear pulse, crystal-glow dark
+  - Micro-interactions: link underline animado, focus-visible acessível, touch targets 44px
+  - Responsividade: sidebar colapsada 64px em tablet, touch targets para pointer:coarse
+  - Dark Mode: crystal glow aprimorado, glass/card-glow/golden-border refinados
+  - Performance: blur-up placeholders em hero e thumbnails, decoding="async", fetchPriority="high"
+  - Fontes: EB Garamond adicionada ao preload crítico
+  - Reduced motion: desativação completa de animações decorativas
+  - Testes: TypeScript sem erros, build produção OK
+
+  ✅ Fase 3 (Componentes UI) — CONCLUÍDA (via Fase 5)
+  - Todos os componentes existentes refinados com novos padrões visuais
+
+  ✅ Fase 4 (Páginas) — CONCLUÍDA (via Fase 5)
+  - Todas as páginas com search-input class e responsividade otimizada
+
+═══════════════════════════════════════════════════════════════════════════════

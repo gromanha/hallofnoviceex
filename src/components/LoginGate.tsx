@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useEscapeKey } from '../lib/useEscapeKey';
@@ -64,7 +64,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
     >
       <motion.div
         ref={modalRef}
-        className="glass rounded-2xl w-full max-w-md border border-[var(--color-outline)]/50 shadow-2xl overflow-hidden relative"
+        className="rounded-2xl w-full max-w-md border border-[var(--color-outline)]/50 shadow-2xl overflow-hidden relative bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-surface-alt)]"
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         initial={{ scale: 0.95, opacity: 0 }}
@@ -72,7 +72,8 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="h-1 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] w-full" />
+        {/* Top gold accent */}
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/50 to-transparent" />
 
         {onClose && (
           <button
@@ -85,21 +86,22 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
         )}
 
         <div className="p-8 space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-[var(--color-outline)]">
+          {/* Academy Crest */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#C9A84C]/30 shadow-lg bg-[var(--color-surface)]">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
-            <div>
-              <h1 className="text-lg font-display font-bold text-[var(--color-on-surface)]">
-                Reitoria – HoN EX
+            <div className="text-center">
+              <h1 className="font-cinzel font-bold text-lg text-[var(--color-on-surface)]">
+                Porta da Academia
               </h1>
-              <p className="text-[10px] font-sans uppercase tracking-widest text-[var(--color-primary)] font-bold">
-                Painel do Administrador
+              <p className="text-[10px] font-sans uppercase tracking-widest text-[var(--color-primary)] font-bold mt-1">
+                Reitoria — HoN EX
               </p>
             </div>
           </div>
 
-          <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
+          <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed text-center">
             Acesse com suas credenciais de administrador para gerenciar eventos e publicar conteúdo no site.
           </p>
 
@@ -115,7 +117,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="ex: admin"
-                className="w-full bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 rounded-xl px-4 py-2.5 text-xs text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                className="search-input w-full bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 rounded-xl px-4 py-3 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none"
               />
             </div>
 
@@ -129,7 +131,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 rounded-xl px-4 py-2.5 text-xs text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                className="search-input w-full bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 rounded-xl px-4 py-3 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none"
               />
             </div>
 
@@ -142,7 +144,7 @@ export const LoginGate: React.FC<LoginGateProps> = ({ onLogin, onClose }) => {
             <button
               type="submit"
               disabled={busy}
-              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] disabled:opacity-50 text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] disabled:opacity-50 text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center justify-center gap-2 active:scale-[0.97]"
             >
               {busy ? 'Autenticando...' : 'Entrar no Painel'}
             </button>

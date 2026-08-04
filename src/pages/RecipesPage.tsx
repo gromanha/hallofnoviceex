@@ -74,15 +74,23 @@ export const RecipesPage: React.FC = () => {
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
-      {/* Header */}
-      <div className="glass rounded-2xl p-8 sm:p-10 border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 relative overflow-hidden text-center space-y-4">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-0 right-1/4 w-72 h-72 bg-[var(--color-secondary)]/10 rounded-full blur-3xl" />
+      {/* Header — Cozinha Mágica */}
+      <div className="relative rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 border-t-2 border-t-[#C9A84C]/30 text-center space-y-4">
+        {/* AI Background */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/kitchen.png"
+            alt=""
+            className="w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-background)]/70 via-[var(--color-background)]/85 to-[var(--color-background)]/95" />
         </div>
-        <div className="relative z-10">
-          <div className="type-label text-[var(--color-secondary)] mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/10 border border-[var(--color-secondary)]/20">
+
+        <div className="relative z-10 p-8 sm:p-10">
+          <div className="type-label text-[var(--color-secondary)] mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-secondary)]/10 border border-[var(--color-secondary)]/20 backdrop-blur-sm">
             <UtensilsCrossed className="w-3.5 h-3.5" />
-            Livro de Receitas de Eorzea
+            Cozinha Mágica — Livro de Receitas
           </div>
 
           <h1 className="type-display font-cinzel text-[var(--color-on-surface)]">
@@ -90,13 +98,13 @@ export const RecipesPage: React.FC = () => {
           </h1>
 
           <p className="type-body text-[var(--color-on-surface-variant)] max-w-2xl mx-auto mt-2">
-            Receitas inspiradas no cookbook oficial de Final Fantasy XIV. Do Cafe da Manha de Limsa Lominsa as Sobremesas de Ishgard.
+            Receitas inspiradas no cookbook oficial de Final Fantasy XIV. Do Café da Manhã de Limsa Lominsa às Sobremesas de Ishgard.
           </p>
 
           <div className="mt-4">
             <a
               href="/game-data"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[var(--color-outline)]/30 text-[var(--color-secondary)] hover:border-[var(--color-secondary)]/50 transition-all type-body"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-outline)]/30 text-[var(--color-secondary)] hover:border-[var(--color-secondary)]/50 transition-all type-body"
             >
               <Globe className="w-4 h-4" />
               Explorar dados do jogo
@@ -143,7 +151,7 @@ export const RecipesPage: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Buscar receita..."
-            className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none"
+            className="search-input w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-outline)]/50 type-body text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none"
           />
           {searchQuery && (
             <button

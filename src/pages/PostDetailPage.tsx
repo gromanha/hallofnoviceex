@@ -165,7 +165,7 @@ export const PostDetailPage: React.FC = () => {
                 {post.category}
               </div>
 
-              <h1 className="type-display text-[var(--color-on-surface)] break-words">
+              <h1 className="type-display font-cinzel text-[var(--color-on-surface)] break-words">
                 {post.title}
               </h1>
 

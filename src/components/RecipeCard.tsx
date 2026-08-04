@@ -8,38 +8,59 @@ interface RecipeCardProps {
   onClick: () => void;
 }
 
-const DIFFICULTY_COLORS = {
-  Easy: 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border-[var(--color-sage)]/20',
-  Medium: 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border-[var(--color-amber)]/20',
-  Hard: 'bg-[var(--color-crimson)]/10 text-[var(--color-crimson)] border-[var(--color-crimson)]/20',
+const DIFFICULTY_CONFIG = {
+  Easy: {
+    bg: 'bg-[var(--color-sage)]/10',
+    text: 'text-[var(--color-sage)]',
+    border: 'border-[var(--color-sage)]/20',
+    icon: '🌿',
+  },
+  Medium: {
+    bg: 'bg-[var(--color-amber)]/10',
+    text: 'text-[var(--color-amber)]',
+    border: 'border-[var(--color-amber)]/20',
+    icon: '🔥',
+  },
+  Hard: {
+    bg: 'bg-[var(--color-crimson)]/10',
+    text: 'text-[var(--color-crimson)]',
+    border: 'border-[var(--color-crimson)]/20',
+    icon: '⚡',
+  },
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) => {
   const [imgError, setImgError] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
 
   const totalTime = [recipe.prep_time, recipe.cook_time].filter(Boolean).join(' + ');
+  const difficultyConfig = DIFFICULTY_CONFIG[recipe.difficulty as keyof typeof DIFFICULTY_CONFIG] || DIFFICULTY_CONFIG.Easy;
 
   return (
     <a
       href={`/receitas/${recipe.slug}`}
       onClick={(e) => { e.preventDefault(); onClick(); }}
-      className="group relative glass rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] card-glow card-shimmer-accent"
+      className="group relative rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] hover:border-[var(--color-primary)]/30 hover:shadow-[0_8px_24px_rgba(91,164,181,0.12)] hover:-translate-y-0.5 bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-surface-alt)]"
     >
+      {/* Top gold accent */}
+      <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/40 to-transparent" />
+
       {recipe.cover_image && !imgError && (
         <div className="relative h-48 sm:h-52 overflow-hidden bg-[var(--color-surface-alt)]">
           <img
             src={recipe.cover_image}
             alt={recipe.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ${thumbLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
             loading="lazy"
+            decoding="async"
             onError={() => setImgError(true)}
+            onLoad={() => setThumbLoaded(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-background)] via-transparent to-transparent" />
 
-          <div className="absolute top-3 right-3">
-            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border ${DIFFICULTY_COLORS[recipe.difficulty] || DIFFICULTY_COLORS.Easy}`}>
-              {recipe.difficulty}
-            </span>
+          <div className={`absolute top-3 right-3 ${difficultyConfig.bg} ${difficultyConfig.text} ${difficultyConfig.border} px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border flex items-center gap-1`}>
+            <span>{difficultyConfig.icon}</span>
+            {recipe.difficulty}
           </div>
 
           {recipe.category && (
@@ -69,7 +90,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = memo(({ recipe, onClick }) 
 
       <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="font-display font-bold text-base text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
+          <h3 className="font-cinzel font-bold text-base text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors mb-2 line-clamp-2 break-words">
             {recipe.title}
           </h3>
 

@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
     `flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all relative ${
       isActive
         ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] sidebar-nav-active'
-        : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] hover:shadow-sm'
+        : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] hover:shadow-[0_0_0_1px_rgba(91,164,181,0.1)]'
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -56,19 +56,30 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
       {/* Sidebar */}
       <aside className={`
         fixed lg:sticky top-0 left-0 z-40 lg:z-auto
-        flex flex-col w-64 shrink-0 h-screen
-        bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-surface-alt)] border-r border-[var(--color-outline)]/50 overflow-hidden
-        transition-transform duration-300 ease-in-out
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}      >
-        {/* Brand */}
-        <div className="px-5 py-6 border-b border-[var(--color-outline)]/30">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#C9A84C]/30 shadow-md shrink-0">
+        flex flex-col shrink-0
+        bg-gradient-to-b from-[var(--color-background)] via-[var(--color-surface)] to-[var(--color-surface-alt)]
+        border-r border-[var(--color-outline)]/30 overflow-hidden
+        transition-all duration-300 ease-in-out
+        shadow-[2px_0_12px_rgba(45,52,54,0.06)]
+        ${mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0 w-64'}
+        lg:h-screen lg:sticky lg:top-0
+        max-lg:fixed max-lg:h-screen
+      `}>
+        {/* Brand Header */}
+        <div className="px-5 py-6 border-b border-[#C9A84C]/20 relative overflow-hidden tablet-sidebar:hidden-tablet-brand">
+          {/* Golden top accent */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A84C]/60 to-transparent" aria-hidden="true" />
+          {/* Subtle background decoration */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" aria-hidden="true">
+            <img src="/svg/rune-circle.svg" alt="" className="absolute -top-8 -right-8 w-32 h-32" />
+          </div>
+
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-[#C9A84C]/30 shadow-md shrink-0 bg-[var(--color-surface)]">
               <img src={logoUrl} alt="HoN EX" className="w-full h-full object-cover" />
             </div>
-            <div className="min-w-0">
-              <span className="font-display font-bold tracking-wider text-xs text-[var(--color-on-surface)] block leading-none truncate">
+            <div className="min-w-0 sidebar-brand-text">
+              <span className="font-cinzel font-bold tracking-wider text-xs text-[var(--color-on-surface)] block leading-none truncate">
                 HALL OF THE NOVICE <span className="text-[var(--color-primary)]">EX</span>
               </span>
               <span className="font-sans text-[10px] tracking-widest text-[var(--color-secondary)] uppercase block mt-1">
@@ -80,6 +91,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto sidebar-scroll" aria-label="Menu lateral">
+          <div className="px-4 mb-3 sidebar-section-label">
+            <span className="type-label text-[var(--color-on-surface-variant)] opacity-60">Navegação</span>
+          </div>
           <NavLink to="/" end className={linkClass} onClick={() => setMobileOpen(false)}>
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 21V9l8-6 8 6v12" />
@@ -144,13 +158,13 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
 
         {/* FC Card — desktop only */}
         {lodestone && (
-          <div className="hidden lg:block border-t border-[var(--color-outline)]/30 pt-3">
+          <div className="hidden lg:block border-t border-[#C9A84C]/20 pt-3 mx-2">
             <FCCard lodestone={lodestone} />
           </div>
         )}
 
         {/* Footer Actions */}
-        <div className="px-3 py-4 border-t border-[var(--color-outline)]/30 space-y-2">
+        <div className="px-3 py-4 border-t border-[#C9A84C]/20 space-y-2">
           <button
             onClick={onToggleTheme}
             className="sidebar-theme-toggle flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-on-surface)] transition-all border border-[#C9A84C]/20 hover:border-[#C9A84C]/40"
@@ -158,8 +172,13 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
             aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
             aria-pressed={theme === 'dark'}
           >
-            {theme === 'light' ? <Moon className="w-4 h-4 shrink-0" /> : <Sun className="w-4 h-4 shrink-0 text-[var(--color-amber)]" />}
-            {theme === 'light' ? 'Tema Escuro' : 'Tema Claro'}
+            <motion.div
+              animate={{ rotate: theme === 'dark' ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4 shrink-0" /> : <Sun className="w-4 h-4 shrink-0 text-[var(--color-amber)]" />}
+            </motion.div>
+            {theme === 'light' ? 'Noturno no Campus' : 'Campus Iluminado'}
           </button>
 
           {admin ? (
@@ -185,10 +204,14 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ theme, onToggleTheme, onO
           )}
         </div>
 
+        {/* Floating book decoration — bottom corner */}
+        <div className="absolute bottom-20 right-3 pointer-events-none opacity-10" aria-hidden="true">
+          <img src="/svg/floating-book.svg" alt="" className="w-8 h-8 float-book" />
+        </div>
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 px-4 bg-[var(--color-surface)] border-t-2 border-t-[#C9A84C]/20 text-[10px] font-medium" aria-label="Menu de navegação mobile">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 px-4 bg-[var(--color-surface)] border-t-2 border-t-[#C9A84C]/30 text-[10px] font-medium shadow-[0_-4px_12px_rgba(45,52,54,0.08)]" aria-label="Menu de navegação mobile">
         <NavLink to="/" end className={mobileLinkClass}>
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 21V9l8-6 8 6v12" />

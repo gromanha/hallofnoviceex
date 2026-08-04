@@ -1,120 +1,215 @@
-<!-- SEED: established with the user before implementation; re-run /impeccable document once there's code to capture the actual tokens and components. -->
-
----
-name: Hall of the Novice EX
-description: Arcane Dashboard — gaming-grade dark interface for a magical FFXIV academy
----
-
 # Design System: Hall of the Novice EX
 
 ## Overview
 
-**Creative North Star: "The Arcane Dashboard"**
+**Creative North Star: "The Magical Campus"**
 
-A magical academy that runs on a gaming-grade control panel. The Sharlayan scholar's desk reimagined as a sleek dark interface — deep slate backgrounds, luminous teal accents, regal gold identity, glass-morphism depth, and serif-forward typography. The warmth of academia meets the precision of a game launcher. Every surface feels active, alive, and purposeful.
+O visitante está dentro do campus da Majestic Battle Academy. Cada seção do site é um "cômodo" ou "área" da escola de magia. A navegação é caminhar pelo campus — do saguão iluminado para a biblioteca, dos jardins para a sala de aula. A interface desaparece; a experiência é imersiva, acolhora e viva.
 
-The system refuses the warm parchment default of academic guilds. Instead it borrows from esports dashboards and game UIs: high-contrast dark grounds, luminous accent colors that pop against slate, semi-transparent glass cards with subtle blur, and a typographic hierarchy that commands attention. The magical academy identity lives in the gold accents, the ceremonial Cinzel for display headings, and the copy's scholarly voice carried by Cormorant Garamond.
+O sistema abandona o dashboard gaming escuro e abraça uma estética de ilustração aquática — tons quentes de parchment, arquitetura gótica com arcos e colunas, cristais brilhantes, livros flutuantes, e jardins de lavanda. Cada superfície tem textura e profundidade natural. A identidade vive na paleta da academia: teal domos, gold ornamental, lavanda mística, e sage da natureza.
 
-**Key Characteristics:**
-- Deep slate ground (#1a1f2e) — dark but not oppressive, with lighter surface layers
-- Luminous teal (#5BA4B5) as the primary action color — calm, arcane, commanding
-- Muted gold (#c9a84c) as the secondary identity color — academic, prestigious
-- Lavender (#9B7EC8) for tertiary highlights — mystical, distinctive
-- Glass-morphism cards with backdrop-blur and subtle borders
-- Cormorant Garamond for body text, Space Grotesk for display, Cinzel for ceremonial headings
-- Generous spacing with dashboard-style grid layout
-- Motion: subtle glow on hover, smooth page transitions, floating particles
+**Características-chave:**
+- Ground cream quente (#F5EFE0) — iluminado, acolhedor, não frio
+- Academy Teal (#5BA4B5) como cor de ação principal — calmo, arcano, comandante
+- Academy Gold (#C9A84C) como cor de identidade — acadêmico, prestigiado
+- Academy Lavender (#9B7EC8) para highlights terciários — místico, distintivo
+- Academy Sage (#7BA68A) para elementos naturais — sucesso, crescimento
+- Cards com textura de parchment e bordas douradas sutil
+- Cormorant Garamond para corpo, Cinzel para heading cerimonial, Inter para labels
+- Espaçamento generoso com layout de campus
+- Motion: livros flutuando, cristais brilhando,ivy balançando
 
 ## Colors
 
-The palette is built for dark-mode-first browsing with a lightened slate ground that avoids pitch-black oppression. Vibrant accents pop against the dark surface.
+A paleta é construída para light-mode-first com escuro como variação noturna. Tons quentes e naturais dominam; accents vibrantes ganham contraste contra o ground claro.
 
 ### Primary
-- **Arcane Teal** (#5BA4B5): Primary action color — CTAs, active states, highlights, interactive accents. Calm, arcane, commanding against dark grounds.
-- **Arcane Teal Deep** (#2D6A6A): Hover/pressed state for primary actions. Deeper saturation on interaction.
+- **Academy Teal** (#5BA4B5): Cor de ação principal — CTAs, estados ativos, destaques, accents interativos. Calmo, arcano, comandante contra grounds claros.
+- **Academy Teal Deep** (#3D8A96): Estado hover/pressed para ações primárias. Mais saturação na interação.
+- **Academy Teal Light** (#8EC5D0): Backgrounds sutis, highlights de texto, badges.
 
 ### Secondary
-- **Sharlayan Gold** (#c9a84c): Identity and prestige — headings, borders, decorative accents, admin badges. Carries the academic authority.
-- **Sharlayan Gold Accent** (#d4b85c): Hover state for gold elements.
+- **Academy Gold** (#C9A84C): Identidade e prestígio — headings, bordas, accents decorativos, badges de admin. Carrega a autoridade acadêmica.
+- **Academy Gold Accent** (#D4B85C): Estado hover para elementos gold.
+- **Academy Gold Muted** (#B89A3F): Versão mais sutil para bordas e divisores.
 
 ### Tertiary
-- **Arcane Lavender** (#9B7EC8): Mystical highlights — counters, secondary data, mystical emphasis. Used sparingly for data that needs distinction without urgency.
+- **Academy Lavender** (#9B7EC8): Highlights místicos — contadores, dados secundários, ênfase mística. Usado com moderação para dados que precisam de distinção sem urgência.
+- **Academy Lavender Light** (#C4B0E0): Backgrounds suaves, badges secundários.
 
-### Neutral
-- **Deep Slate** (#1a1f2e): Primary background — dark but warm, not pure black.
-- **Slate Surface** (#232a3b): Card and panel backgrounds — one step lighter than ground.
-- **Slate Elevated** (#2a3244): Elevated surfaces, modals, dropdowns — highest layer.
-- **Slate Border** (#374151): Subtle borders and dividers — visible but not loud.
-- **Muted Text** (#94a3b8): Secondary text, labels, placeholders — readable against dark surfaces.
-- **Light Text** (#e2e8f0): Primary body text — high contrast against dark ground.
-- **White Text** (#f8fafc): Headings and emphasis — maximum contrast.
+### Nature
+- **Academy Sage** (#7BA68A): Elementos naturais — estados de sucesso, badges de progresso, natureza. Conecta ao jardim da academia.
+- **Academy Sage Light** (#A8CDB5): Backgrounds de sucesso, badges sutis.
+
+### Neutral (Light Mode — padrão)
+- **Academy Cream** (#F5EFE0): Background principal — warm, iluminado, não branco puro.
+- **Stone Light** (#E8E0D0): Superfícies de cards e painéis — um passo acima do ground.
+- **Stone Medium** (#C4B8A0): Bordas e divisores — visível mas não alto.
+- **Stone Dark** (#8B7E6A): Texto secundário, labels, placeholders — legível contra surfaces claros.
+- **Ink Dark** (#2D3436): Texto principal — alto contraste contra grounds claros.
+- **Ink Black** (#1A1A2E): Headings e ênfase — contraste máximo.
 
 ### Named Rules
-**The Accent Rarity Rule.** Arcane Teal is used on ≤15% of any given screen. Its rarity is what makes it command attention. When everything is teal, nothing is.
+**The Accent Rarity Rule.** Academy Teal é usado em ≤15% de qualquer tela. Sua raridade é o que faz com que ganhe atenção. Quando tudo é teal, nada é.
 
-**The Gold Identity Rule.** Sharlayan Gold appears only on elements that carry institutional identity — the logo mark, section headings, admin badges, and decorative borders. It never serves as a functional action color.
+**The Gold Identity Rule.** Academy Gold aparece apenas em elementos que carregam identidade institucional — o logotipo, headings de seção, badges de admin e bordas decorativas. Nunca serve como cor de ação funcional.
+
+**The Campus Light Rule.** O campus é iluminado. Backgrounds são sempre claros e quentes. Escuro é uma variação, não o padrão.
 
 ## Typography
 
-**Display Font:** Space Grotesk (with fallback: system-ui, sans-serif) — hero headlines, page titles
-**Body Font:** Cormorant Garamond (with fallback: Inter, system-ui, sans-serif) — body text, prose, scholarly voice
-**Heading Font:** Cinzel (with fallback: Georgia, serif) — section headings, ceremonial display moments
-**Label Font:** Inter (with fallback: system-ui, sans-serif) — navigation items, badges, metadata
+**Display Font:** Cinzel (com fallback: Georgia, serif) — hero headlines, títulos de página cerimonial
+**Body Font:** Cormorant Garamond (com fallback: Inter, system-ui, sans-serif) — texto corpo, prosa, voz acadêmica
+**Heading Font:** EB Garamond (com fallback: Cormorant Garamond, serif) — headings de seção, momentos de exibição
+**Label Font:** Inter (com fallback: system-ui, sans-serif) — itens de navegação, badges, metadados
 
-**Character:** The pairing is scholarly and commanding — Cormorant Garamond carries the academic gravitas in body text, Space Grotesk brings geometric boldness for display headlines, and Cinzel appears as the ceremonial heading face for institutional authority. Inter serves the functional label role.
+**Característica:** O casamento é acadêmico e cerimonial — Cormorant Garamond carrega a gravidade acadêmica no corpo, Cinzel traz autoridade para headings cerimoniais, EB Garamond elegância para headings de seção, e Inter serve o papel funcional de label.
 
 ### Hierarchy
-- **Display** (700 weight, clamp(2rem, 5vw, 3.5rem), line-height 1.1): Hero headlines, page titles — the loudest voice on the page.
-- **Headline** (600 weight, 1.5rem, line-height 1.2): Section headings — clear structure markers.
-- **Title** (600 weight, 1.125rem, line-height 1.3): Card titles, subsection headers —紧凑 and scannable.
-- **Body** (400 weight, 0.875rem, line-height 1.6): Main content text — measured at 65–75ch max width.
-- **Label** (500 weight, 0.75rem, letter-spacing 0.05em, uppercase): Navigation items, badges, metadata — compact and functional.
+- **Display** (700 weight, clamp(2rem, 5vw, 3.5rem), line-height 1.1): Hero headlines, títulos de página — a voz mais alta na página.
+- **Headline** (600 weight, 1.5rem, line-height 1.2): Headings de seção — marcadores de estrutura claros.
+- **Title** (600 weight, 1.125rem, line-height 1.3): Títulos de cards, subseções — compacto e escaneável.
+- **Body** (400 weight, 0.875rem, line-height 1.6): Texto conteúdo principal — medido em 65–75ch largura máxima.
+- **Label** (500 weight, 0.75rem, letter-spacing 0.05em, uppercase): Itens de navegação, badges, metadados — compacto e funcional.
 
 ### Named Rules
-**The Three-Face Rule.** Space Grotesk owns display and hero headlines. Cinzel owns section headings and ceremonial display. Cormorant Garamond owns body and prose. Inter owns labels and metadata. Each face has a clear role — mixing them breaks the hierarchy.
+**The Three-Face Rule.** Cinzel tem display e hero headlines. EB Garamond tem headings de seção. Cormorant Garamond tem corpo e prosa. Inter tem labels e metadados. Cada face tem um papel claro — misturá-las quebra a hierarquia.
 
 ## Layout
 
-Dashboard-style grid with a max-width of 1280px (max-w-7xl). The homepage uses a hero section followed by a responsive card grid. Navigation is a persistent sidebar (desktop) with a hamburger-triggered overlay (mobile) plus a bottom navigation bar for quick access. Spacing follows an 8px base unit: sections separated by 64px, cards within sections by 24px, internal card padding by 24px.
+Layout de campus com largura máxima de 1280px (max-w-7xl). A homepage usa uma seção hero seguida de grid responsivo de cards. Navegação é uma sidebar persistente (desktop) com overlay ativado por hamburger (mobile) mais barra de navegação inferior para acesso rápido. Espaçamento segue uma unidade base de 8px: seções separadas por 64px, cards dentro de seções por 24px, padding interno de cards por 24px.
 
-Mobile: single-column stack, bottom navigation bar, reduced card density. The hero scales down but retains its dark ground and accent hierarchy.
+Mobile: stack coluna única, barra de navegação inferior, densidade de cards reduzida. O hero escala para baixo mas retém seu ground claro e hierarquia de accent.
+
+### Campus Sections
+Cada seção do site representa uma área do campus:
+- **Hero** → Vista panorâmica do campus (entrada principal)
+- **Academia** → Sala de aula / Biblioteca
+- **Calendário** → Quadro de eventos do pátio
+- **Receitas** → Cozinha mágica
+- **Game Data** → Biblioteca de tomos
+- **Footer** → Portão de saída do campus
 
 ## Elevation & Depth
 
-The system uses glass-morphism for depth: semi-transparent backgrounds with backdrop-blur, not heavy shadows. Shadows are reserved for hover states and elevated panels.
+O sistema usa textura e bordas para profundidade, não glass-morphism pesado. Sombras são reservadas para hover states e painéis elevados.
 
 ### Shadow Vocabulary
-- **Card Rest** (`box-shadow: 0 1px 3px rgba(0,0,0,0.3)`): Subtle baseline lift on all cards at rest.
-- **Card Hover** (`box-shadow: 0 8px 24px rgba(91,164,181,0.15)`): Teal-tinted glow on interactive card hover — the signature depth moment.
-- **Panel Elevated** (`box-shadow: 0 12px 40px rgba(0,0,0,0.4)`): Modals, dropdowns, elevated panels — the highest rest state.
+- **Card Rest** (`box-shadow: 0 2px 8px rgba(0,0,0,0.06)`): Levantar sutil em todos os cards em repouso.
+- **Card Hover** (`box-shadow: 0 8px 24px rgba(91,164,181,0.12)`): Brilho teal-tinted em hover de card interativo — o momento de profundidade assinatura.
+- **Panel Elevated** (`box-shadow: 0 12px 40px rgba(0,0,0,0.1)`): Modals, dropdowns, painéis elevados — o estado de repouso mais alto.
 
 ### Named Rules
-**The Glass Rule.** Cards and panels use `background: rgba(35,42,59,0.8)` with `backdrop-filter: blur(12px)` and a 1px border of `rgba(55,65,81,0.5)`. This creates depth through transparency, not shadow weight. Heavy shadows are hover-only.
+**The Parchment Rule.** Cards e painéis usam `background: var(--stone-light)` com `border: 1px solid var(--stone-medium)` e `border-radius: 16px`. Isso cria profundidade através de textura e borda, não transparência. Sombras pesadas são apenas em hover.
 
 ## Shapes
 
-Rounded-2xl (16px) is the dominant radius — applied to cards, buttons, badges, and containers. This creates a friendly, approachable feel that softens the dark palette. Inputs use rounded-xl (12px). The navbar uses no radius (full-bleed). Buttons use rounded-xl (12px) for a slightly tighter feel than cards.
+Rounded-2xl (16px) é o radius dominante — aplicado a cards, botões, badges e containers. Isso cria uma sensação amigável e acolhedora que suaviza a paleta. Inputs usam rounded-xl (12px). A navbar usa sem radius (full-bleed). Botões usam rounded-xl (12px) para um feel mais compacto que cards.
+
+### Ornamental Shapes
+- **Gothic Arches:** Formas de arco para headings de seção e divisores — evoca a arquitetura da academia
+- **Crystal Points:** Formas de cristal para badges e ícones — evoca a magia
+- **Ivy Borders:** Bordas com padrão de hera para seções decorativas — evoca os jardins
+- **Column Dividers:** Divisores estilo coluna gótica para separar seções
 
 ## Components
 
 ### Buttons
 - **Shape:** rounded-xl (12px)
-- **Primary:** Arcane Teal background, white text, 12px 24px padding, bold weight. Hover: deeper teal + subtle scale(1.02).
-- **Secondary:** Transparent background, teal border, teal text. Hover: teal background at 10% opacity.
-- **Ghost:** Transparent, no border. Hover: slate-elevated background.
+- **Primary:** Academy Teal background, white text, 12px 24px padding, bold weight. Hover: deeper teal + subtle scale(1.02).
+- **Secondary:** Transparent background, gold border, gold text. Hover: gold background at 10% opacity.
+- **Ghost:** Transparent, no border. Hover: stone-light background.
 
 ### Cards
 - **Corner Style:** rounded-2xl (16px)
-- **Background:** Glass-morphism: rgba(35,42,59,0.8) with backdrop-blur(12px)
+- **Background:** Stone Light (#E8E0D0) with subtle parchment texture
 - **Shadow Strategy:** Rest shadow at baseline, teal-tinted glow on hover
-- **Border:** 1px solid rgba(55,65,81,0.5)
+- **Border:** 1px solid Stone Medium (#C4B8A0)
 - **Internal Padding:** 24px
+- **Decorative:** Optional gold top-border for identity cards, ivy corner ornament for special cards
 
-### Navigation
-- **Style:** Persistent sidebar (256px), slate-surface gradient background, golden ornamental borders
+### Navigation (Sidebar)
+- **Style:** Persistent sidebar (256px), academy cream gradient background, golden ornamental borders
 - **Desktop:** Vertical links with custom SVG icons, active state = teal glow-bar on left edge
 - **Mobile:** Hamburger-triggered overlay sidebar + fixed bottom bar with icon-only links
+- **Decorative:** Floating book animation at bottom, crystal divider between sections
 
 ### Badges / Chips
 - **Style:** Rounded-full, small, uppercase labels
 - **Variants:** Teal (primary action), Gold (identity), Lavender (mystical), Sage (success)
+
+### Section Headers
+- **Style:** Cinzel font, gold color, optional ornamental underline (crystal divider or ivy line)
+- **Decorative:** Small floating crystal icon to the left of heading
+
+### Hero Section
+- **Style:** Full-width panoramic image of the campus with gradient overlay
+- **Content:** Large Cinzel heading, subtitle in Cormorant Garamond, search bar, quick stats
+- **Decorative:** Floating books, crystal particles, ivy borders
+
+## Decorative Elements
+
+### SVG Library
+- **ivy-corner.svg:** Corner ornament with ivy leaves — used on cards and sections
+- **crystal-divider.svg:** Horizontal divider with crystal point — used between sections
+- **floating-book.svg:** Animated floating book — used in hero and sidebar
+- **lavender-sprig.svg:** Lavender sprig decoration — used in footer and cards
+- **column-ornament.svg:** Gothic column ornament — used in section headers
+- **rune-circle.svg:** Magical rune circle — used as background texture
+- **academy-crest.svg:** Academy crest — used in sidebar and login
+
+### Animations
+- **Floating Books:** Gentle up-down oscillation on hero and sidebar books
+- **Crystal Glow:** Subtle pulse on crystal elements
+- **Ivy Sway:** Gentle left-right sway on ivy decorations
+- **Card Hover:** Teal-tinted shadow expansion + slight scale
+- **Page Transitions:** Fade-in with slight upward slide
+
+## Responsive
+
+### Desktop (1024px+)
+- Persistent sidebar (256px)
+- Multi-column card grid (3 columns)
+- Full hero with panoramic image
+- All decorative elements visible
+
+### Tablet (768px-1023px)
+- Collapsed sidebar (icon-only, 64px)
+- 2-column card grid
+- Hero scaled down
+- Reduced decorative density
+
+### Mobile (< 768px)
+- Hidden sidebar with hamburger trigger
+- Bottom navigation bar
+- Single-column stack
+- Hero compressed to key visual + text
+- Minimal decorative elements
+- Touch-friendly targets (44px minimum)
+
+## Dark Mode: "Noturno no Campus"
+
+Dark mode é uma variação noturna, não o padrão. O campus à noite:
+- Ground: Deep navy (#1A1F2E) — azulado, não preto
+- Surface: Slate (#232A3B)
+- Accents: Mesmas cores mas com mais brilho/luminosidade
+- Decorative: Cristais brilhantes mais pronunciados, livros com glow
+- Sensação: Mágico, misterioso, mas ainda acolhedor
+
+## Accessibility
+
+- Skip link "Pular para o conteúdo principal"
+- Contraste WCAG AA em todos os textos
+- Focus visible em todos os elementos interativos
+- Reduced motion: desabilita todas as animações
+- Screen reader: sr-only labels em ícones decorativos
+- Semantic HTML: landmarks, headings hierarchy, alt text
+
+## Performance
+
+- Imagens AI em WebP com lazy loading
+- Blur placeholders para imagens de card
+- CSS custom properties para temas (sem re-render)
+- Font preloading (critical fonts only)
+- Framer Motion com reducedMotion="user"
+- SVG inline para decorative elements (sem requests extras)

@@ -61,6 +61,7 @@ Inspirada na cidade de Old Sharlayan, a FC se posiciona como uma **Academia de M
 - **Lema:** "Onde o conhecimento se torna a sua maior magia"
 - **Lema pessoal do Reitor:** "Fortuna favet Prudentibus" (A sorte favorece os preparados)
 - **Idioma:** PT-BR
+- **Identidade Visual:** "The Magical Campus" — o visitante está dentro do campus da Majestic Battle Academy. Estilo watercolor illustration com paleta de teal (#5BA4B5), gold (#C9A84C), cream (#F5EFE0), lavanda (#9B7EC8) e sage (#7BA68A). Light-mode-first,温暖, acolhedor, imersivo. Referências: Studio Ghibli, Final Fantasy Sharlayan, Old Sharlayan.
 
 ## Evidence on Hand
 

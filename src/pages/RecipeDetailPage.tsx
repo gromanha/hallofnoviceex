@@ -5,10 +5,10 @@ import { ArrowLeft, Clock, ChefHat, Share2, Check, UtensilsCrossed } from 'lucid
 import { Recipe } from '../types';
 import { apiGet } from '../lib/api';
 
-const DIFFICULTY_BADGE: Record<string, string> = {
-  Easy: 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border-[var(--color-sage)]/20',
-  Medium: 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border-[var(--color-amber)]/20',
-  Hard: 'bg-[var(--color-crimson)]/10 text-[var(--color-crimson)] border-[var(--color-crimson)]/20',
+const DIFFICULTY_BADGE: Record<string, { className: string; icon: string }> = {
+  Easy: { className: 'bg-[var(--color-sage)]/10 text-[var(--color-sage)] border-[var(--color-sage)]/20', icon: '🌿' },
+  Medium: { className: 'bg-[var(--color-amber)]/10 text-[var(--color-amber)] border-[var(--color-amber)]/20', icon: '🔥' },
+  Hard: { className: 'bg-[var(--color-crimson)]/10 text-[var(--color-crimson)] border-[var(--color-crimson)]/20', icon: '⚡' },
 };
 
 export const RecipeDetailPage: React.FC = () => {
@@ -131,7 +131,7 @@ export const RecipeDetailPage: React.FC = () => {
             {recipe.category?.replace('_', ' & ') || 'Receita'}
           </div>
 
-          <h1 className="type-display text-[var(--color-on-surface)] break-words">
+          <h1 className="type-display font-cinzel text-[var(--color-on-surface)] break-words">
             {recipe.title}
           </h1>
 
@@ -164,7 +164,8 @@ export const RecipeDetailPage: React.FC = () => {
 
         <div className="flex flex-wrap items-center justify-center gap-4 py-4 border-y border-[var(--color-outline)]/30 type-caption font-semibold text-[var(--color-on-surface)]">
           {recipe.difficulty && (
-            <span className={`px-2.5 py-1 rounded-lg border ${DIFFICULTY_BADGE[recipe.difficulty] || DIFFICULTY_BADGE.Easy}`}>
+            <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1 ${(DIFFICULTY_BADGE[recipe.difficulty] || DIFFICULTY_BADGE.Easy).className}`}>
+              <span>{(DIFFICULTY_BADGE[recipe.difficulty] || DIFFICULTY_BADGE.Easy).icon}</span>
               {recipe.difficulty}
             </span>
           )}

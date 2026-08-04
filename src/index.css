@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ══════════════════════════════════════════════════════
+   THE MAGICAL CAMPUS — Hall of the Novice EX
+   A watercolor-academy visual world: warm cream grounds,
+   teal domes, gold ornaments, lavender gardens.
+   ══════════════════════════════════════════════════════ */
+
 /* ── Core Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -27,12 +33,34 @@
   to { transform: translateY(100%) scale(0.95); opacity: 0; }
 }
 
+@keyframes floatBook {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes crystalGlow {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 4px rgba(91,164,181,0.3)); }
+  50% { filter: brightness(1.15) drop-shadow(0 0 12px rgba(91,164,181,0.5)); }
+}
+
+@keyframes ivySway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+
+@keyframes sparkleFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50% { opacity: 1; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(0.5); }
+}
+
 .fade-in {
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .zoom-in-95 {
-  animation: zoomIn95 0.2s ease-out;
+  animation: zoomIn95 0.3s ease-out;
 }
 
 *, *::before, *::after {
@@ -40,7 +68,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -52,11 +80,15 @@ body {
   background-image: url('/textures/parchment-light.svg');
   background-repeat: repeat;
   color: var(--color-on-background);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 [data-theme="dark"] body {
   background-image: url('/textures/parchment-dark.svg');
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 [data-theme="dark"] .type-body {
@@ -101,14 +133,19 @@ body {
   scrollbar-color: var(--color-outline) transparent;
 }
 
+/* ══════════════════════════════════════════════════════
+   THEME TOKENS — The Magical Campus
+   ══════════════════════════════════════════════════════ */
 @theme {
+  /* ── Typography ── */
   --font-body: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Cinzel", serif;
   --font-cinzel: "Cinzel", serif;
   --font-cormorant: "Cormorant Garamond", Georgia, serif;
+  --font-eb-garamond: "EB Garamond", "Cormorant Garamond", Georgia, serif;
 
-  /* ── Type Scale — Role-based tokens ── */
+  /* ── Type Scale ── */
   --type-display-size: clamp(2rem, 5vw, 3.5rem);
   --type-display-leading: 1.1;
   --type-display-tracking: -0.02em;
@@ -133,26 +170,101 @@ body {
   --type-caption-leading: 1.45;
   --type-caption-tracking: 0.02em;
 
-  /* ── Arcane Academy — Campus Palette ── */
-  --color-primary: #5BA4B5;
+  /* ══════════════════════════════════════════════════
+     LIGHT THEME (DEFAULT) — Campus under sunlight
+     ══════════════════════════════════════════════════ */
+
+  /* ── Primary: Academy Teal ── */
+  --color-primary: #3D8A96;
   --color-primary-deep: #2D6A6A;
-  --color-primary-light: rgba(91, 164, 181, 0.12);
+  --color-primary-light: rgba(61, 138, 150, 0.10);
   --color-on-primary: #ffffff;
+  --color-primary-hover: #5BA4B5;
 
-  --color-secondary: #C9A84C;
-  --color-secondary-light: rgba(201, 168, 76, 0.12);
-  --color-secondary-accent: #d4b85c;
-  --color-on-secondary: #1a1f2e;
-  --color-on-secondary-deep: #8b7420;
+  /* ── Secondary: Academy Gold ── */
+  --color-secondary: #B89A3F;
+  --color-secondary-light: rgba(184, 154, 63, 0.10);
+  --color-secondary-accent: #C9A84C;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-deep: #8B7420;
 
-  --color-primary-hover: #6FB8C8;
-  --color-error: #C0392B;
-  --color-error-light: rgba(192, 57, 43, 0.12);
-
+  /* ── Tertiary: Academy Lavender ── */
   --color-tertiary: #9B7EC8;
-  --color-tertiary-light: rgba(155, 126, 200, 0.12);
+  --color-tertiary-light: rgba(155, 126, 200, 0.10);
   --color-on-tertiary: #ffffff;
 
+  /* ── Error ── */
+  --color-error: #C0392B;
+  --color-error-light: rgba(192, 57, 43, 0.10);
+
+  /* ── Ground: Warm Cream ── */
+  --color-background: #F5EFE0;
+  --color-surface: #EDE5D3;
+  --color-surface-alt: #E3D9C5;
+  --color-on-background: #2D3436;
+  --color-on-surface: #2D3436;
+  --color-on-surface-variant: #636E72;
+  --color-outline: #C4B8A0;
+  --color-outline-variant: rgba(196, 184, 160, 0.5);
+
+  /* ── Nature: Academy Sage ── */
+  --color-crystal: #5BA4B5;
+  --color-crystal-light: rgba(91, 164, 181, 0.10);
+  --color-lavender: #9B7EC8;
+  --color-lavender-light: rgba(155, 126, 200, 0.10);
+  --color-rose: #C0392B;
+  --color-rose-light: rgba(192, 57, 43, 0.10);
+  --color-sage: #7BA68A;
+  --color-sage-light: rgba(123, 166, 138, 0.10);
+
+  --color-indigo: #7B8EC8;
+  --color-indigo-light: rgba(123, 142, 200, 0.10);
+  --color-amber: #C9A84C;
+  --color-amber-light: rgba(201, 168, 76, 0.10);
+  --color-copper: #B89A3F;
+  --color-copper-light: rgba(184, 154, 63, 0.10);
+  --color-crimson: #C0392B;
+  --color-crimson-light: rgba(192, 57, 43, 0.10);
+
+  /* ── Recipe Category Colors ── */
+  --color-cat-breakfast: #D4913A;
+  --color-cat-appetizers: #B89A3F;
+  --color-cat-breads: #C4963A;
+  --color-cat-soups: #C0392B;
+  --color-cat-main: #3D8A96;
+  --color-cat-sides: #7BA68A;
+  --color-cat-desserts: #9B7EC8;
+  --color-cat-drinks: #5BA4B5;
+
+  /* ── Info ── */
+  --color-info: #3D8A96;
+  --color-info-light: rgba(61, 138, 150, 0.10);
+  --color-on-info: #ffffff;
+
+  /* ── Effects: Parchment Depth ── */
+  --glass-bg: rgba(237, 229, 211, 0.90);
+  --glass-bg-hover: rgba(237, 229, 211, 0.95);
+  --glass-border: rgba(196, 184, 160, 0.6);
+  --card-shadow-rest: 0 2px 8px rgba(45, 52, 54, 0.06);
+  --card-shadow-hover: 0 8px 24px rgba(61, 138, 150, 0.12);
+  --card-shadow-active: 0 2px 8px rgba(45, 52, 54, 0.10);
+  --card-border-hover: rgba(61, 138, 150, 0.3);
+  --shadow-elevated: 0 12px 40px rgba(45, 52, 54, 0.12);
+
+  /* ── Decorative: Academy Gold ── */
+  --gold-border: rgba(184, 154, 63, 0.25);
+  --gold-border-hover: rgba(184, 154, 63, 0.45);
+  --gold-glow: rgba(201, 168, 76, 0.15);
+
+  /* ── Decorative: Crystal Teal ── */
+  --crystal-glow: rgba(91, 164, 181, 0.25);
+  --crystal-glow-strong: rgba(91, 164, 181, 0.45);
+}
+
+/* ══════════════════════════════════════════════════════
+   DARK THEME — Noturno no Campus
+   ══════════════════════════════════════════════════════ */
+[data-theme="dark"] {
   --color-background: #1A1F2E;
   --color-surface: #232A3B;
   --color-surface-alt: #2A3244;
@@ -161,6 +273,25 @@ body {
   --color-on-surface-variant: #94A3B8;
   --color-outline: #374151;
   --color-outline-variant: rgba(55, 65, 81, 0.5);
+
+  --color-primary: #5BA4B5;
+  --color-primary-deep: #3D8A96;
+  --color-primary-light: rgba(91, 164, 181, 0.12);
+  --color-primary-hover: #6FB8C8;
+  --color-on-primary: #ffffff;
+
+  --color-secondary: #C9A84C;
+  --color-secondary-light: rgba(201, 168, 76, 0.12);
+  --color-secondary-accent: #D4B85C;
+  --color-on-secondary: #1a1f2e;
+  --color-on-secondary-deep: #8b7420;
+
+  --color-tertiary: #9B7EC8;
+  --color-tertiary-light: rgba(155, 126, 200, 0.12);
+  --color-on-tertiary: #ffffff;
+
+  --color-error: #C0392B;
+  --color-error-light: rgba(192, 57, 43, 0.12);
 
   --color-crystal: #4FC3F7;
   --color-crystal-light: rgba(79, 195, 247, 0.12);
@@ -180,121 +311,56 @@ body {
   --color-crimson: #ef4444;
   --color-crimson-light: rgba(239, 68, 68, 0.12);
 
-  /* ── Recipe Category Colors ── */
   --color-cat-breakfast: #f97316;
   --color-cat-appetizers: #c9a84c;
   --color-cat-breads: #d97706;
   --color-cat-soups: #ef4444;
-  --color-cat-main: #f97316;
-  --color-cat-sides: #4ade80;
-  --color-cat-desserts: #f472b6;
-  --color-cat-drinks: #5dade2;
-
-  /* ── Info & Wayfinding ── */
-  --color-info: #5dade2;
-  --color-info-light: rgba(93, 173, 226, 0.12);
-  --color-on-info: #ffffff;
-
-  /* ── Theme-aware Glass & Effects ── */
-  --glass-bg: rgba(35, 42, 59, 0.8);
-  --glass-bg-hover: rgba(35, 42, 59, 0.9);
-  --glass-border: rgba(55, 65, 81, 0.5);
-  --card-shadow-rest: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --card-shadow-hover: 0 8px 24px rgba(91, 164, 181, 0.15);
-  --card-shadow-active: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --card-border-hover: rgba(91, 164, 181, 0.3);
-  --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* ── Light Theme Overrides — Parchment Campus ── */
-[data-theme="light"] {
-  color-scheme: light;
-
-  --color-background: #FBF8F3;
-  --color-surface: #F5F0E8;
-  --color-surface-alt: #EDE7DB;
-  --color-on-background: #2C2416;
-  --color-on-surface: #2C2416;
-  --color-on-surface-variant: #5A5040;
-  --color-outline: #D4CFC4;
-  --color-outline-variant: rgba(212, 207, 196, 0.5);
-
-  --color-primary: #5BA4B5;
-  --color-primary-deep: #2D6A6A;
-  --color-primary-light: rgba(91, 164, 181, 0.1);
-  --color-primary-hover: #6FB8C8;
-  --color-on-primary: #ffffff;
-
-  --color-secondary: #C9A84C;
-  --color-secondary-light: rgba(201, 168, 76, 0.1);
-  --color-secondary-accent: #d4b85c;
-  --color-on-secondary: #ffffff;
-  --color-on-secondary-deep: #8b7420;
-
-  --color-tertiary: #9B7EC8;
-  --color-tertiary-light: rgba(155, 126, 200, 0.1);
-  --color-on-tertiary: #ffffff;
-
-  --color-error: #C0392B;
-  --color-error-light: rgba(192, 57, 43, 0.1);
-
-  --color-crystal: #4FC3F7;
-  --color-crystal-light: rgba(79, 195, 247, 0.1);
-  --color-lavender: #9B7EC8;
-  --color-lavender-light: rgba(155, 126, 200, 0.1);
-  --color-rose: #C0392B;
-  --color-rose-light: rgba(192, 57, 43, 0.1);
-  --color-sage: #6B8E6B;
-  --color-sage-light: rgba(107, 142, 107, 0.1);
-
-  --color-indigo: #6366f1;
-  --color-indigo-light: rgba(99, 102, 241, 0.1);
-  --color-amber: #C9A84C;
-  --color-amber-light: rgba(201, 168, 76, 0.1);
-  --color-copper: #C9A84C;
-  --color-copper-light: rgba(201, 168, 76, 0.1);
-  --color-crimson: #C0392B;
-  --color-crimson-light: rgba(192, 57, 43, 0.1);
-
-  /* ── Recipe Category Colors (Light) ── */
-  --color-cat-breakfast: #C9A84C;
-  --color-cat-appetizers: #C9A84C;
-  --color-cat-breads: #b36206;
-  --color-cat-soups: #C0392B;
   --color-cat-main: #5BA4B5;
   --color-cat-sides: #6B8E6B;
   --color-cat-desserts: #9B7EC8;
   --color-cat-drinks: #4FC3F7;
 
   --color-info: #5BA4B5;
-  --color-info-light: rgba(91, 164, 181, 0.1);
+  --color-info-light: rgba(91, 164, 181, 0.12);
   --color-on-info: #ffffff;
 
-  /* ── Theme-aware Glass & Effects (Light) ── */
-  --glass-bg: rgba(251, 248, 243, 0.85);
-  --glass-bg-hover: rgba(251, 248, 243, 0.95);
-  --glass-border: rgba(212, 207, 196, 0.6);
-  --card-shadow-rest: 0 1px 3px rgba(44, 36, 22, 0.08);
-  --card-shadow-hover: 0 8px 24px rgba(91, 164, 181, 0.12);
-  --card-shadow-active: 0 2px 8px rgba(44, 36, 22, 0.1);
-  --card-border-hover: rgba(201, 168, 76, 0.3);
-  --shadow-elevated: 0 12px 40px rgba(44, 36, 22, 0.12);
+  --glass-bg: rgba(35, 42, 59, 0.85);
+  --glass-bg-hover: rgba(35, 42, 59, 0.95);
+  --glass-border: rgba(55, 65, 81, 0.5);
+  --card-shadow-rest: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --card-shadow-hover: 0 8px 24px rgba(91, 164, 181, 0.15);
+  --card-shadow-active: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --card-border-hover: rgba(91, 164, 181, 0.3);
+  --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.35);
+
+  --gold-border: rgba(201, 168, 76, 0.25);
+  --gold-border-hover: rgba(201, 168, 76, 0.45);
+  --gold-glow: rgba(201, 168, 76, 0.15);
+  --crystal-glow: rgba(79, 195, 247, 0.25);
+  --crystal-glow-strong: rgba(79, 195, 247, 0.45);
 }
 
-/* ── Glass-morphism Utilities ── */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
+/* ══════════════════════════════════════════════════════
+   CAMPUS SURFACES — Parchment & Stone
+   ══════════════════════════════════════════════════════ */
+
+.campus-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: 16px;
 }
 
-.glass-hover:hover {
-  background: var(--glass-bg-hover);
-  border-color: var(--card-border-hover);
+.campus-surface-elevated {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-outline);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow-rest);
 }
 
-/* ── Card Glow on Hover ── */
+/* ══════════════════════════════════════════════════════
+   CARD GLOW — Teal hover signature
+   ══════════════════════════════════════════════════════ */
+
 .card-glow {
   box-shadow: var(--card-shadow-rest);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
@@ -312,7 +378,64 @@ body {
   transition-duration: 0.1s;
 }
 
-/* ── Active Press States ── */
+/* ══════════════════════════════════════════════════════
+   GOLD BORDER — Academy identity accent
+   ══════════════════════════════════════════════════════ */
+
+.golden-border-subtle {
+  border: 1px solid var(--gold-border);
+  transition: border-color 0.3s ease;
+}
+
+.golden-border-subtle:hover {
+  border-color: var(--gold-border-hover);
+}
+
+.gold-border-top {
+  border-top: 2px solid var(--color-secondary);
+}
+
+/* ══════════════════════════════════════════════════════
+   DECORATIVE ANIMATIONS — Campus Life
+   ══════════════════════════════════════════════════════ */
+
+.float-book {
+  animation: floatBook 4s ease-in-out infinite;
+}
+
+.crystal-glow {
+  animation: crystalGlow 3s ease-in-out infinite;
+}
+
+.ivy-sway {
+  animation: ivySway 5s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.sparkle-particle {
+  animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════════════
+   GLASS-MORPHISM — For overlays and modals only
+   ══════════════════════════════════════════════════════ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-hover:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--card-border-hover);
+}
+
+/* ══════════════════════════════════════════════════════
+   ACTIVE PRESS STATES
+   ══════════════════════════════════════════════════════ */
+
 button:active:not(:disabled),
 [role="button"]:active:not(:disabled) {
   transform: scale(0.97);
@@ -324,7 +447,10 @@ button:active:not(:disabled):hover,
   transform: scale(0.97);
 }
 
-/* ── Shimmer Loading ── */
+/* ══════════════════════════════════════════════════════
+   SHIMMER LOADING
+   ══════════════════════════════════════════════════════ */
+
 .shimmer {
   background: linear-gradient(
     90deg,
@@ -336,9 +462,12 @@ button:active:not(:disabled):hover,
   animation: shimmer 1.5s infinite;
 }
 
-/* ── Type Roles ── */
+/* ══════════════════════════════════════════════════════
+   TYPE ROLES
+   ══════════════════════════════════════════════════════ */
+
 .type-display {
-  font-family: var(--font-display);
+  font-family: var(--font-cinzel);
   font-size: var(--type-display-size);
   font-weight: 700;
   line-height: var(--type-display-leading);
@@ -346,7 +475,7 @@ button:active:not(:disabled):hover,
 }
 
 .type-headline {
-  font-family: var(--font-display);
+  font-family: var(--font-eb-garamond);
   font-size: var(--type-headline-size);
   font-weight: 600;
   line-height: var(--type-headline-leading);
@@ -354,7 +483,7 @@ button:active:not(:disabled):hover,
 }
 
 .type-title {
-  font-family: var(--font-display);
+  font-family: var(--font-eb-garamond);
   font-size: var(--type-title-size);
   font-weight: 600;
   line-height: var(--type-title-leading);
@@ -412,20 +541,10 @@ img {
   height: auto;
 }
 
-/* ── Recipe Card ── */
-.recipe-card {
-  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
-  border: 1px solid var(--color-outline);
-  border-radius: 1rem;
-  transition: all 0.3s ease;
-}
+/* ══════════════════════════════════════════════════════
+   SIDEBAR — Campus Navigation
+   ══════════════════════════════════════════════════════ */
 
-.recipe-card:hover {
-  border-color: var(--card-border-hover);
-  box-shadow: var(--card-shadow-hover);
-}
-
-/* ── Sidebar Nav Active ── */
 .sidebar-nav-active {
   position: relative;
 }
@@ -441,7 +560,26 @@ img {
   background: var(--color-primary);
 }
 
-/* ── Toast ── */
+/* ══════════════════════════════════════════════════════
+   RECIPE CARD
+   ══════════════════════════════════════════════════════ */
+
+.recipe-card {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
+  border: 1px solid var(--color-outline);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.recipe-card:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+   ══════════════════════════════════════════════════════ */
+
 .toast-enter {
   animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -450,7 +588,10 @@ img {
   animation: toastSlideOut 0.25s ease-in forwards;
 }
 
-/* ── Prose: Markdown Content Styling ── */
+/* ══════════════════════════════════════════════════════
+   PROSE: Markdown Content
+   ══════════════════════════════════════════════════════ */
+
 .prose {
   color: var(--color-on-surface);
   font-family: var(--font-body);
@@ -531,8 +672,8 @@ img {
 }
 
 .prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-left: 3px solid var(--color-primary);
-  background: var(--color-primary-light);
+  border-left: 3px solid var(--color-secondary);
+  background: var(--color-secondary-light);
   padding: 1em 1.25em;
   margin: 1.5em 0;
   border-radius: 0 0.75rem 0.75rem 0;
@@ -592,7 +733,7 @@ img {
 }
 
 .prose :where(li::marker):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: var(--color-primary);
+  color: var(--color-secondary);
   font-weight: 600;
 }
 
@@ -637,7 +778,7 @@ img {
 }
 
 .prose :where(tbody tr):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
-  background: var(--color-primary-light);
+  background: var(--color-secondary-light);
 }
 
 .prose :where(> :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -648,7 +789,10 @@ img {
   margin-bottom: 0;
 }
 
-/* ── Wiki Content Styles ── */
+/* ══════════════════════════════════════════════════════
+   WIKI Content Styles
+   ══════════════════════════════════════════════════════ */
+
 .wiki-table-wrapper {
   overflow-x: auto;
   margin: 1.5em 0;
@@ -679,7 +823,7 @@ img {
 }
 
 .wiki-table tbody tr:hover {
-  background: var(--color-primary-light);
+  background: var(--color-secondary-light);
 }
 
 .wiki-image {
@@ -693,7 +837,7 @@ img {
   height: auto;
   border-radius: 0.75rem;
   border: 1px solid var(--color-outline);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(45, 52, 54, 0.1);
 }
 
 .wiki-image figcaption {
@@ -715,7 +859,6 @@ span.icon-label-container img {
   margin: 0;
 }
 
-/* Wiki-style numbered lists */
 .prose ol {
   counter-reset: wiki-counter;
   list-style-type: none;
@@ -734,7 +877,7 @@ span.icon-label-container img {
   position: absolute;
   left: 0;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
 .prose ol ol,
@@ -790,11 +933,14 @@ img[height="16"] {
   box-shadow: none;
 }
 
-/* ── Wiki HTML Import ── */
+/* ══════════════════════════════════════════════════════
+   WIKI HTML Import
+   ══════════════════════════════════════════════════════ */
+
 .quotation-box,
 blockquote.quotation-box {
-  border-left: 3px solid var(--color-primary);
-  background: var(--color-primary-light);
+  border-left: 3px solid var(--color-secondary);
+  background: var(--color-secondary-light);
   padding: 1em 1.25em;
   margin: 1.5em 0;
   border-radius: 0 0.75rem 0.75rem 0;
@@ -917,17 +1063,10 @@ img[alt*="Icon"] {
   box-shadow: none;
 }
 
-/* ── Reduced Motion ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+/* ══════════════════════════════════════════════════════
+   FCCard — FC Info Card
+   ══════════════════════════════════════════════════════ */
 
-/* ── FCCard — FC Info Card ── */
 .fccard {
   background: var(--color-surface);
   border: 1px solid var(--color-outline);
@@ -953,7 +1092,10 @@ img[alt*="Icon"] {
   object-fit: contain;
 }
 
-/* ── Members Panel ── */
+/* ══════════════════════════════════════════════════════
+   Members Panel
+   ══════════════════════════════════════════════════════ */
+
 .members-panel__item {
   border-left: 2px solid transparent;
   transition: border-color 0.15s ease, background-color 0.15s ease;
@@ -970,7 +1112,10 @@ img[alt*="Icon"] {
   overflow: hidden;
 }
 
-/* ── Minimal utility classes referenced by components ── */
+/* ══════════════════════════════════════════════════════
+   Utility Classes
+   ══════════════════════════════════════════════════════ */
+
 .font-cinzel {
   font-family: 'Cinzel', serif;
 }
@@ -979,43 +1124,369 @@ img[alt*="Icon"] {
   font-family: 'Cormorant Garamond', serif;
 }
 
+.font-eb-garamond {
+  font-family: 'EB Garamond', 'Cormorant Garamond', serif;
+}
+
 .sidebar-sigil {
-  /* Intentionally empty — animation removed in distillation */
+  /* Reserved for future campus navigation */
 }
 
 .today-glow {
-  /* Intentionally empty — animation removed in distillation */
-}
-
-.crystal-glow {
-  /* Intentionally empty — animation removed in distillation */
+  /* Reserved for calendar highlights */
 }
 
 .wander-book {
-  /* Intentionally empty — animation removed in distillation */
-}
-
-.sparkle-particle {
-  /* Intentionally empty — animation removed in distillation */
+  animation: floatBook 4s ease-in-out infinite;
 }
 
 .card-shimmer-accent {
-  /* Intentionally empty — animation removed in distillation */
+  /* Reserved for card accent shimmer */
 }
 
-.golden-border-subtle {
-  border: 1px solid rgba(201, 168, 76, 0.2);
+/* ══════════════════════════════════════════════════════
+   Parchment Surfaces — Campus Ground
+   ══════════════════════════════════════════════════════ */
+
+.parchment-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: 16px;
+  position: relative;
 }
 
-.golden-border-subtle:hover {
-  border-color: rgba(201, 168, 76, 0.4);
+.parchment-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background-image: url('/textures/parchment-light.svg');
+  background-repeat: repeat;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ── Scrollbar None Utility ── */
+[data-theme="dark"] .parchment-surface::before {
+  background-image: url('/textures/parchment-dark.svg');
+}
+
+/* ══════════════════════════════════════════════════════
+   Campus Navigation — Golden Accents
+   ══════════════════════════════════════════════════════ */
+
+.campus-nav-link {
+  transition: all 0.2s ease;
+}
+
+.campus-nav-link:hover {
+  box-shadow: 0 0 0 1px rgba(91, 164, 181, 0.15);
+}
+
+.campus-golden-border {
+  border: 1px solid var(--gold-border);
+  transition: border-color 0.3s ease;
+}
+
+.campus-golden-border:hover {
+  border-color: var(--gold-border-hover);
+}
+
+/* ══════════════════════════════════════════════════════
+   Scrollbar None Utility
+   ══════════════════════════════════════════════════════ */
+
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO SECTION — Campus Panorama
+   ══════════════════════════════════════════════════════ */
+
+.hero-campus {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.hero-campus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 239, 224, 0) 0%,
+    rgba(245, 239, 224, 0.3) 50%,
+    rgba(245, 239, 224, 0.85) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .hero-campus::before {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 31, 46, 0) 0%,
+    rgba(26, 31, 46, 0.3) 50%,
+    rgba(26, 31, 46, 0.85) 100%
+  );
+}
+
+.hero-campus-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION DIVIDER — Gothic Column
+   ══════════════════════════════════════════════════════ */
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  color: var(--color-secondary);
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold-border),
+    transparent
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   LINK UNDERLINE — Animated underline on hover
+   ══════════════════════════════════════════════════════ */
+
+a.animated-underline {
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
+  background-size: 0% 2px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+
+a.animated-underline:hover {
+  background-size: 100% 2px;
+}
+
+/* ══════════════════════════════════════════════════════
+   BADGE PULSE — Appear animation for badges
+   ══════════════════════════════════════════════════════ */
+
+@keyframes badgePulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.badge-appear {
+  animation: badgePulse 0.35s ease-out forwards;
+}
+
+/* ══════════════════════════════════════════════════════
+   SEARCH FOCUS — Glow animation on search inputs
+   ══════════════════════════════════════════════════════ */
+
+@keyframes searchFocusGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(91, 164, 181, 0.1); }
+  50% { box-shadow: 0 0 0 5px rgba(91, 164, 181, 0.18); }
+}
+
+.search-input:focus {
+  animation: searchFocusGlow 2s ease-in-out infinite;
+  border-color: var(--color-primary) !important;
+  outline: none;
+}
+
+[data-theme="dark"] .search-input:focus {
+  animation-name: searchFocusGlowDark;
+}
+
+@keyframes searchFocusGlowDark {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15); }
+  50% { box-shadow: 0 0 0 5px rgba(79, 195, 247, 0.25); }
+}
+
+/* ══════════════════════════════════════════════════════
+   ENHANCED FOCUS VISIBLE — Accessibility
+   ══════════════════════════════════════════════════════ */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(91, 164, 181, 0.15);
+}
+
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] [role="button"]:focus-visible {
+  box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.2);
+}
+
+/* ══════════════════════════════════════════════════════
+   TOUCH TARGETS — Minimum 44px for interactive elements
+   ══════════════════════════════════════════════════════ */
+
+@media (pointer: coarse) {
+  button, a, [role="button"], input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .mobile-nav-link {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   IMAGE LAZY LOAD — Blur-up placeholder
+   ══════════════════════════════════════════════════════ */
+
+.img-placeholder {
+  background: var(--color-surface);
+  filter: blur(8px);
+  transition: filter 0.4s ease;
+}
+
+.img-placeholder.loaded {
+  filter: blur(0);
+}
+
+/* ══════════════════════════════════════════════════════
+   DARK MODE — Enhanced crystal glow (Noturno no Campus)
+   ══════════════════════════════════════════════════════ */
+
+@keyframes crystalGlowDark {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 6px rgba(79, 195, 247, 0.4));
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 16px rgba(79, 195, 247, 0.65));
+  }
+}
+
+[data-theme="dark"] .crystal-glow {
+  animation: crystalGlowDark 3s ease-in-out infinite;
+}
+
+[data-theme="dark"] .card-glow:hover {
+  box-shadow: 0 8px 24px rgba(79, 195, 247, 0.2);
+  border-color: rgba(79, 195, 247, 0.35);
+}
+
+[data-theme="dark"] .golden-border-subtle:hover {
+  border-color: rgba(201, 168, 76, 0.5);
+}
+
+[data-theme="dark"] .campus-nav-link:hover {
+  box-shadow: 0 0 0 1px rgba(79, 195, 247, 0.2);
+}
+
+[data-theme="dark"] .glass {
+  background: rgba(35, 42, 59, 0.88);
+  border-color: rgba(55, 65, 81, 0.6);
+}
+
+/* ══════════════════════════════════════════════════════
+   TABLET — Collapsed sidebar (768px–1023px)
+   ══════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Sidebar collapsed: 64px width, icons only */
+  aside {
+    width: 64px !important;
+  }
+
+  aside .sidebar-brand-text,
+  aside .sidebar-section-label,
+  aside .nav-label,
+  aside .fccard-container,
+  aside .sidebar-footer-label,
+  aside > .px-3 > .sidebar-footer-label {
+    display: none !important;
+  }
+
+  aside nav a {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  aside nav a svg {
+    margin: 0;
+  }
+
+  /* Brand: show only crest icon */
+  aside > div:first-child .flex.items-center.gap-3 {
+    justify-content: center;
+  }
+
+  aside > div:first-child .flex.items-center.gap-3 > div:last-child {
+    display: none;
+  }
+
+  /* Footer actions: icon only */
+  aside > div:last-child button,
+  aside > div:last-child > div {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  aside > div:last-child button span:not(svg),
+  aside > div:last-child > div > span:not(.flex) {
+    display: none;
+  }
+
+  /* Content area: 2-col grid */
+  .home-grid-tablet {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .home-sidebar-tablet {
+    display: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .float-book,
+  .crystal-glow,
+  .ivy-sway,
+  .sparkle-particle,
+  .wander-book {
+    animation: none !important;
+  }
 }

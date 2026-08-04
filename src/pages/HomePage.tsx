@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BookOpen, ArrowRight, ExternalLink, RefreshCw, AlertTriangle } from 'lucide-react';
+import { BookOpen, ArrowRight, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
+import { HeroSection } from '../components/HeroSection';
+import { WeekCalendarPreview } from '../components/WeekCalendarPreview';
+import { MembersCard } from '../components/MembersCard';
+import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const lodestone = useLodestoneFC();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -61,83 +66,18 @@ export const HomePage: React.FC = () => {
     <main className="pb-16">
 
       {/* ═══════════════════ HERO: The Sharlayan Threshold ═══════════════════ */}
-      <section className="relative overflow-hidden">
-        {/* Background image — soft & ethereal */}
-        <div className="absolute inset-0 pointer-events-none">
-          <img
-            src="/id.png"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-25 blur-[1px] mix-blend-soft-light"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-surface)]/80 via-[var(--color-surface)]/50 to-[var(--color-surface)]/90" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
-          <div className="flex flex-col items-center text-center space-y-8">
-
-            {/* Academy Name — Cinzel ceremonial */}
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <h1 className="font-cinzel font-bold text-[var(--type-display-size)] leading-[var(--type-display-leading)] tracking-[var(--type-display-tracking)] text-[var(--color-on-surface)]" style={{ textShadow: '0 2px 4px rgba(201, 168, 76, 0.2)' }}>
-                Hall of the Novice{' '}
-                <span className="text-[var(--color-primary)]">EX</span>
-              </h1>
-              <p className="type-headline font-cinzel text-[var(--color-on-surface-variant)] max-w-xl mx-auto">
-                Academia de Magia, Batalha e Artesanato
-              </p>
-            </motion.div>
-
-            {/* Sharlayan Motto */}
-            <motion.p
-              className="type-body italic font-cormorant text-[var(--color-lavender)] max-w-md"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            >
-              "Onde o conhecimento se torna a sua maior magia."
-            </motion.p>
-
-            {/* Primary CTAs */}
-            <motion.div
-              className="flex flex-col sm:flex-row items-center gap-3"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <button
-                onClick={handleNavigateAcademia}
-                className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-deep)] text-white font-bold text-sm transition-all hover:shadow-xl hover:shadow-[var(--color-primary)]/30 hover:scale-[1.02] border border-transparent hover:border-[#C9A84C]/40"
-              >
-                <BookOpen className="w-4 h-4" />
-                Conheça a Academia
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-              <a
-                href="https://discord.gg/3XJgrsVUbP"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[var(--color-surface-alt)] hover:bg-[var(--color-surface)] border-2 border-[#C9A84C]/40 hover:border-[#C9A84C]/60 hover:bg-[#C9A84C]/5 text-[var(--color-on-surface)] font-bold text-sm transition-all"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 32 32" fill="none"><rect x="6" y="4" width="20" height="24" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/><ellipse cx="16" cy="4" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/><ellipse cx="16" cy="28" rx="10" ry="2" fill="none" stroke="currentColor" strokeWidth="1"/></svg>
-                Entrar no Discord
-                <ExternalLink className="w-3 h-3 opacity-50" />
-              </a>
-            </motion.div>
-
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        totalGuides={posts.length}
+        totalEvents={0}
+        totalRecipes={0}
+      />
 
       {/* ═══════════════════ Content Area ═══════════════════ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col xl:flex-row gap-8">
 
-        {/* ── Posts Section ── */}
-        <div>
+          {/* ── Main Content: Posts ── */}
+          <div className="flex-1 min-w-0">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -220,6 +160,13 @@ export const HomePage: React.FC = () => {
           )}
         </div>
 
+        {/* ── Right Sidebar: Calendar + Members ── */}
+        <div className="hidden xl:flex flex-col w-80 shrink-0 space-y-5">
+          <WeekCalendarPreview />
+          <MembersCard lodestone={lodestone} />
+        </div>
+
+        </div>
       </div>
     </main>
   );

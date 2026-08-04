@@ -8,6 +8,10 @@ import { PostCard } from '../components/PostCard';
 import { HeroSection } from '../components/HeroSection';
 import { WeekCalendarPreview } from '../components/WeekCalendarPreview';
 import { MembersCard } from '../components/MembersCard';
+import { TrendingCategories } from '../components/TrendingCategories';
+import { FeaturedGuides } from '../components/FeaturedGuides';
+import { LatestReviews } from '../components/LatestReviews';
+import { PopularCollections } from '../components/PopularCollections';
 import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 export const HomePage: React.FC = () => {
@@ -71,6 +75,9 @@ export const HomePage: React.FC = () => {
         totalEvents={0}
         totalRecipes={0}
       />
+
+      {/* ═══════════════════ Trending Categories ═══════════════════ */}
+      <TrendingCategories />
 
       {/* ═══════════════════ Content Area ═══════════════════ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -168,6 +175,15 @@ export const HomePage: React.FC = () => {
 
         </div>
       </div>
+
+      {/* ═══════════════════ Featured Guides ═══════════════════ */}
+      <FeaturedGuides />
+
+      {/* ═══════════════════ Latest Reviews ═══════════════════ */}
+      <LatestReviews />
+
+      {/* ═══════════════════ Popular Collections ═══════════════════ */}
+      <PopularCollections />
     </main>
   );
 };

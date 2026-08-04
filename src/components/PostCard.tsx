@@ -47,6 +47,11 @@ export const PostCard: React.FC<PostCardProps> = memo(({ post, onClick }) => {
       onClick={(e) => { e.preventDefault(); onClick(); }}
       className="group relative rounded-2xl overflow-hidden border border-[var(--color-outline)]/50 transition-all duration-300 cursor-pointer flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] hover:border-[var(--color-primary)]/30 hover:shadow-[0_8px_24px_rgba(91,164,181,0.12)] hover:-translate-y-0.5 bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-surface-alt)]"
     >
+      {/* Magical glow on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
+      </div>
+      
       {/* Top gold accent */}
       <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C9A84C]/40 to-transparent" />
 

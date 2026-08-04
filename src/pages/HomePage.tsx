@@ -111,36 +111,74 @@ export const HomePage: React.FC = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {[1, 2, 3, 4].map(n => (
-                <div key={n} className="h-72 bg-[var(--color-surface)] rounded-2xl shimmer" />
+                <div key={n} className="h-72 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-outline)]/20 relative overflow-hidden">
+                  <div className="absolute inset-0 shimmer" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-2 opacity-40">
+                      <img src="/svg/floating-book.svg" alt="" className="w-8 h-8 animate-pulse" />
+                      <span className="type-caption text-[var(--color-on-surface-variant)]">Carregando...</span>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           ) : loadError ? (
-            <div className="text-center py-12 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30">
-              <AlertTriangle className="w-10 h-10 text-[var(--color-crimson)] mx-auto mb-3 opacity-60" />
-              <p className="text-sm font-semibold text-[var(--color-on-surface)] mb-1">{loadError}</p>
-              <button
-                onClick={() => {
-                  setLoading(true);
-                  setLoadError(null);
-                  apiGet<Post[]>('/api/posts')
-                    .then(data => setPosts(data || []))
-                    .catch(err => {
-                      console.error('Erro ao recarregar postagens:', err);
-                      setLoadError('Falha ao recarregar. Tente novamente.');
-                    })
-                    .finally(() => setLoading(false));
-                }}
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-deep)] transition-all"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                Tentar novamente
-              </button>
+            <div className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-crimson)]/30 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none" aria-hidden="true">
+                <img src="/svg/rune-circle.svg" alt="" className="w-full h-full object-contain" />
+              </div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[var(--color-crimson)]/10 flex items-center justify-center">
+                  <AlertTriangle className="w-8 h-8 text-[var(--color-crimson)]" />
+                </div>
+                <p className="type-headline text-[var(--color-on-surface)] mb-2">
+                  A conexão se interrompeu
+                </p>
+                <p className="type-body text-[var(--color-on-surface-variant)] max-w-sm mx-auto mb-4">
+                  {loadError}
+                </p>
+                <button
+                  onClick={() => {
+                    setLoading(true);
+                    setLoadError(null);
+                    apiGet<Post[]>('/api/posts')
+                      .then(data => setPosts(data || []))
+                      .catch(err => {
+                        console.error('Erro ao recarregar postagens:', err);
+                        setLoadError('A conexão com a biblioteca permanece instável. Tente novamente em breve.');
+                      })
+                      .finally(() => setLoading(false));
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white text-sm font-bold hover:bg-[var(--color-primary-deep)] transition-all hover:shadow-lg hover:shadow-[var(--color-primary)]/20"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Tentar novamente
+                </button>
+                <p className="type-caption text-[var(--color-lavender)] italic font-cormorant mt-4">
+                  "Paciência é a virtude dos sábios"
+                </p>
+              </div>
             </div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-12 glass rounded-2xl p-8 border border-[var(--color-outline)]/50">
-              <BookOpen className="w-12 h-12 text-[var(--color-on-surface-variant)] mx-auto mb-3 opacity-40" />
-              <p className="text-sm font-semibold text-[var(--color-on-surface)]">Nenhuma postagem encontrada.</p>
-              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Use o Painel Admin para criar a primeira publicação.</p>
+            <div className="text-center py-16 glass rounded-2xl p-8 border border-[var(--color-outline)]/50 relative overflow-hidden">
+              {/* Decorative rune circle */}
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none" aria-hidden="true">
+                <img src="/svg/rune-circle.svg" alt="" className="w-full h-full object-contain" />
+              </div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[var(--color-secondary)]/10 flex items-center justify-center">
+                  <BookOpen className="w-8 h-8 text-[var(--color-secondary)]" />
+                </div>
+                <p className="type-headline text-[var(--color-on-surface)] mb-2">
+                  Os pergaminhos aguardam
+                </p>
+                <p className="type-body text-[var(--color-on-surface-variant)] max-w-sm mx-auto mb-4">
+                  A biblioteca da academia ainda não possui registros. Seja o primeiro a contribuir com um guia para a comunidade.
+                </p>
+                <p className="type-caption text-[var(--color-lavender)] italic font-cormorant">
+                  "O conhecimento compartilhado se multiplica"
+                </p>
+              </div>
             </div>
           ) : (
             <motion.div

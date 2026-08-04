@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { TopNavbar } from './TopNavbar';
 import { Footer } from './Footer';
+import { WelcomeTooltip } from './WelcomeTooltip';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = memo(({ children,
         {children}
       </main>
       <Footer />
+      <WelcomeTooltip />
     </div>
   );
 });

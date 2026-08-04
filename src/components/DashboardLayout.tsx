@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
-import { Sidebar } from './Sidebar';
+import { TopNavbar } from './TopNavbar';
 import { Footer } from './Footer';
-import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,19 +10,13 @@ interface DashboardLayoutProps {
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = memo(({ children, theme, onToggleTheme, onOpenLogin }) => {
-  const lodestone = useLodestoneFC();
-
   return (
-    <div className="flex flex-1 min-h-0">
-      <Sidebar theme={theme} onToggleTheme={onToggleTheme} onOpenLogin={onOpenLogin} lodestone={lodestone} />
-      <div className="flex-1 min-w-0 overflow-y-auto pb-16 lg:pb-0 bg-[var(--color-background)]">
-        <main className="min-h-screen flex flex-col">
-          <div className="flex-1">
-            {children}
-          </div>
-          <Footer />
-        </main>
-      </div>
+    <div className="min-h-screen flex flex-col bg-[var(--color-background)]">
+      <TopNavbar theme={theme} onToggleTheme={onToggleTheme} onOpenLogin={onOpenLogin} />
+      <main className="flex-1">
+        {children}
+      </main>
+      <Footer />
     </div>
   );
 });

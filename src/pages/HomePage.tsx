@@ -6,17 +6,14 @@ import { Post } from '../types';
 import { apiGet } from '../lib/api';
 import { PostCard } from '../components/PostCard';
 import { HeroSection } from '../components/HeroSection';
-import { WeekCalendarPreview } from '../components/WeekCalendarPreview';
-import { MembersCard } from '../components/MembersCard';
+import { SidebarCards } from '../components/SidebarCards';
 import { TrendingCategories } from '../components/TrendingCategories';
 import { FeaturedGuides } from '../components/FeaturedGuides';
 import { LatestReviews } from '../components/LatestReviews';
 import { PopularCollections } from '../components/PopularCollections';
-import { useLodestoneFC } from '../lib/useLodestoneFC';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const lodestone = useLodestoneFC();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -167,11 +164,8 @@ export const HomePage: React.FC = () => {
           )}
         </div>
 
-        {/* ── Right Sidebar: Calendar + Members ── */}
-        <div className="hidden xl:flex flex-col w-80 shrink-0 space-y-5">
-          <WeekCalendarPreview />
-          <MembersCard lodestone={lodestone} />
-        </div>
+        {/* ── Right Sidebar: FC Card + Calendar + Members ── */}
+        <SidebarCards />
 
         </div>
       </div>
